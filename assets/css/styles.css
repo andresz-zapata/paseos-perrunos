@@ -3,6 +3,10 @@
     padding: 0;
     box-sizing: border-box;
 }
+/* Scroll suave */
+html {
+    scroll-behavior: smooth;
+}
 :root {
     --verde-principal: #1f7a63;
     --verde-secundario: #27ae60;
@@ -31,6 +35,10 @@ body {
     padding: 15px 40px;
     box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.05);
     border-bottom: 1px solid rgba(31, 122, 99, 0.1);
+}
+.navbar.scrolled {
+    background-color: rgba(255, 255, 255, 0.98);
+    box-shadow: 0px 10px 30px rgba(0,0,0,0.15);
 }
 .logo {
     color: var(--verde-principal);
@@ -101,7 +109,7 @@ h2 {
 }
 .card h3 {
     color: var(--verde-principal);
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 .footer {
     background-color: #ecfdf5;
@@ -142,19 +150,88 @@ h2 {
     transform: scale(1.1);
 }
 
+/* Login */
+.auth-container {
+    width: 100%;
+    max-width: 420px;
+    margin: 80px auto;
+    padding: 40px;
+    background-color: var(--blanco);
+    border-radius: 20px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.08);
+}
+.auth-container h1 {
+    margin-bottom: 30px;
+    color: var(--verde-principal);
+    font-size: 32px;
+}
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.auth-form input {
+    padding: 10px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 16px;
+    outline: none;
+    transition: 0.3s;
+}
+.auth-form input:focus {
+    border-color: var(--verde-principal);
+    box-shadow: 0px 0px 0px 4px rgba(31, 122, 99, 0.1);
+}
+.auth-form button {
+    background: linear-gradient(
+        135deg,
+        var(--verde-secundario),
+        var(--verde-principal)
+    );
+    color: white;
+    border: none;
+    padding: 9px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.auth-form button:hover {
+    transform: scale(1.02);
+}
+.auth-links {
+    margin-top: 25px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.auth-links a {
+    text-decoration: none;
+    color: var(--verde-principal);
+    font-weight: 500;
+}
+.auth-links a:hover {
+    text-decoration: underline;
+}
+.auth-container p {
+    margin-bottom: 20px;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* Password Toggle */
+.password-container {
+    position: relative;
+}
+.password-container input {
+    width: 100%;
+}
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+}
