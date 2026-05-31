@@ -74,7 +74,7 @@ if (registerForm) {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/auth/register", {
+      const response = await fetch("https://paseos-perrunos.onrender.com/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -114,7 +114,7 @@ if (loginForm && document.querySelector("#login-password")) {
     message.style.fontWeight = "500";
 
     try {
-      const response = await fetch("http://localhost:3000/api/auth/login", {
+      const response = await fetch("https://paseos-perrunos.onrender.com/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -174,7 +174,7 @@ if (perfilNombre) {
   } else {
     perfilNombre.textContent = nombre;
 
-    fetch("http://localhost:3000/api/auth/perfil", {
+    fetch("https://paseos-perrunos.onrender.com/api/auth/perfil", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
