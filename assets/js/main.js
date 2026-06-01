@@ -201,3 +201,20 @@ if (cerrarSesion) {
     window.location.href = "login.html";
   });
 }
+
+const menuToggle = document.querySelector('#menu-toggle');
+const menu = document.querySelector('.menu');
+
+if (menuToggle && menu) {
+  menuToggle.addEventListener('click', () => {
+    menu.classList.toggle('open');
+    menuToggle.textContent = menu.classList.contains('open') ? '✕' : '☰';
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!menu.contains(e.target) && !menuToggle.contains(e.target)) {
+      menu.classList.remove('open');
+      menuToggle.textContent = '☰';
+    }
+  });
+}
