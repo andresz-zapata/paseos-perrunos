@@ -1,4 +1,7 @@
 console.log("JavaScript conectado correctamente 🚀");
+const BASE_URL = window.location.hostname === 'localhost'
+  ? ''
+  : 'https://paseos-perrunos.onrender.com';
 
 const navbar = document.querySelector(".navbar");
 window.addEventListener("scroll", () => {
@@ -74,8 +77,7 @@ if (registerForm) {
     }
 
     try {
-      const response = await fetch("/api/auth/register", { // Desarrollo
-      // const response = await fetch("https://paseos-perrunos.onrender.com/api/auth/register", { // Producción
+      const response = await fetch(`${BASE_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -89,6 +91,9 @@ if (registerForm) {
         message.textContent = data.message;
         message.style.color = "green";
         registerForm.reset();
+        setTimeout(() => {
+          message.textContent = '';
+        }, 2000);
       } else {
         message.textContent = data.message;
         message.style.color = "red";
@@ -115,8 +120,7 @@ if (loginForm && document.querySelector("#login-password")) {
     message.style.fontWeight = "500";
 
     try {
-      const response = await fetch("/api/auth/login", { // Desarrollo
-      // const response = await fetch("https://paseos-perrunos.onrender.com/api/auth/login", { // Producción
+      const response = await fetch(`${BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -164,11 +168,15 @@ if (miCuentaLink && token && nombre) {
   miCuentaLink.href = "perfil.html";
 }
 
-// Perfil page
-const perfilNombre = document.querySelector("#perfil-nombre");
-const perfilEmail = document.querySelector("#perfil-email");
-const nombreUsuario = document.querySelector("#nombre-usuario");
-const cerrarSesion = document.querySelector("#cerrar-sesion");
+// Perfil y páginas protegidas
+const perfilNombre = document.querySelector('#perfil-nombre');
+const perfilEmail = document.querySelector('#perfil-email');
+const nombreUsuario = document.querySelector('#nombre-usuario');
+const cerrarSesion = document.querySelector('#cerrar-sesion');
+
+if (nombreUsuario && token && nombre) {
+  nombreUsuario.textContent = `👤 ${nombre}`;
+}
 
 if (perfilNombre) {
   if (!token) {
@@ -176,8 +184,7 @@ if (perfilNombre) {
   } else {
     perfilNombre.textContent = nombre;
 
-    fetch("/api/auth/perfil", { // Desarrollo
-      // fetch("https://paseos-perrunos.onrender.com/api/auth/perfil", { // Producción
+    fetch(`${BASE_URL}/api/auth/perfil`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -246,8 +253,7 @@ if (mascotaForm) {
 
   const cargarMascotas = async () => {
     try {
-      const response = await fetch('/api/mascotas', { // Desarrollo
-      // const response = await fetch('https://paseos-perrunos.onrender.com/api/mascotas', { // Producción
+      const response = await fetch(`${BASE_URL}/api/mascotas`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -309,8 +315,7 @@ if (mascotaForm) {
     }
 
     try {
-      const response = await fetch('/api/mascotas', { // Desarrollo
-      // const response = await fetch('https://paseos-perrunos.onrender.com/api/mascotas', { // Producción
+      const response = await fetch(`${BASE_URL}/api/mascotas`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
