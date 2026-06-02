@@ -514,6 +514,30 @@ h2 {
   .perfil-card h2 {
     font-size: 22px;
   }
+
+  /* Mascotas */
+  .mascotas-container {
+    padding: 30px 16px;
+  }
+  .mascotas-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .mascotas-header h1 {
+    font-size: 24px;
+  }
+  .btn-agregar {
+    width: 100%;
+    text-align: center;
+  }
+  .formulario-mascota {
+    padding: 30px 25px;
+  }
+  .mascotas-lista {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
 }
 
 /* Responsive - Móviles (480px) */
@@ -531,6 +555,7 @@ h2 {
 
   .menu-toggle {
     display: flex;
+    order: -1;
   }
 
   .menu {
@@ -645,4 +670,58 @@ h2 {
     bottom: 16px;
     right: 16px;
   }
+
+  /* Mascotas */
+  .mascotas-container {
+    padding: 20px 16px;
+  }
+  .mascotas-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .mascotas-header h1 {
+    font-size: 22px;
+  }
+  .btn-agregar {
+    width: 100%;
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+  .formulario-mascota {
+    padding: 25px 20px;
+    border-radius: 16px;
+  }
+  .formulario-mascota h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  .formulario-mascota input,
+  .formulario-mascota textarea {
+    font-size: 15px;
+  }
+  .formulario-mascota button {
+    font-size: 15px;
+  }
+  .mascotas-lista {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .mascota-card {
+    border-radius: 16px;
+  }
+  .mascota-foto {
+    height: 180px;
+  }
+  .mascota-info {
+    padding: 16px;
+  }
+  .mascota-info h3 {
+    font-size: 18px;
+  }
+  .mascota-info p {
+    font-size: 13px;
+  }
 }
+
