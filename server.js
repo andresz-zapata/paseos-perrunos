@@ -19,6 +19,8 @@ mongoose
 
 const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
+const mascotasRoutes = require('./routes/mascotas');
+app.use('/api/mascotas', mascotasRoutes);
 app.get('/{*path}', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });

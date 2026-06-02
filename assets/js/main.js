@@ -74,7 +74,8 @@ if (registerForm) {
     }
 
     try {
-      const response = await fetch("https://paseos-perrunos.onrender.com/api/auth/register", {
+      const response = await fetch("/api/auth/register", { // Desarrollo
+      // const response = await fetch("https://paseos-perrunos.onrender.com/api/auth/register", { // Producción
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -114,7 +115,8 @@ if (loginForm && document.querySelector("#login-password")) {
     message.style.fontWeight = "500";
 
     try {
-      const response = await fetch("https://paseos-perrunos.onrender.com/api/auth/login", {
+      const response = await fetch("/api/auth/login", { // Desarrollo
+      // const response = await fetch("https://paseos-perrunos.onrender.com/api/auth/login", { // Producción
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -174,12 +176,13 @@ if (perfilNombre) {
   } else {
     perfilNombre.textContent = nombre;
 
-    fetch("https://paseos-perrunos.onrender.com/api/auth/perfil", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    fetch("/api/auth/perfil", { // Desarrollo
+      // fetch("https://paseos-perrunos.onrender.com/api/auth/perfil", { // Producción
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((res) => res.json())
       .then((data) => {
         if (data.email) {
@@ -215,6 +218,123 @@ if (menuToggle && menu) {
     if (!menu.contains(e.target) && !menuToggle.contains(e.target)) {
       menu.classList.remove('open');
       menuToggle.textContent = '☰';
+    }
+  });
+}
+
+// Mascotas
+const mascotaForm = document.querySelector('#mascota-form');
+const btnAgregar = document.querySelector('#btn-agregar');
+const formularioMascota = document.querySelector('#formulario-mascota');
+const mascotasLista = document.querySelector('#mascotas-lista');
+const mascotasEmpty = document.querySelector('#mascotas-empty');
+
+if (mascotaForm) {
+  if (!token) {
+    window.location.href = 'login.html';
+  }
+
+  btnAgregar.addEventListener('click', () => {
+    if (formularioMascota.style.display === 'none') {
+      formularioMascota.style.display = 'block';
+      btnAgregar.textContent = '− Cancelar';
+    } else {
+      formularioMascota.style.display = 'none';
+      btnAgregar.textContent = '+ Agregar mascota';
+    }
+  });
+
+  const cargarMascotas = async () => {
+    try {
+      const response = await fetch('/api/mascotas', { // Desarrollo
+      // const response = await fetch('https://paseos-perrunos.onrender.com/api/mascotas', { // Producción
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const mascotas = await response.json();
+
+      if (mascotas.length === 0) {
+        mascotasEmpty.style.display = 'block';
+        return;
+      }
+
+      mascotasEmpty.style.display = 'none';
+      mascotasLista.innerHTML = '';
+
+      mascotas.forEach(mascota => {
+        const card = document.createElement('div');
+        card.classList.add('mascota-card');
+
+        const fotoHTML = mascota.foto
+          ? `<div class="mascota-foto"><img src="${mascota.foto}" alt="${mascota.nombre}" /></div>`
+          : `<div class="mascota-foto">🐶</div>`;
+
+        card.innerHTML = `
+          ${fotoHTML}
+          <div class="mascota-info">
+            <h3>${mascota.nombre}</h3>
+            <p>🐾 Raza: ${mascota.raza}</p>
+            <p>🎂 Edad: ${mascota.edad} año${mascota.edad === 1 ? '' : 's'}</p>
+            ${mascota.notas ? `<p>📝 ${mascota.notas}</p>` : ''}
+          </div>
+        `;
+
+        mascotasLista.appendChild(card);
+      });
+
+    } catch (error) {
+      console.error('Error al cargar mascotas:', error);
+    }
+  };
+
+  cargarMascotas();
+
+  mascotaForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const message = document.querySelector('#mascota-message');
+    const formData = new FormData();
+
+    formData.append('nombre', document.querySelector('#mascota-nombre').value);
+    formData.append('raza', document.querySelector('#mascota-raza').value);
+    formData.append('edad', document.querySelector('#mascota-edad').value);
+    formData.append('notas', document.querySelector('#mascota-notas').value);
+
+    const foto = document.querySelector('#mascota-foto').files[0];
+    if (foto) {
+      formData.append('foto', foto);
+    }
+
+    try {
+      const response = await fetch('/api/mascotas', { // Desarrollo
+      // const response = await fetch('https://paseos-perrunos.onrender.com/api/mascotas', { // Producción
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        message.textContent = data.message;
+        message.style.color = 'green';
+        mascotaForm.reset();
+        formularioMascota.style.display = 'none';
+        btnAgregar.textContent = '+ Agregar mascota';
+        cargarMascotas();
+      } else {
+        message.textContent = data.message;
+        message.style.color = 'red';
+      }
+
+    } catch (error) {
+      message.textContent = 'No se pudo conectar con el servidor';
+      message.style.color = 'red';
     }
   });
 }
