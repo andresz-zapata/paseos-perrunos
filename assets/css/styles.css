@@ -454,6 +454,157 @@ h2 {
   color: var(--verde-principal) !important;
 }
 
+/* Reservas */
+.reservas-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+.reservas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+.reservas-header h1 {
+  color: var(--verde-principal);
+  font-size: 28px;
+}
+.formulario-reserva {
+  background-color: var(--blanco);
+  border-radius: 20px;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin-bottom: 40px;
+}
+.formulario-reserva h2 {
+  color: var(--verde-principal);
+  margin-bottom: 25px;
+}
+.label-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--gris);
+  margin-bottom: 15px;
+}
+.label-campo input,
+.label-campo select,
+.label-campo textarea {
+  width: 100%;
+  padding: 10px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  outline: none;
+  transition: 0.3s;
+  background-color: var(--blanco);
+  color: var(--oscuro);
+}
+.label-campo input:focus,
+.label-campo select:focus,
+.label-campo textarea:focus {
+  border-color: var(--verde-principal);
+  box-shadow: 0px 0px 0px 4px rgba(31, 122, 99, 0.1);
+}
+.formulario-reserva button[type="submit"] {
+  background: linear-gradient(135deg, var(--verde-secundario), var(--verde-principal));
+  color: white;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 5px;
+}
+.formulario-reserva button[type="submit"]:hover {
+  transform: scale(1.02);
+}
+#reserva-message {
+  margin-top: 10px;
+  font-weight: 500;
+  font-size: 14px;
+}
+.reservas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.reserva-card {
+  background-color: var(--blanco);
+  border-radius: 20px;
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.05);
+  padding: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  transition: 0.3s;
+}
+.reserva-card:hover {
+  transform: translateY(-4px);
+}
+.reserva-info h3 {
+  color: var(--verde-principal);
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+.reserva-info p {
+  color: var(--gris);
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.reserva-acciones {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  min-width: 120px;
+}
+.badge-estado {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.badge-pendiente {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+.badge-confirmada {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+.badge-cancelada {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+.btn-cancelar {
+  background: none;
+  border: 1px solid #e53e3e;
+  color: #e53e3e;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.btn-cancelar:hover {
+  background-color: #e53e3e;
+  color: white;
+}
+.reservas-empty {
+  color: var(--gris);
+  font-size: 15px;
+}
+
 /* Responsive Tablets (768px) */
 @media (max-width: 768px) {
 
@@ -537,6 +688,27 @@ h2 {
   .mascotas-lista {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
+  }
+
+  /* Reservas */
+  .reservas-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .reservas-header h1 {
+    font-size: 24px;
+  }
+  .formulario-reserva {
+    padding: 30px 25px;
+  }
+  .reserva-card {
+    flex-direction: column;
+  }
+  .reserva-acciones {
+    align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 }
 
@@ -722,6 +894,28 @@ h2 {
   }
   .mascota-info p {
     font-size: 13px;
+  }
+
+  /* Reservas */
+  .reservas-container {
+    padding: 20px 16px;
+  }
+  .reservas-header {
+    margin-bottom: 20px;
+  }
+  .reservas-header h1 {
+    font-size: 22px;
+  }
+  .formulario-reserva {
+    padding: 25px 20px;
+    border-radius: 16px;
+  }
+  .formulario-reserva h2 {
+    font-size: 20px;
+  }
+  .reserva-card {
+    padding: 20px;
+    border-radius: 16px;
   }
 }
 

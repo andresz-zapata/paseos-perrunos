@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mis Reservas | Paseos Perrunos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">☰</button>
+      <h2 class="logo">Paseos Perrunos 🐶</h2>
+      <ul class="menu">
+        <li><a href="perfil.html" class="btn-volver">← Mi Perfil</a></li>
+        <li><a href="mascotas.html">Mis Mascotas</a></li>
+        <li id="nombre-usuario"></li>
+        <li><a href="#" id="cerrar-sesion">Cerrar sesión</a></li>
+      </ul>
+    </nav>
+
+    <section class="reservas-container">
+      <div class="reservas-header">
+        <h1>Mis Reservas 📅</h1>
+        <button class="btn-agregar" id="btn-nueva-reserva">+ Nueva reserva</button>
+      </div>
+
+      <div class="formulario-reserva" id="formulario-reserva" style="display:none;">
+        <h2>Nueva reserva de paseo 🐾</h2>
+        <form id="reserva-form">
+          <label class="label-campo">
+            Mascota
+            <select id="reserva-mascota" required>
+              <option value="">Cargando mascotas...</option>
+            </select>
+          </label>
+          <label class="label-campo">
+            Fecha y hora
+            <input type="datetime-local" id="reserva-fecha" required />
+          </label>
+          <label class="label-campo">
+            Dirección de recogida
+            <input type="text" id="reserva-direccion" placeholder="Ej: Calle 10 #45-20, Medellín" required />
+          </label>
+          <label class="label-campo">
+            Notas adicionales (opcional)
+            <textarea id="reserva-notas" placeholder="Ej: Mi perro es tímido con extraños" rows="3"></textarea>
+          </label>
+          <button type="submit">Crear reserva</button>
+          <p id="reserva-message"></p>
+        </form>
+      </div>
+
+      <div class="reservas-lista" id="reservas-lista">
+        <p class="reservas-empty" id="reservas-empty">No tienes reservas aún.</p>
+      </div>
+    </section>
+
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

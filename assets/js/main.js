@@ -343,3 +343,200 @@ if (mascotaForm) {
     }
   });
 }
+
+// Reservas
+const reservaForm = document.querySelector('#reserva-form');
+const btnNuevaReserva = document.querySelector('#btn-nueva-reserva');
+const formularioReserva = document.querySelector('#formulario-reserva');
+const reservasLista = document.querySelector('#reservas-lista');
+const reservasEmpty = document.querySelector('#reservas-empty');
+
+if (reservaForm) {
+  if (!token) {
+    window.location.href = 'login.html';
+  }
+
+  // Fecha mínima: ahora
+  const fechaInput = document.querySelector('#reserva-fecha');
+  const ahora = new Date();
+  ahora.setMinutes(ahora.getMinutes() - ahora.getTimezoneOffset());
+  fechaInput.min = ahora.toISOString().slice(0, 16);
+
+  // Mostrar/ocultar formulario
+  btnNuevaReserva.addEventListener('click', () => {
+    if (formularioReserva.style.display === 'none') {
+      formularioReserva.style.display = 'block';
+      btnNuevaReserva.textContent = '− Cancelar';
+    } else {
+      formularioReserva.style.display = 'none';
+      btnNuevaReserva.textContent = '+ Nueva reserva';
+    }
+  });
+
+  // Cargar mascotas en el select
+  const cargarMascotasSelect = async () => {
+    try {
+      const response = await fetch('/api/mascotas', {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      const mascotas = await response.json();
+      const select = document.querySelector('#reserva-mascota');
+
+      if (mascotas.length === 0) {
+        select.innerHTML = '<option value="">No tienes mascotas registradas</option>';
+        return;
+      }
+
+      select.innerHTML = '<option value="">Selecciona una mascota</option>';
+      mascotas.forEach(mascota => {
+        const option = document.createElement('option');
+        option.value = mascota._id;
+        option.textContent = `${mascota.nombre} (${mascota.raza})`;
+        select.appendChild(option);
+      });
+
+    } catch (error) {
+      console.error('Error al cargar mascotas:', error);
+    }
+  };
+
+  cargarMascotasSelect();
+
+  // Formatear fecha legible
+  const formatearFecha = (fechaISO) => {
+    const fecha = new Date(fechaISO);
+    return fecha.toLocaleString('es-CO', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  // Cargar reservas
+  const cargarReservas = async () => {
+    try {
+      const response = await fetch('/api/reservas', {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      const reservas = await response.json();
+
+      if (reservas.length === 0) {
+        reservasEmpty.style.display = 'block';
+        return;
+      }
+
+      reservasEmpty.style.display = 'none';
+      reservasLista.innerHTML = '';
+
+      reservas.forEach(reserva => {
+        const card = document.createElement('div');
+        card.classList.add('reserva-card');
+
+        const badgeClase = `badge-estado badge-${reserva.estado}`;
+        const mostrarCancelar = reserva.estado === 'pendiente';
+
+        card.innerHTML = `
+          <div class="reserva-info">
+            <h3>🐾 Paseo de ${reserva.mascota.nombre}</h3>
+            <p>📅 ${formatearFecha(reserva.fecha)}</p>
+            <p>📍 ${reserva.direccion}</p>
+            ${reserva.notas ? `<p>📝 ${reserva.notas}</p>` : ''}
+          </div>
+          <div class="reserva-acciones">
+            <span class="${badgeClase}">${reserva.estado}</span>
+            ${mostrarCancelar ? `<button class="btn-cancelar" data-id="${reserva._id}">Cancelar</button>` : ''}
+          </div>
+        `;
+
+        reservasLista.appendChild(card);
+      });
+
+      // Eventos cancelar
+      document.querySelectorAll('.btn-cancelar').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.id;
+
+          try {
+            const response = await fetch(`/api/reservas/${id}/cancelar`, {
+              method: 'PATCH',
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              cargarReservas();
+            } else {
+              alert(data.message);
+            }
+
+          } catch (error) {
+            alert('No se pudo cancelar la reserva');
+          }
+        });
+      });
+
+    } catch (error) {
+      console.error('Error al cargar reservas:', error);
+    }
+  };
+
+  cargarReservas();
+
+  // Crear reserva
+  reservaForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const message = document.querySelector('#reserva-message');
+
+    const mascota = document.querySelector('#reserva-mascota').value;
+    const fecha = document.querySelector('#reserva-fecha').value;
+    const direccion = document.querySelector('#reserva-direccion').value;
+    const notas = document.querySelector('#reserva-notas').value;
+
+    if (!mascota) {
+      message.textContent = 'Debes seleccionar una mascota';
+      message.style.color = 'red';
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/reservas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ mascota, fecha, direccion, notas })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        message.textContent = data.message;
+        message.style.color = 'green';
+        reservaForm.reset();
+        formularioReserva.style.display = 'none';
+        btnNuevaReserva.textContent = '+ Nueva reserva';
+        cargarReservas();
+        setTimeout(() => {
+          message.textContent = '';
+        }, 3000);
+      } else {
+        message.textContent = data.message;
+        message.style.color = 'red';
+      }
+
+    } catch (error) {
+      message.textContent = 'No se pudo conectar con el servidor';
+      message.style.color = 'red';
+    }
+  });
+}
