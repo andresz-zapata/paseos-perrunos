@@ -118,7 +118,7 @@ router.post(
       }
 
       const token = jwt.sign(
-        { id: usuario._id, nombre: usuario.nombre },
+        { id: usuario._id, nombre: usuario.nombre, rol: usuario.rol },
         process.env.JWT_SECRET,
         { expiresIn: "8h" }
       );
@@ -127,6 +127,7 @@ router.post(
         message: `¡Bienvenido ${usuario.nombre}! 🐾`,
         token,
         nombre: usuario.nombre,
+        rol: usuario.rol
       });
     } catch (error) {
       console.error(error);

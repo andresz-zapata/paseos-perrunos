@@ -136,11 +136,16 @@ if (loginForm && document.querySelector("#login-password")) {
         loginForm.reset();
 
         localStorage.setItem("token", data.token);
-        localStorage.setItem("nombre", data.nombre);
+localStorage.setItem("nombre", data.nombre);
+localStorage.setItem("rol", data.rol);
 
-        setTimeout(() => {
-          window.location.href = "perfil.html";
-        }, 1500);
+setTimeout(() => {
+  if (data.rol === 'admin') {
+    window.location.href = "admin.html";
+  } else {
+    window.location.href = "perfil.html";
+  }
+}, 1500);
       } else {
         message.textContent = data.message;
         message.style.color = "red";
@@ -165,7 +170,8 @@ const nombre = localStorage.getItem("nombre");
 const miCuentaLink = document.querySelector(".menu a[href='login.html']");
 if (miCuentaLink && token && nombre) {
   miCuentaLink.textContent = `👤 ${nombre}`;
-  miCuentaLink.href = "perfil.html";
+  const rolActual = localStorage.getItem('rol');
+  miCuentaLink.href = rolActual === 'admin' ? "admin.html" : "perfil.html";
 }
 
 // Perfil y páginas protegidas
@@ -183,6 +189,11 @@ if (perfilNombre) {
     window.location.href = "login.html";
   } else {
     perfilNombre.textContent = nombre;
+
+    const enlaceAdmin = document.querySelector('#enlace-admin');
+    if (enlaceAdmin && rol === 'admin') {
+      enlaceAdmin.style.display = 'block';
+    }
 
     fetch(`${BASE_URL}/api/auth/perfil`, {
         method: "GET",
@@ -539,4 +550,148 @@ if (reservaForm) {
       message.style.color = 'red';
     }
   });
+}
+
+// Admin
+const adminLista = document.querySelector('#admin-lista');
+const adminEmpty = document.querySelector('#admin-empty');
+const rol = localStorage.getItem('rol');
+
+if (adminLista) {
+  if (!token || rol !== 'admin') {
+    window.location.href = 'login.html';
+  }
+
+  if (nombreUsuario && token && nombre) {
+    nombreUsuario.textContent = `👤 ${nombre}`;
+  }
+
+  let todasLasReservas = [];
+  let filtroActual = 'todas';
+
+  const formatearFechaAdmin = (fechaISO) => {
+    const fecha = new Date(fechaISO);
+    return fecha.toLocaleString('es-CO', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const renderizarReservas = (reservas) => {
+    adminLista.innerHTML = '';
+
+    if (reservas.length === 0) {
+      adminLista.innerHTML = '<p class="reservas-empty">No hay reservas en esta categoría.</p>';
+      return;
+    }
+
+    reservas.forEach(reserva => {
+      const card = document.createElement('div');
+      card.classList.add('admin-card');
+
+      const badgeClase = `badge-estado badge-${reserva.estado}`;
+      const esPendiente = reserva.estado === 'pendiente';
+
+      card.innerHTML = `
+        <div class="admin-card-info">
+          <h3>🐾 Paseo de ${reserva.mascota.nombre}</h3>
+          <p>👤 Cliente: ${reserva.usuario.nombre} (${reserva.usuario.email})</p>
+          <p>📅 ${formatearFechaAdmin(reserva.fecha)}</p>
+          <p>📍 ${reserva.direccion}</p>
+          ${reserva.notas ? `<p>📝 ${reserva.notas}</p>` : ''}
+        </div>
+        <div class="admin-card-acciones">
+          <span class="${badgeClase}">${reserva.estado}</span>
+          ${esPendiente ? `
+            <button class="btn-confirmar" data-id="${reserva._id}" data-accion="confirmada">Confirmar</button>
+            <button class="btn-cancelar-admin" data-id="${reserva._id}" data-accion="cancelada">Cancelar</button>
+          ` : ''}
+        </div>
+      `;
+
+      adminLista.appendChild(card);
+    });
+
+    document.querySelectorAll('.btn-confirmar, .btn-cancelar-admin').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.id;
+        const estado = btn.dataset.accion;
+
+        try {
+          const response = await fetch(`/api/reservas/admin/${id}/estado`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ estado })
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            cargarTodasLasReservas();
+          } else {
+            alert(data.message);
+          }
+
+        } catch (error) {
+          alert('No se pudo actualizar la reserva');
+        }
+      });
+    });
+  };
+
+  const cargarTodasLasReservas = async () => {
+    try {
+      const response = await fetch('/api/reservas/admin/todas', {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      const data = await response.json();
+
+      if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('nombre');
+        localStorage.removeItem('rol');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      if (!response.ok) {
+        adminLista.innerHTML = '<p class="reservas-empty">Error al cargar las reservas. Intenta de nuevo.</p>';
+        return;
+      }
+
+      todasLasReservas = data;
+      aplicarFiltro(filtroActual);
+
+    } catch (error) {
+      console.error('Error al cargar reservas:', error);
+      adminLista.innerHTML = '<p class="reservas-empty">No se pudo conectar con el servidor.</p>';
+    }
+  };
+
+  const aplicarFiltro = (filtro) => {
+    filtroActual = filtro;
+    const filtradas = filtro === 'todas'
+      ? todasLasReservas
+      : todasLasReservas.filter(r => r.estado === filtro);
+    renderizarReservas(filtradas);
+  };
+
+  document.querySelectorAll('.filtro-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('filtro-activo'));
+      btn.classList.add('filtro-activo');
+      aplicarFiltro(btn.dataset.filtro);
+    });
+  });
+
+  cargarTodasLasReservas();
 }

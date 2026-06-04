@@ -22,6 +22,13 @@ const verificarToken = (req, res, next) => {
   }
 };
 
+const verificarAdmin = (req, res, next) => {
+  if (req.usuario.rol !== 'admin') {
+    return res.status(403).json({ message: 'Acceso denegado, se requiere rol de administrador' });
+  }
+  next();
+};
+
 router.post('/', verificarToken, [
   body('mascota')
     .notEmpty().withMessage('Debes seleccionar una mascota'),
@@ -80,6 +87,46 @@ router.get('/', verificarToken, async (req, res) => {
       .sort({ fecha: 1 });
 
     res.status(200).json(reservas);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error en el servidor' });
+  }
+});
+
+router.get('/admin/todas', verificarToken, verificarAdmin, async (req, res) => {
+  try {
+    const reservas = await Reserva.find()
+      .populate('usuario', 'nombre email')
+      .populate('mascota', 'nombre foto')
+      .sort({ fecha: 1 });
+
+    res.status(200).json(reservas);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error en el servidor' });
+  }
+});
+
+router.patch('/admin/:id/estado', verificarToken, verificarAdmin, async (req, res) => {
+  try {
+    const { estado } = req.body;
+
+    if (!['confirmada', 'cancelada'].includes(estado)) {
+      return res.status(400).json({ message: 'Estado no válido' });
+    }
+
+    const reserva = await Reserva.findByIdAndUpdate(
+      req.params.id,
+      { estado },
+      { new: true }
+    );
+
+    if (!reserva) {
+      return res.status(404).json({ message: 'Reserva no encontrada' });
+    }
+
+    res.status(200).json({ message: `Reserva ${estado} correctamente`, reserva });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error en el servidor' });

@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const mascotaSchema = new mongoose.Schema({
   usuario: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'user',
     required: true
   },
   nombre: {
