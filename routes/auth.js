@@ -127,7 +127,7 @@ router.post(
         message: `¡Bienvenido ${usuario.nombre}! 🐾`,
         token,
         nombre: usuario.nombre,
-        rol: usuario.rol
+        rol: usuario.rol,
       });
     } catch (error) {
       console.error(error);

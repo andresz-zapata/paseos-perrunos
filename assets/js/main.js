@@ -1,7 +1,9 @@
 console.log("JavaScript conectado correctamente 🚀");
-const BASE_URL = window.location.hostname === 'localhost'
-  ? ''
-  : 'https://paseos-perrunos.onrender.com';
+const BASE_URL =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1"
+    ? ""
+    : "https://paseos-perrunos.onrender.com";
 
 const navbar = document.querySelector(".navbar");
 window.addEventListener("scroll", () => {
@@ -92,7 +94,7 @@ if (registerForm) {
         message.style.color = "green";
         registerForm.reset();
         setTimeout(() => {
-          message.textContent = '';
+          message.textContent = "";
         }, 2000);
       } else {
         message.textContent = data.message;
@@ -136,16 +138,16 @@ if (loginForm && document.querySelector("#login-password")) {
         loginForm.reset();
 
         localStorage.setItem("token", data.token);
-localStorage.setItem("nombre", data.nombre);
-localStorage.setItem("rol", data.rol);
+        localStorage.setItem("nombre", data.nombre);
+        localStorage.setItem("rol", data.rol);
 
-setTimeout(() => {
-  if (data.rol === 'admin') {
-    window.location.href = "admin.html";
-  } else {
-    window.location.href = "perfil.html";
-  }
-}, 1500);
+        setTimeout(() => {
+          if (data.rol === "admin") {
+            window.location.href = "admin.html";
+          } else {
+            window.location.href = "perfil.html";
+          }
+        }, 1500);
       } else {
         message.textContent = data.message;
         message.style.color = "red";
@@ -170,15 +172,15 @@ const nombre = localStorage.getItem("nombre");
 const miCuentaLink = document.querySelector(".menu a[href='login.html']");
 if (miCuentaLink && token && nombre) {
   miCuentaLink.textContent = `👤 ${nombre}`;
-  const rolActual = localStorage.getItem('rol');
-  miCuentaLink.href = rolActual === 'admin' ? "admin.html" : "perfil.html";
+  const rolActual = localStorage.getItem("rol");
+  miCuentaLink.href = rolActual === "admin" ? "admin.html" : "perfil.html";
 }
 
 // Perfil y páginas protegidas
-const perfilNombre = document.querySelector('#perfil-nombre');
-const perfilEmail = document.querySelector('#perfil-email');
-const nombreUsuario = document.querySelector('#nombre-usuario');
-const cerrarSesion = document.querySelector('#cerrar-sesion');
+const perfilNombre = document.querySelector("#perfil-nombre");
+const perfilEmail = document.querySelector("#perfil-email");
+const nombreUsuario = document.querySelector("#nombre-usuario");
+const cerrarSesion = document.querySelector("#cerrar-sesion");
 
 if (nombreUsuario && token && nombre) {
   nombreUsuario.textContent = `👤 ${nombre}`;
@@ -191,26 +193,29 @@ if (perfilNombre) {
     perfilNombre.textContent = nombre;
 
     const enlaceAdmin = document.querySelector('#enlace-admin');
-    if (enlaceAdmin && rol === 'admin') {
-      enlaceAdmin.style.display = 'block';
-    }
+const rolActualPerfil = localStorage.getItem('rol');
+if (enlaceAdmin && rolActualPerfil === 'admin') {
+  enlaceAdmin.style.display = 'block';
+}
 
-    fetch(`${BASE_URL}/api/auth/perfil`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.email) {
-          perfilEmail.textContent = data.email;
-          nombreUsuario.textContent = `👤 ${data.nombre}`;
-        }
-      })
-      .catch(() => {
-        perfilEmail.textContent = "No se pudo cargar el correo";
-      });
+fetch(`${BASE_URL}/api/auth/perfil`, {
+  method: "GET",
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+})
+.then((res) => res.json())
+.then((data) => {
+  if (data.email) {
+    perfilEmail.textContent = data.email;
+    nombreUsuario.textContent = `👤 ${data.nombre}`;
+  } else {
+    perfilEmail.textContent = "No se pudo cargar el correo";
+  }
+})
+.catch(() => {
+  perfilEmail.textContent = "No se pudo cargar el correo";
+});
   }
 }
 
@@ -219,71 +224,72 @@ if (cerrarSesion) {
     e.preventDefault();
     localStorage.removeItem("token");
     localStorage.removeItem("nombre");
+    localStorage.removeItem("rol");
     window.location.href = "login.html";
   });
 }
 
-const menuToggle = document.querySelector('#menu-toggle');
-const menu = document.querySelector('.menu');
+const menuToggle = document.querySelector("#menu-toggle");
+const menu = document.querySelector(".menu");
 
 if (menuToggle && menu) {
-  menuToggle.addEventListener('click', () => {
-    menu.classList.toggle('open');
-    menuToggle.textContent = menu.classList.contains('open') ? '✕' : '☰';
+  menuToggle.addEventListener("click", () => {
+    menu.classList.toggle("open");
+    menuToggle.textContent = menu.classList.contains("open") ? "✕" : "☰";
   });
 
-  document.addEventListener('click', (e) => {
+  document.addEventListener("click", (e) => {
     if (!menu.contains(e.target) && !menuToggle.contains(e.target)) {
-      menu.classList.remove('open');
-      menuToggle.textContent = '☰';
+      menu.classList.remove("open");
+      menuToggle.textContent = "☰";
     }
   });
 }
 
 // Mascotas
-const mascotaForm = document.querySelector('#mascota-form');
-const btnAgregar = document.querySelector('#btn-agregar');
-const formularioMascota = document.querySelector('#formulario-mascota');
-const mascotasLista = document.querySelector('#mascotas-lista');
-const mascotasEmpty = document.querySelector('#mascotas-empty');
+const mascotaForm = document.querySelector("#mascota-form");
+const btnAgregar = document.querySelector("#btn-agregar");
+const formularioMascota = document.querySelector("#formulario-mascota");
+const mascotasLista = document.querySelector("#mascotas-lista");
+const mascotasEmpty = document.querySelector("#mascotas-empty");
 
 if (mascotaForm) {
   if (!token) {
-    window.location.href = 'login.html';
+    window.location.href = "login.html";
   }
 
-  btnAgregar.addEventListener('click', () => {
-    if (formularioMascota.style.display === 'none') {
-      formularioMascota.style.display = 'block';
-      btnAgregar.textContent = '− Cancelar';
+  btnAgregar.addEventListener("click", () => {
+    if (formularioMascota.style.display === "none") {
+      formularioMascota.style.display = "block";
+      btnAgregar.textContent = "− Cancelar";
     } else {
-      formularioMascota.style.display = 'none';
-      btnAgregar.textContent = '+ Agregar mascota';
+      formularioMascota.style.display = "none";
+      btnAgregar.textContent = "+ Agregar mascota";
     }
   });
 
   const cargarMascotas = async () => {
     try {
       const response = await fetch(`${BASE_URL}/api/mascotas`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       const mascotas = await response.json();
 
       if (mascotas.length === 0) {
-        mascotasEmpty.style.display = 'block';
+        mascotasEmpty.style.display = "block";
         return;
       }
 
-      mascotasEmpty.style.display = 'none';
-      mascotasLista.innerHTML = '';
+      mascotasEmpty.style.display = "none";
+      mascotasLista.innerHTML = "";
 
-      mascotas.forEach(mascota => {
-        const card = document.createElement('div');
-        card.classList.add('mascota-card');
+      mascotas.forEach((mascota) => {
+        const card = document.createElement("div");
+        card.classList.add("mascota-card");
 
         const fotoHTML = mascota.foto
           ? `<div class="mascota-foto"><img src="${mascota.foto}" alt="${mascota.nombre}" /></div>`
@@ -294,191 +300,190 @@ if (mascotaForm) {
           <div class="mascota-info">
             <h3>${mascota.nombre}</h3>
             <p>🐾 Raza: ${mascota.raza}</p>
-            <p>🎂 Edad: ${mascota.edad} año${mascota.edad === 1 ? '' : 's'}</p>
-            ${mascota.notas ? `<p>📝 ${mascota.notas}</p>` : ''}
+            <p>🎂 Edad: ${mascota.edad} año${mascota.edad === 1 ? "" : "s"}</p>
+            ${mascota.notas ? `<p>📝 ${mascota.notas}</p>` : ""}
           </div>
         `;
 
         mascotasLista.appendChild(card);
       });
-
     } catch (error) {
-      console.error('Error al cargar mascotas:', error);
+      console.error("Error al cargar mascotas:", error);
     }
   };
 
   cargarMascotas();
 
-  mascotaForm.addEventListener('submit', async (e) => {
+  mascotaForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const message = document.querySelector('#mascota-message');
+    const message = document.querySelector("#mascota-message");
     const formData = new FormData();
 
-    formData.append('nombre', document.querySelector('#mascota-nombre').value);
-    formData.append('raza', document.querySelector('#mascota-raza').value);
-    formData.append('edad', document.querySelector('#mascota-edad').value);
-    formData.append('notas', document.querySelector('#mascota-notas').value);
+    formData.append("nombre", document.querySelector("#mascota-nombre").value);
+    formData.append("raza", document.querySelector("#mascota-raza").value);
+    formData.append("edad", document.querySelector("#mascota-edad").value);
+    formData.append("notas", document.querySelector("#mascota-notas").value);
 
-    const foto = document.querySelector('#mascota-foto').files[0];
+    const foto = document.querySelector("#mascota-foto").files[0];
     if (foto) {
-      formData.append('foto', foto);
+      formData.append("foto", foto);
     }
 
     try {
       const response = await fetch(`${BASE_URL}/api/mascotas`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: formData
+        body: formData,
       });
 
       const data = await response.json();
 
       if (response.ok) {
         message.textContent = data.message;
-        message.style.color = 'green';
+        message.style.color = "green";
         mascotaForm.reset();
-        formularioMascota.style.display = 'none';
-        btnAgregar.textContent = '+ Agregar mascota';
+        formularioMascota.style.display = "none";
+        btnAgregar.textContent = "+ Agregar mascota";
         cargarMascotas();
       } else {
         message.textContent = data.message;
-        message.style.color = 'red';
+        message.style.color = "red";
       }
-
     } catch (error) {
-      message.textContent = 'No se pudo conectar con el servidor';
-      message.style.color = 'red';
+      message.textContent = "No se pudo conectar con el servidor";
+      message.style.color = "red";
     }
   });
 }
 
 // Reservas
-const reservaForm = document.querySelector('#reserva-form');
-const btnNuevaReserva = document.querySelector('#btn-nueva-reserva');
-const formularioReserva = document.querySelector('#formulario-reserva');
-const reservasLista = document.querySelector('#reservas-lista');
-const reservasEmpty = document.querySelector('#reservas-empty');
+const reservaForm = document.querySelector("#reserva-form");
+const btnNuevaReserva = document.querySelector("#btn-nueva-reserva");
+const formularioReserva = document.querySelector("#formulario-reserva");
+const reservasLista = document.querySelector("#reservas-lista");
+const reservasEmpty = document.querySelector("#reservas-empty");
 
 if (reservaForm) {
   if (!token) {
-    window.location.href = 'login.html';
+    window.location.href = "login.html";
   }
 
-  // Fecha mínima: ahora
-  const fechaInput = document.querySelector('#reserva-fecha');
+  const fechaInput = document.querySelector("#reserva-fecha");
   const ahora = new Date();
   ahora.setMinutes(ahora.getMinutes() - ahora.getTimezoneOffset());
   fechaInput.min = ahora.toISOString().slice(0, 16);
 
-  // Mostrar/ocultar formulario
-  btnNuevaReserva.addEventListener('click', () => {
-    if (formularioReserva.style.display === 'none') {
-      formularioReserva.style.display = 'block';
-      btnNuevaReserva.textContent = '− Cancelar';
+  btnNuevaReserva.addEventListener("click", () => {
+    if (formularioReserva.style.display === "none") {
+      formularioReserva.style.display = "block";
+      btnNuevaReserva.textContent = "− Cancelar";
     } else {
-      formularioReserva.style.display = 'none';
-      btnNuevaReserva.textContent = '+ Nueva reserva';
+      formularioReserva.style.display = "none";
+      btnNuevaReserva.textContent = "+ Nueva reserva";
     }
   });
 
-  // Cargar mascotas en el select
   const cargarMascotasSelect = async () => {
     try {
-      const response = await fetch('/api/mascotas', {
-        method: 'GET',
-        headers: { 'Authorization': `Bearer ${token}` }
+      const response = await fetch(`${BASE_URL}/api/mascotas`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const mascotas = await response.json();
-      const select = document.querySelector('#reserva-mascota');
+      const select = document.querySelector("#reserva-mascota");
 
       if (mascotas.length === 0) {
-        select.innerHTML = '<option value="">No tienes mascotas registradas</option>';
+        select.innerHTML =
+          '<option value="">No tienes mascotas registradas</option>';
         return;
       }
 
       select.innerHTML = '<option value="">Selecciona una mascota</option>';
-      mascotas.forEach(mascota => {
-        const option = document.createElement('option');
+      mascotas.forEach((mascota) => {
+        const option = document.createElement("option");
         option.value = mascota._id;
         option.textContent = `${mascota.nombre} (${mascota.raza})`;
         select.appendChild(option);
       });
-
     } catch (error) {
-      console.error('Error al cargar mascotas:', error);
+      console.error("Error al cargar mascotas:", error);
     }
   };
 
   cargarMascotasSelect();
 
-  // Formatear fecha legible
   const formatearFecha = (fechaISO) => {
     const fecha = new Date(fechaISO);
-    return fecha.toLocaleString('es-CO', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return fecha.toLocaleString("es-CO", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
-  // Cargar reservas
   const cargarReservas = async () => {
     try {
-      const response = await fetch('/api/reservas', {
-        method: 'GET',
-        headers: { 'Authorization': `Bearer ${token}` }
+      const response = await fetch(`${BASE_URL}/api/reservas`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const reservas = await response.json();
 
       if (reservas.length === 0) {
-        reservasEmpty.style.display = 'block';
+        reservasEmpty.style.display = "block";
         return;
       }
 
-      reservasEmpty.style.display = 'none';
-      reservasLista.innerHTML = '';
+      reservasEmpty.style.display = "none";
+      reservasLista.innerHTML = "";
 
-      reservas.forEach(reserva => {
-        const card = document.createElement('div');
-        card.classList.add('reserva-card');
+      reservas.forEach((reserva) => {
+        const card = document.createElement("div");
+        card.classList.add("reserva-card");
 
         const badgeClase = `badge-estado badge-${reserva.estado}`;
-        const mostrarCancelar = reserva.estado === 'pendiente';
+        const mostrarCancelar = reserva.estado === "pendiente";
 
         card.innerHTML = `
           <div class="reserva-info">
             <h3>🐾 Paseo de ${reserva.mascota.nombre}</h3>
             <p>📅 ${formatearFecha(reserva.fecha)}</p>
             <p>📍 ${reserva.direccion}</p>
-            ${reserva.notas ? `<p>📝 ${reserva.notas}</p>` : ''}
+            ${reserva.notas ? `<p>📝 ${reserva.notas}</p>` : ""}
           </div>
           <div class="reserva-acciones">
             <span class="${badgeClase}">${reserva.estado}</span>
-            ${mostrarCancelar ? `<button class="btn-cancelar" data-id="${reserva._id}">Cancelar</button>` : ''}
+            ${
+              mostrarCancelar
+                ? `<button class="btn-cancelar" data-id="${reserva._id}">Cancelar</button>`
+                : ""
+            }
           </div>
         `;
 
         reservasLista.appendChild(card);
       });
 
-      // Eventos cancelar
-      document.querySelectorAll('.btn-cancelar').forEach(btn => {
-        btn.addEventListener('click', async () => {
+      document.querySelectorAll(".btn-cancelar").forEach((btn) => {
+        btn.addEventListener("click", async () => {
           const id = btn.dataset.id;
 
           try {
-            const response = await fetch(`/api/reservas/${id}/cancelar`, {
-              method: 'PATCH',
-              headers: { 'Authorization': `Bearer ${token}` }
-            });
+            const response = await fetch(
+              `${BASE_URL}/api/reservas/${id}/cancelar`,
+              {
+                method: "PATCH",
+                headers: { Authorization: `Bearer ${token}` },
+              }
+            );
 
             const data = await response.json();
 
@@ -487,79 +492,74 @@ if (reservaForm) {
             } else {
               alert(data.message);
             }
-
           } catch (error) {
-            alert('No se pudo cancelar la reserva');
+            alert("No se pudo cancelar la reserva");
           }
         });
       });
-
     } catch (error) {
-      console.error('Error al cargar reservas:', error);
+      console.error("Error al cargar reservas:", error);
     }
   };
 
   cargarReservas();
 
-  // Crear reserva
-  reservaForm.addEventListener('submit', async (e) => {
+  reservaForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const message = document.querySelector('#reserva-message');
-
-    const mascota = document.querySelector('#reserva-mascota').value;
-    const fecha = document.querySelector('#reserva-fecha').value;
-    const direccion = document.querySelector('#reserva-direccion').value;
-    const notas = document.querySelector('#reserva-notas').value;
+    const message = document.querySelector("#reserva-message");
+    const mascota = document.querySelector("#reserva-mascota").value;
+    const fecha = document.querySelector("#reserva-fecha").value;
+    const direccion = document.querySelector("#reserva-direccion").value;
+    const notas = document.querySelector("#reserva-notas").value;
 
     if (!mascota) {
-      message.textContent = 'Debes seleccionar una mascota';
-      message.style.color = 'red';
+      message.textContent = "Debes seleccionar una mascota";
+      message.style.color = "red";
       return;
     }
 
     try {
-      const response = await fetch('/api/reservas', {
-        method: 'POST',
+      const response = await fetch(`${BASE_URL}/api/reservas`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ mascota, fecha, direccion, notas })
+        body: JSON.stringify({ mascota, fecha, direccion, notas }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
         message.textContent = data.message;
-        message.style.color = 'green';
+        message.style.color = "green";
         reservaForm.reset();
-        formularioReserva.style.display = 'none';
-        btnNuevaReserva.textContent = '+ Nueva reserva';
+        formularioReserva.style.display = "none";
+        btnNuevaReserva.textContent = "+ Nueva reserva";
         cargarReservas();
         setTimeout(() => {
-          message.textContent = '';
+          message.textContent = "";
         }, 3000);
       } else {
         message.textContent = data.message;
-        message.style.color = 'red';
+        message.style.color = "red";
       }
-
     } catch (error) {
-      message.textContent = 'No se pudo conectar con el servidor';
-      message.style.color = 'red';
+      message.textContent = "No se pudo conectar con el servidor";
+      message.style.color = "red";
     }
   });
 }
 
 // Admin
-const adminLista = document.querySelector('#admin-lista');
-const adminEmpty = document.querySelector('#admin-empty');
-const rol = localStorage.getItem('rol');
+const adminLista = document.querySelector("#admin-lista");
+const adminEmpty = document.querySelector("#admin-empty");
+const rol = localStorage.getItem("rol");
 
 if (adminLista) {
-  if (!token || rol !== 'admin') {
-    window.location.href = 'login.html';
+  if (!token || rol !== "admin") {
+    window.location.href = "login.html";
   }
 
   if (nombreUsuario && token && nombre) {
@@ -567,128 +567,143 @@ if (adminLista) {
   }
 
   let todasLasReservas = [];
-  let filtroActual = 'todas';
+  let filtroActual = "todas";
 
   const formatearFechaAdmin = (fechaISO) => {
     const fecha = new Date(fechaISO);
-    return fecha.toLocaleString('es-CO', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return fecha.toLocaleString("es-CO", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const renderizarReservas = (reservas) => {
-    adminLista.innerHTML = '';
+    adminLista.innerHTML = "";
 
     if (reservas.length === 0) {
-      adminLista.innerHTML = '<p class="reservas-empty">No hay reservas en esta categoría.</p>';
+      adminLista.innerHTML =
+        '<p class="reservas-empty">No hay reservas en esta categoría.</p>';
       return;
     }
 
-    reservas.forEach(reserva => {
-      const card = document.createElement('div');
-      card.classList.add('admin-card');
+    reservas.forEach((reserva) => {
+      const card = document.createElement("div");
+      card.classList.add("admin-card");
 
       const badgeClase = `badge-estado badge-${reserva.estado}`;
-      const esPendiente = reserva.estado === 'pendiente';
+      const esPendiente = reserva.estado === "pendiente";
 
       card.innerHTML = `
         <div class="admin-card-info">
           <h3>🐾 Paseo de ${reserva.mascota.nombre}</h3>
-          <p>👤 Cliente: ${reserva.usuario.nombre} (${reserva.usuario.email})</p>
+          <p>👤 Cliente: ${reserva.usuario.nombre} (${
+        reserva.usuario.email
+      })</p>
           <p>📅 ${formatearFechaAdmin(reserva.fecha)}</p>
           <p>📍 ${reserva.direccion}</p>
-          ${reserva.notas ? `<p>📝 ${reserva.notas}</p>` : ''}
+          ${reserva.notas ? `<p>📝 ${reserva.notas}</p>` : ""}
         </div>
         <div class="admin-card-acciones">
           <span class="${badgeClase}">${reserva.estado}</span>
-          ${esPendiente ? `
+          ${
+            esPendiente
+              ? `
             <button class="btn-confirmar" data-id="${reserva._id}" data-accion="confirmada">Confirmar</button>
             <button class="btn-cancelar-admin" data-id="${reserva._id}" data-accion="cancelada">Cancelar</button>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
       `;
 
       adminLista.appendChild(card);
     });
 
-    document.querySelectorAll('.btn-confirmar, .btn-cancelar-admin').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const id = btn.dataset.id;
-        const estado = btn.dataset.accion;
+    document
+      .querySelectorAll(".btn-confirmar, .btn-cancelar-admin")
+      .forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const id = btn.dataset.id;
+          const estado = btn.dataset.accion;
 
-        try {
-          const response = await fetch(`/api/reservas/admin/${id}/estado`, {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ estado })
-          });
+          try {
+            const response = await fetch(
+              `${BASE_URL}/api/reservas/admin/${id}/estado`,
+              {
+                method: "PATCH",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ estado }),
+              }
+            );
 
-          const data = await response.json();
+            const data = await response.json();
 
-          if (response.ok) {
-            cargarTodasLasReservas();
-          } else {
-            alert(data.message);
+            if (response.ok) {
+              cargarTodasLasReservas();
+            } else {
+              alert(data.message);
+            }
+          } catch (error) {
+            alert("No se pudo actualizar la reserva");
           }
-
-        } catch (error) {
-          alert('No se pudo actualizar la reserva');
-        }
+        });
       });
-    });
   };
 
   const cargarTodasLasReservas = async () => {
     try {
-      const response = await fetch('/api/reservas/admin/todas', {
-        method: 'GET',
-        headers: { 'Authorization': `Bearer ${token}` }
+      const response = await fetch(`${BASE_URL}/api/reservas/admin/todas`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = await response.json();
 
       if (response.status === 401 || response.status === 403) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('nombre');
-        localStorage.removeItem('rol');
-        window.location.href = 'login.html';
+        localStorage.removeItem("token");
+        localStorage.removeItem("nombre");
+        localStorage.removeItem("rol");
+        window.location.href = "login.html";
         return;
       }
 
       if (!response.ok) {
-        adminLista.innerHTML = '<p class="reservas-empty">Error al cargar las reservas. Intenta de nuevo.</p>';
+        adminLista.innerHTML =
+          '<p class="reservas-empty">Error al cargar las reservas. Intenta de nuevo.</p>';
         return;
       }
 
       todasLasReservas = data;
       aplicarFiltro(filtroActual);
-
     } catch (error) {
-      console.error('Error al cargar reservas:', error);
-      adminLista.innerHTML = '<p class="reservas-empty">No se pudo conectar con el servidor.</p>';
+      console.error("Error al cargar reservas:", error);
+      adminLista.innerHTML =
+        '<p class="reservas-empty">No se pudo conectar con el servidor.</p>';
     }
   };
 
   const aplicarFiltro = (filtro) => {
     filtroActual = filtro;
-    const filtradas = filtro === 'todas'
-      ? todasLasReservas
-      : todasLasReservas.filter(r => r.estado === filtro);
+    const filtradas =
+      filtro === "todas"
+        ? todasLasReservas
+        : todasLasReservas.filter((r) => r.estado === filtro);
     renderizarReservas(filtradas);
   };
 
-  document.querySelectorAll('.filtro-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('filtro-activo'));
-      btn.classList.add('filtro-activo');
+  document.querySelectorAll(".filtro-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document
+        .querySelectorAll(".filtro-btn")
+        .forEach((b) => b.classList.remove("filtro-activo"));
+      btn.classList.add("filtro-activo");
       aplicarFiltro(btn.dataset.filtro);
     });
   });

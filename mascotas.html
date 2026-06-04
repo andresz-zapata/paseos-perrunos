@@ -1,55 +1,85 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mis Mascotas | Paseos Perrunos</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="assets/css/styles.css" />
-</head>
-<body>
-  <nav class="navbar">
-    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">☰</button>
-    <h2 class="logo">Paseos Perrunos 🐶</h2>
-    <ul class="menu">
-      <li><a href="index.html">Inicio</a></li>
-      <li><a href="perfil.html">Mi Perfil</a></li>
-      <li><a href="mascotas.html">Mis Mascotas</a></li>
-      <li><a href="reservas.html">Mis Reservas</a></li>
-      <li id="nombre-usuario"></li>
-      <li><a href="#" id="cerrar-sesion">Cerrar sesión</a></li>
-    </ul>
-  </nav>
-      <section class="mascotas-container">
-        <div class="mascotas-header">
-          <h1>Mis Mascotas 🐾</h1>
-          <button class="btn-agregar" id="btn-agregar">+ Agregar mascota</button>
-        </div>
-  
-        <div class="formulario-mascota" id="formulario-mascota" style="display:none;">
-          <h2>Registrar mascota</h2>
-          <form id="mascota-form">
-            <input type="text" id="mascota-nombre" placeholder="Nombre de la mascota" required />
-            <input type="text" id="mascota-raza" placeholder="Raza" required />
-            <input type="number" id="mascota-edad" placeholder="Edad (años)" min="0" max="30" required />
-            <textarea id="mascota-notas" placeholder="Notas especiales (opcional)" rows="3"></textarea>
-            <label class="label-foto">
-              Foto de tu mascota (opcional)
-              <input type="file" id="mascota-foto" accept="image/jpg, image/jpeg, image/png, image/webp" />
-            </label>
-            <button type="submit">Registrar mascota</button>
-            <p id="mascota-message"></p>
-          </form>
-        </div>
-  
-        <div class="mascotas-lista" id="mascotas-lista">
-          <p class="mascotas-empty" id="mascotas-empty">No tienes mascotas registradas aún.</p>
-        </div>
-      </section>
-  
-      <script src="assets/js/main.js"></script>
-  
-</body>
+  </head>
+  <body>
+    <nav class="navbar">
+      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">
+        ☰
+      </button>
+      <h2 class="logo">Paseos Perrunos 🐶</h2>
+      <ul class="menu">
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="perfil.html">Mi Perfil</a></li>
+        <li><a href="mascotas.html">Mis Mascotas</a></li>
+        <li><a href="reservas.html">Mis Reservas</a></li>
+        <li id="nombre-usuario"></li>
+        <li><a href="#" id="cerrar-sesion">Cerrar sesión</a></li>
+      </ul>
+    </nav>
+    <section class="mascotas-container">
+      <div class="mascotas-header">
+        <h1>Mis Mascotas 🐾</h1>
+        <button class="btn-agregar" id="btn-agregar">+ Agregar mascota</button>
+      </div>
+
+      <div
+        class="formulario-mascota"
+        id="formulario-mascota"
+        style="display: none"
+      >
+        <h2>Registrar mascota</h2>
+        <form id="mascota-form">
+          <input
+            type="text"
+            id="mascota-nombre"
+            placeholder="Nombre de la mascota"
+            required
+          />
+          <input type="text" id="mascota-raza" placeholder="Raza" required />
+          <input
+            type="number"
+            id="mascota-edad"
+            placeholder="Edad (años)"
+            min="0"
+            max="30"
+            required
+          />
+          <textarea
+            id="mascota-notas"
+            placeholder="Notas especiales (opcional)"
+            rows="3"
+          ></textarea>
+          <label class="label-foto">
+            Foto de tu mascota (opcional)
+            <input
+              type="file"
+              id="mascota-foto"
+              accept="image/jpg, image/jpeg, image/png, image/webp"
+            />
+          </label>
+          <button type="submit">Registrar mascota</button>
+          <p id="mascota-message"></p>
+        </form>
+      </div>
+
+      <div class="mascotas-lista" id="mascotas-lista">
+        <p class="mascotas-empty" id="mascotas-empty">
+          No tienes mascotas registradas aún.
+        </p>
+      </div>
+    </section>
+
+    <script src="assets/js/main.js"></script>
+  </body>
 </html>
