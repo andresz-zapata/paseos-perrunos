@@ -62,11 +62,11 @@
           ></textarea>
           <label class="label-foto">
             Foto de tu mascota (opcional)
-            <input
-              type="file"
-              id="mascota-foto"
-              accept="image/jpg, image/jpeg, image/png, image/webp"
-            />
+            <div class="foto-input-wrapper">
+              <input type="file" id="mascota-foto" accept="image/jpg, image/jpeg, image/png, image/webp" />
+              <button type="button" id="btn-quitar-foto" style="display:none;">✕</button>
+            </div>
+            <span id="foto-nombre" class="foto-nombre"></span>
           </label>
           <button type="submit">Registrar mascota</button>
           <p id="mascota-message"></p>

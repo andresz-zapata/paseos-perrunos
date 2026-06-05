@@ -361,6 +361,24 @@ if (mascotaForm) {
 
   cargarMascotas();
 
+  const mascotaFotoInput = document.querySelector('#mascota-foto');
+  const btnQuitarFoto = document.querySelector('#btn-quitar-foto');
+  const fotoNombre = document.querySelector('#foto-nombre');
+
+  if (mascotaFotoInput) {
+    mascotaFotoInput.addEventListener('change', () => {
+      if (mascotaFotoInput.files[0]) {
+        fotoNombre.textContent = mascotaFotoInput.files[0].name;
+        btnQuitarFoto.style.display = 'flex';
+      }
+    });
+
+    btnQuitarFoto.addEventListener('click', () => {
+      mascotaFotoInput.value = '';
+      fotoNombre.textContent = '';
+      btnQuitarFoto.style.display = 'none';
+    });
+  }
   mascotaForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -372,19 +390,29 @@ if (mascotaForm) {
     formData.append("edad", document.querySelector("#mascota-edad").value);
     formData.append("notas", document.querySelector("#mascota-notas").value);
 
-    const foto = document.querySelector("#mascota-foto").files[0];
+    const fotoInput = document.querySelector("#mascota-foto");
+    const foto = fotoInput.files[0];
     if (foto) {
       formData.append("foto", foto);
     }
 
     try {
+      message.textContent = 'Subiendo mascota...';
+      message.style.color = 'var(--gris)';
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
+
       const response = await fetch(`${BASE_URL}/api/mascotas`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
         },
         body: formData,
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
 
       const data = await response.json();
 
@@ -394,6 +422,9 @@ if (mascotaForm) {
         mascotaForm.reset();
         formularioMascota.style.display = "none";
         btnAgregar.textContent = "+ Agregar mascota";
+        fotoInput.value = '';
+        document.querySelector('#btn-quitar-foto').style.display = 'none';
+        document.querySelector('#foto-nombre').textContent = '';
         cargarMascotas();
       } else {
         message.textContent = data.message;

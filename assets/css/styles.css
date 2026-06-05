@@ -810,6 +810,39 @@ h2 {
   color: white !important;
 }
 
+/* Foto input con botón quitar */
+.foto-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#btn-quitar-foto {
+  background: none;
+  border: 1px solid #e53e3e;
+  color: #e53e3e;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+  flex-shrink: 0;
+  padding: 0;
+}
+#btn-quitar-foto:hover {
+  background-color: #e53e3e;
+  color: white;
+}
+.foto-nombre {
+  font-size: 13px;
+  color: var(--gris);
+  margin-top: 4px;
+  display: block;
+}
+
 /* Responsive Tablets (768px) */
 @media (max-width: 768px) {
   /* Navbar */
