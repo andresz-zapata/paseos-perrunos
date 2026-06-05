@@ -4,6 +4,7 @@ const { body, validationResult } = require("express-validator");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
+const { upload } = require('../config/cloudinary');
 
 const verificarToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -142,10 +143,37 @@ router.get("/perfil", verificarToken, async (req, res) => {
     if (!usuario) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
-    res.status(200).json({ nombre: usuario.nombre, email: usuario.email });
+    res.status(200).json({ nombre: usuario.nombre, email: usuario.email, foto: usuario.foto });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error en el servidor" });
+  }
+});
+
+router.post('/foto', verificarToken, upload.single('foto'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No se envió ninguna imagen' });
+    }
+
+    const usuario = await User.findByIdAndUpdate(
+      req.usuario.id,
+      { foto: req.file.path },
+      { new: true }
+    ).select('-password');
+
+    if (!usuario) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    res.status(200).json({
+      message: 'Foto de perfil actualizada correctamente 🎉',
+      foto: usuario.foto
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error en el servidor' });
   }
 });
 

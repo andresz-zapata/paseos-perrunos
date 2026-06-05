@@ -32,10 +32,19 @@
     </nav>
     <section class="perfil-container">
       <div class="perfil-card">
-        <div class="perfil-avatar">🐾</div>
+        <div class="perfil-avatar" id="perfil-avatar">
+          <img id="perfil-foto" src="" alt="Foto de perfil" style="display:none;" />
+          <span id="perfil-emoji">🐾</span>
+        </div>
         <h2 id="perfil-nombre">Cargando...</h2>
         <p id="perfil-email" class="perfil-email">Cargando...</p>
         <p class="perfil-miembro">Miembro de Paseos Perrunos</p>
+        
+        <label class="label-foto-perfil" id="label-foto-perfil">
+          📷 Cambiar foto de perfil
+          <input type="file" id="foto-perfil-input" accept="image/jpg, image/jpeg, image/png, image/webp" />
+        </label>
+        <p id="foto-perfil-message"></p>
       </div>
     </section>
     <script src="assets/js/main.js"></script>

@@ -192,30 +192,77 @@ if (perfilNombre) {
   } else {
     perfilNombre.textContent = nombre;
 
-    const enlaceAdmin = document.querySelector('#enlace-admin');
-const rolActualPerfil = localStorage.getItem('rol');
-if (enlaceAdmin && rolActualPerfil === 'admin') {
-  enlaceAdmin.style.display = 'block';
-}
-
-fetch(`${BASE_URL}/api/auth/perfil`, {
-  method: "GET",
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-})
-.then((res) => res.json())
-.then((data) => {
-  if (data.email) {
-    perfilEmail.textContent = data.email;
-    nombreUsuario.textContent = `👤 ${data.nombre}`;
-  } else {
-    perfilEmail.textContent = "No se pudo cargar el correo";
+    fetch("/api/auth/perfil", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.email) {
+          perfilEmail.textContent = data.email;
+          nombreUsuario.textContent = `👤 ${data.nombre}`;
+        }
+        if (data.foto) {
+          const perfilFoto = document.querySelector('#perfil-foto');
+          const perfilEmoji = document.querySelector('#perfil-emoji');
+          perfilFoto.src = data.foto;
+          perfilFoto.style.display = 'block';
+          perfilEmoji.style.display = 'none';
+        }
+      })
+      .catch(() => {
+        perfilEmail.textContent = "No se pudo cargar el correo";
+      });
   }
-})
-.catch(() => {
-  perfilEmail.textContent = "No se pudo cargar el correo";
-});
+
+  const fotoPerfil = document.querySelector('#foto-perfil-input');
+  const fotoPerfilMessage = document.querySelector('#foto-perfil-message');
+
+  if (fotoPerfil) {
+    fotoPerfil.addEventListener('change', async () => {
+      const archivo = fotoPerfil.files[0];
+      if (!archivo) return;
+
+      const formData = new FormData();
+      formData.append('foto', archivo);
+
+      fotoPerfilMessage.textContent = 'Subiendo foto...';
+      fotoPerfilMessage.style.color = 'var(--gris)';
+
+      try {
+        const response = await fetch('/api/auth/foto', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          const perfilFoto = document.querySelector('#perfil-foto');
+          const perfilEmoji = document.querySelector('#perfil-emoji');
+          perfilFoto.src = data.foto;
+          perfilFoto.style.display = 'block';
+          perfilEmoji.style.display = 'none';
+          fotoPerfilMessage.textContent = data.message;
+          fotoPerfilMessage.style.color = 'green';
+          setTimeout(() => {
+            fotoPerfilMessage.textContent = '';
+          }, 3000);
+        } else {
+          fotoPerfilMessage.textContent = data.message;
+          fotoPerfilMessage.style.color = 'red';
+        }
+
+      } catch (error) {
+        fotoPerfilMessage.textContent = 'No se pudo conectar con el servidor';
+        fotoPerfilMessage.style.color = 'red';
+      }
+    });
   }
 }
 
