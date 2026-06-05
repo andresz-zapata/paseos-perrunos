@@ -192,7 +192,7 @@ if (perfilNombre) {
   } else {
     perfilNombre.textContent = nombre;
 
-    fetch("/api/auth/perfil", {
+    fetch(`${BASE_URL}/api/auth/perfil`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -232,7 +232,7 @@ if (perfilNombre) {
       fotoPerfilMessage.style.color = 'var(--gris)';
 
       try {
-        const response = await fetch('/api/auth/foto', {
+        const response = await fetch(`${BASE_URL}/api/auth/foto`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`
