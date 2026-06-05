@@ -37,6 +37,7 @@ body {
   padding: 15px 40px;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.05);
   border-bottom: 1px solid rgba(31, 122, 99, 0.1);
+  z-index: 1000;
 }
 .navbar.scrolled {
   background-color: rgba(255, 255, 255, 0.98);
@@ -258,6 +259,8 @@ h2 {
     var(--hero-fondo-1),
     var(--hero-fondo-2)
   );
+  position: relative;
+  z-index: 1;
 }
 .perfil-card {
   background-color: var(--blanco);
@@ -280,6 +283,7 @@ h2 {
   font-size: 60px;
   overflow: hidden;
   position: relative;
+  z-index: 1;
 }
 
 .perfil-avatar img {
@@ -861,6 +865,8 @@ h2 {
   }
   .perfil-avatar {
     font-size: 55px;
+    position: relative;
+    z-index: 1;
   }
   .perfil-card h2 {
     font-size: 22px;
@@ -1041,6 +1047,8 @@ h2 {
     padding: 20px 16px;
     align-items: flex-start;
     padding-top: 40px;
+    position: relative;
+    z-index: 1;
   }
   .perfil-card {
     padding: 30px 20px;
@@ -1051,6 +1059,8 @@ h2 {
     height: 90px;
     font-size: 40px;
     margin-bottom: 15px;
+    position: relative;
+    z-index: 1;
   }
   .perfil-card h2 {
     font-size: 20px;
@@ -1159,5 +1169,4 @@ h2 {
     font-size: 13px;
     padding: 10px 20px;
   }
-
 }
