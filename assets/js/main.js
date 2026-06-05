@@ -379,6 +379,7 @@ if (mascotaForm) {
       btnQuitarFoto.style.display = 'none';
     });
   }
+
   mascotaForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -431,7 +432,11 @@ if (mascotaForm) {
         message.style.color = "red";
       }
     } catch (error) {
-      message.textContent = "No se pudo conectar con el servidor";
+      if (error.name === 'AbortError') {
+        message.textContent = 'El servidor tardó demasiado, intenta de nuevo en unos segundos';
+      } else {
+        message.textContent = 'No se pudo conectar con el servidor';
+      }
       message.style.color = "red";
     }
   });
