@@ -433,9 +433,9 @@ if (mascotaForm) {
       }
     } catch (error) {
       if (error.name === 'AbortError') {
-        message.textContent = 'El servidor tardó demasiado, intenta de nuevo en unos segundos';
+        message.textContent = 'Timeout: el servidor tardó demasiado';
       } else {
-        message.textContent = 'No se pudo conectar con el servidor';
+        message.textContent = `Error: ${error.message} | Tipo: ${error.name}`;
       }
       message.style.color = "red";
     }
