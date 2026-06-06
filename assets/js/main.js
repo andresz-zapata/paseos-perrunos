@@ -793,3 +793,18 @@ if (adminLista) {
 
   cargarTodasLasReservas();
 }
+
+// Botón paseos
+const btnPaseos = document.querySelector("#btn-paseos");
+
+if (btnPaseos) {
+  btnPaseos.addEventListener("click", () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      window.location.href = "login.html";
+    } else {
+      window.location.href = "reservas.html";
+    }
+  });
+}

@@ -843,8 +843,49 @@ h2 {
   display: block;
 }
 
+.card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* Planes de pago */
+.plan-card {
+  text-align: center;
+}
+.precio {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--verde-principal);
+  margin: 10px 0;
+}
+.btn-plan {
+  background: linear-gradient(
+    135deg,
+    var(--verde-secundario),
+    var(--verde-principal)
+  );
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  margin-top: 10px;
+  transition: 0.3s;
+}
+.btn-plan:hover {
+  transform: scale(1.03);
+}
+.destacado {
+  border: 2px solid var(--verde-principal);
+  transform: scale(1.03);
+}
+
 /* Responsive Tablets (768px) */
 @media (max-width: 768px) {
+
   /* Navbar */
   .navbar {
     flex-direction: column;
@@ -975,10 +1016,23 @@ h2 {
     text-align: center;
     display: block;
   }
+
+  /* Planes */
+  .plan-card {
+    width: 100%;
+    max-width: 340px;
+  }
+  .precio {
+    font-size: 18px;
+  }
+  .btn-plan {
+    padding: 12px;
+  }
 }
 
 /* Responsive - Móviles (480px) */
 @media (max-width: 480px) {
+
   /* Navbar */
   .navbar {
     padding: 12px 16px;
@@ -1201,5 +1255,20 @@ h2 {
   .btn-vista-cliente {
     font-size: 13px;
     padding: 10px 20px;
+  }
+
+  /* Planes */
+  .plan-card {
+    max-width: 100%;
+  }
+  .precio {
+    font-size: 18px;
+  }
+  .btn-plan {
+    font-size: 14px;
+    padding: 12px;
+  }
+  .destacado {
+    transform: none;
   }
 }
