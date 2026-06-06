@@ -398,16 +398,16 @@ if (mascotaForm) {
     }
 
     try {
+      message.textContent = `URL: ${BASE_URL} | Host: ${window.location.hostname}`;
+      message.style.color = 'var(--gris)';
+
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
       message.textContent = 'Subiendo mascota...';
       message.style.color = 'var(--gris)';
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000);
-
-      console.log('BASE_URL:', BASE_URL);
-      console.log('URL completa:', `${BASE_URL}/api/mascotas`);
-      message.textContent = `Conectando a: ${BASE_URL}/api/mascotas`;
-      message.style.color = 'var(--gris)';
 
       const response = await fetch(`${BASE_URL}/api/mascotas`, {
         method: "POST",
