@@ -26,15 +26,15 @@ mongoose
   .then(() => console.log("✅ Conectado a MongoDB Atlas"))
   .catch((error) => console.error("❌ Error al conectar:", error));
 
-const authRoutes = require("./routes/auth");
-app.use("/api/auth", authRoutes);
-const mascotasRoutes = require("./routes/mascotas");
-app.use("/api/mascotas", mascotasRoutes);
-const reservasRoutes = require("./routes/reservas");
-app.use("/api/reservas", reservasRoutes);
-app.get("/{*path}", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
+  const authRoutes = require("./routes/auth");
+  app.use("/api/auth", authRoutes);
+  const mascotasRoutes = require("./routes/mascotas");
+  app.use("/api/mascotas", mascotasRoutes);
+  const reservasRoutes = require("./routes/reservas");
+  app.use("/api/reservas", reservasRoutes);
+  app.get(/^(?!\/api).*$/, (req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
+  });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
