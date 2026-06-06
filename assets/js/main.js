@@ -398,11 +398,6 @@ if (mascotaForm) {
     }
 
     try {
-      message.textContent = `URL: ${BASE_URL} | Host: ${window.location.hostname}`;
-      message.style.color = 'var(--gris)';
-
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
       message.textContent = 'Subiendo mascota...';
       message.style.color = 'var(--gris)';
 
@@ -438,9 +433,9 @@ if (mascotaForm) {
       }
     } catch (error) {
       if (error.name === 'AbortError') {
-        message.textContent = 'Timeout: el servidor tardó demasiado';
+        message.textContent = 'El servidor tardó demasiado, intenta de nuevo';
       } else {
-        message.textContent = `Error: ${error.message} | Tipo: ${error.name}`;
+        message.textContent = 'No se pudo conectar con el servidor';
       }
       message.style.color = "red";
     }
