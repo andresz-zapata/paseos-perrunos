@@ -4,6 +4,7 @@ const { body, validationResult } = require("express-validator");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
+const { enviarBienvenida } = require('../config/mailer');
 const { upload } = require('../config/cloudinary');
 
 const verificarToken = (req, res, next) => {
@@ -77,7 +78,13 @@ router.post(
 
       await nuevoUsuario.save();
 
-      res.status(201).json({ message: "¡Cuenta creada correctamente! 🎉" });
+try {
+  await enviarBienvenida(nombre, email);
+} catch (emailError) {
+  console.error('Error al enviar email de bienvenida:', emailError);
+}
+
+res.status(201).json({ message: "¡Cuenta creada correctamente! 🎉" });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Error en el servidor" });

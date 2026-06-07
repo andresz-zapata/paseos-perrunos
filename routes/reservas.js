@@ -4,6 +4,8 @@ const { body, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const Reserva = require("../models/reserva");
 const Mascota = require("../models/mascota");
+const User = require("../models/user");
+const { enviarConfirmacionReserva } = require("../config/mailer");
 
 const verificarToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -83,6 +85,20 @@ router.post(
       });
 
       await reserva.save();
+
+      try {
+        const usuario = await User.findById(req.usuario.id);
+        await enviarConfirmacionReserva(
+          usuario.nombre,
+          usuario.email,
+          mascotaExiste.nombre,
+          fechaReserva,
+          direccion
+        );
+      } catch (emailError) {
+        console.error("Error al enviar email de confirmación:", emailError);
+      }
+
       res
         .status(201)
         .json({ message: "¡Reserva creada correctamente! 🐾", reserva });
