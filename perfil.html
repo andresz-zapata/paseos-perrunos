@@ -14,38 +14,48 @@
   </head>
   <body>
     <nav class="navbar">
-      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">
-        ☰
-      </button>
       <h2 class="logo">Paseos Perrunos 🐶</h2>
       <ul class="menu">
-        <li><a href="index.html" class="btn-volver">← Inicio</a></li>
-        <li id="enlace-admin" style="display:none;"><a href="admin.html">⚙️ Panel Admin</a></li>
-        <li id="enlace-admin" style="display: none">
-          <a href="admin.html">Panel Admin</a>
-        </li>
-        <li><a href="mascotas.html">Mis Mascotas</a></li>
-        <li><a href="reservas.html">Mis Reservas</a></li>
         <li id="nombre-usuario"></li>
         <li><a href="#" id="cerrar-sesion">Cerrar sesión</a></li>
       </ul>
     </nav>
-    <section class="perfil-container">
-      <div class="perfil-card">
+    <section class="perfil-hero">
+      <div class="perfil-hero-info">
         <div class="perfil-avatar" id="perfil-avatar">
           <img id="perfil-foto" src="" alt="Foto de perfil" style="display:none;" />
           <span id="perfil-emoji">🐾</span>
         </div>
-        <h2 id="perfil-nombre">Cargando...</h2>
-        <p id="perfil-email" class="perfil-email">Cargando...</p>
-        <p class="perfil-miembro">Miembro de Paseos Perrunos</p>
-        
-        <label class="label-foto-perfil" id="label-foto-perfil">
-          📷 Cambiar foto de perfil
-          <input type="file" id="foto-perfil-input" accept="image/jpg, image/jpeg, image/png, image/webp" />
-        </label>
-        <p id="foto-perfil-message"></p>
+        <div class="perfil-hero-texto">
+          <h1 id="perfil-nombre">Cargando...</h1>
+          <p id="perfil-email" class="perfil-email">Cargando...</p>
+          <p class="perfil-miembro">Miembro de Paseos Perrunos</p>
+          <label class="label-foto-perfil" id="label-foto-perfil">
+            📷 Cambiar foto de perfil
+            <input type="file" id="foto-perfil-input" accept="image/jpg, image/jpeg, image/png, image/webp" />
+          </label>
+          <p id="foto-perfil-message"></p>
+        </div>
       </div>
+    </section>
+    
+    <section class="perfil-secciones">
+      <a href="mascotas.html" class="perfil-seccion-card">
+        <div class="perfil-seccion-icono">🐾</div>
+        <div class="perfil-seccion-info">
+          <h2>Mis Mascotas</h2>
+          <p>Registra y gestiona las mascotas de tu hogar</p>
+        </div>
+        <span class="perfil-seccion-arrow">→</span>
+      </a>
+      <a href="reservas.html" class="perfil-seccion-card">
+        <div class="perfil-seccion-icono">📅</div>
+        <div class="perfil-seccion-info">
+          <h2>Mis Reservas</h2>
+          <p>Agenda y revisa tus paseos programados</p>
+        </div>
+        <span class="perfil-seccion-arrow">→</span>
+      </a>
     </section>
     <script src="assets/js/main.js"></script>
   </body>

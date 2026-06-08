@@ -18,11 +18,23 @@ const loginPassword = document.querySelector("#login-password");
 const toggleLoginPassword = document.querySelector("#toggle-login-password");
 if (loginPassword && toggleLoginPassword) {
   toggleLoginPassword.addEventListener("click", () => {
-    if (loginPassword.type === "password") {
-      loginPassword.type = "text";
-    } else {
-      loginPassword.type = "password";
-    }
+    loginPassword.type = loginPassword.type === "password" ? "text" : "password";
+  });
+}
+
+const registerPassword = document.querySelector("#register-password");
+const toggleRegisterPassword = document.querySelector("#toggle-register-password");
+if (registerPassword && toggleRegisterPassword) {
+  toggleRegisterPassword.addEventListener("click", () => {
+    registerPassword.type = registerPassword.type === "password" ? "text" : "password";
+  });
+}
+
+const confirmPassword = document.querySelector("#confirm-password");
+const toggleConfirmPassword = document.querySelector("#toggle-confirm-password");
+if (confirmPassword && toggleConfirmPassword) {
+  toggleConfirmPassword.addEventListener("click", () => {
+    confirmPassword.type = confirmPassword.type === "password" ? "text" : "password";
   });
 }
 
@@ -143,9 +155,9 @@ if (loginForm && document.querySelector("#login-password")) {
 
         setTimeout(() => {
           if (data.rol === "admin") {
-            window.location.href = "admin.html";
+            window.location.replace("admin.html");
           } else {
-            window.location.href = "perfil.html";
+            window.location.replace("perfil.html");
           }
         }, 1500);
       } else {
