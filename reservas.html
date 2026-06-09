@@ -16,6 +16,7 @@
     <nav class="navbar">
       <h2 class="logo">Paseos Perrunos 🐶</h2>
       <ul class="menu">
+        <li><button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button></li>
         <li id="nombre-usuario"></li>
         <li><a href="#" id="cerrar-sesion">Cerrar sesión</a></li>
       </ul>
@@ -68,10 +69,21 @@
         </form>
       </div>
 
-      <div class="reservas-lista" id="reservas-lista">
-        <p class="reservas-empty" id="reservas-empty">
-          No tienes reservas aún.
-        </p>
+      <div class="reservas-tabs">
+        <button class="tab-btn tab-activo" data-tab="proximas">Próximas</button>
+        <button class="tab-btn" data-tab="historial">Historial</button>
+      </div>
+      
+      <div id="tab-proximas">
+        <div class="reservas-lista" id="reservas-lista">
+          <p class="reservas-empty" id="reservas-empty">No tienes reservas próximas.</p>
+        </div>
+      </div>
+      
+      <div id="tab-historial" style="display:none;">
+        <div class="reservas-lista" id="historial-lista">
+          <p class="reservas-empty" id="historial-empty">No tienes reservas en el historial.</p>
+        </div>
       </div>
     </section>
 

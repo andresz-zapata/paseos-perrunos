@@ -4,8 +4,8 @@ const { body, validationResult } = require("express-validator");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
-const { enviarBienvenida } = require('../config/mailer');
-const { upload } = require('../config/cloudinary');
+const { enviarBienvenida } = require("../config/mailer");
+const { upload } = require("../config/cloudinary");
 
 const verificarToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -78,13 +78,13 @@ router.post(
 
       await nuevoUsuario.save();
 
-try {
-  await enviarBienvenida(nombre, email);
-} catch (emailError) {
-  console.error('Error al enviar email de bienvenida:', emailError);
-}
+      try {
+        await enviarBienvenida(nombre, email);
+      } catch (emailError) {
+        console.error("Error al enviar email de bienvenida:", emailError);
+      }
 
-res.status(201).json({ message: "¡Cuenta creada correctamente! 🎉" });
+      res.status(201).json({ message: "¡Cuenta creada correctamente! 🎉" });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Error en el servidor" });
@@ -150,32 +150,95 @@ router.get("/perfil", verificarToken, async (req, res) => {
     if (!usuario) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
-    res.status(200).json({ nombre: usuario.nombre, email: usuario.email, foto: usuario.foto });
+    res
+      .status(200)
+      .json({
+        nombre: usuario.nombre,
+        email: usuario.email,
+        foto: usuario.foto,
+      });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error en el servidor" });
   }
 });
 
-router.post('/foto', verificarToken, upload.single('foto'), async (req, res) => {
+router.post(
+  "/foto",
+  verificarToken,
+  upload.single("foto"),
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No se envió ninguna imagen" });
+      }
+
+      const usuario = await User.findByIdAndUpdate(
+        req.usuario.id,
+        { foto: req.file.path },
+        { new: true }
+      ).select("-password");
+
+      if (!usuario) {
+        return res.status(404).json({ message: "Usuario no encontrado" });
+      }
+
+      res.status(200).json({
+        message: "Foto de perfil actualizada correctamente 🎉",
+        foto: usuario.foto,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Error en el servidor" });
+    }
+  }
+);
+
+router.put('/perfil', verificarToken, [
+  body('nombre')
+    .trim()
+    .notEmpty().withMessage('El nombre es obligatorio')
+    .isLength({ min: 3 }).withMessage('El nombre debe tener mínimo 3 caracteres'),
+  body('passwordActual')
+    .optional({ checkFalsy: true }),
+  body('passwordNueva')
+    .optional({ checkFalsy: true })
+    .isLength({ min: 6 }).withMessage('La contraseña debe tener mínimo 6 caracteres')
+    .matches(/\d/).withMessage('La contraseña debe contener al menos un número')
+    .matches(/[a-zA-Z]/).withMessage('La contraseña debe contener al menos una letra')
+], async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ message: 'No se envió ninguna imagen' });
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+      return res.status(400).json({ message: errores.array()[0].msg });
     }
 
-    const usuario = await User.findByIdAndUpdate(
-      req.usuario.id,
-      { foto: req.file.path },
-      { new: true }
-    ).select('-password');
-
+    const usuario = await User.findById(req.usuario.id);
     if (!usuario) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
+    usuario.nombre = req.body.nombre;
+
+    if (req.body.passwordNueva) {
+      if (!req.body.passwordActual) {
+        return res.status(400).json({ message: 'Debes ingresar tu contraseña actual' });
+      }
+
+      const passwordCorrecta = await bcrypt.compare(req.body.passwordActual, usuario.password);
+      if (!passwordCorrecta) {
+        return res.status(400).json({ message: 'La contraseña actual es incorrecta' });
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      usuario.password = await bcrypt.hash(req.body.passwordNueva, salt);
+    }
+
+    await usuario.save();
+
     res.status(200).json({
-      message: 'Foto de perfil actualizada correctamente 🎉',
-      foto: usuario.foto
+      message: '¡Perfil actualizado correctamente! 🎉',
+      nombre: usuario.nombre
     });
 
   } catch (error) {

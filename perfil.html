@@ -16,6 +16,7 @@
     <nav class="navbar">
       <h2 class="logo">Paseos Perrunos 🐶</h2>
       <ul class="menu">
+        <li><button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button></li>
         <li id="nombre-usuario"></li>
         <li><a href="#" id="cerrar-sesion">Cerrar sesión</a></li>
       </ul>
@@ -23,7 +24,12 @@
     <section class="perfil-hero">
       <div class="perfil-hero-info">
         <div class="perfil-avatar" id="perfil-avatar">
-          <img id="perfil-foto" src="" alt="Foto de perfil" style="display:none;" />
+          <img
+            id="perfil-foto"
+            src=""
+            alt="Foto de perfil"
+            style="display: none"
+          />
           <span id="perfil-emoji">🐾</span>
         </div>
         <div class="perfil-hero-texto">
@@ -32,13 +38,47 @@
           <p class="perfil-miembro">Miembro de Paseos Perrunos</p>
           <label class="label-foto-perfil" id="label-foto-perfil">
             📷 Cambiar foto de perfil
-            <input type="file" id="foto-perfil-input" accept="image/jpg, image/jpeg, image/png, image/webp" />
+            <input
+              type="file"
+              id="foto-perfil-input"
+              accept="image/jpg, image/jpeg, image/png, image/webp"
+            />
           </label>
           <p id="foto-perfil-message"></p>
         </div>
       </div>
     </section>
-    
+
+    <section class="perfil-editar-container">
+      <div class="perfil-editar-header" id="perfil-editar-toggle">
+        <h2>✏️ Editar perfil</h2>
+        <span class="perfil-editar-arrow">▼</span>
+      </div>
+      <div class="perfil-editar-form" id="perfil-editar-form" style="display:none;">
+        <form id="editar-perfil-form">
+          <label class="label-campo">
+            Nombre completo
+            <input type="text" id="editar-perfil-nombre" placeholder="Tu nombre completo" required />
+          </label>
+          <label class="label-campo">
+            Contraseña actual (solo si quieres cambiarla)
+            <div class="password-container">
+              <input type="password" id="editar-perfil-password-actual" placeholder="Contraseña actual" />
+              <span class="toggle-password" id="toggle-password-actual">👁️</span>
+            </div>
+          </label>
+          <label class="label-campo">
+            Nueva contraseña (opcional)
+            <div class="password-container">
+              <input type="password" id="editar-perfil-password-nueva" placeholder="Nueva contraseña" />
+              <span class="toggle-password" id="toggle-password-nueva">👁️</span>
+            </div>
+          </label>
+          <button type="submit" class="btn-agregar" style="width:100%; margin-top:10px;">Guardar cambios</button>
+        </form>
+      </div>
+    </section>
+
     <section class="perfil-secciones">
       <a href="mascotas.html" class="perfil-seccion-card">
         <div class="perfil-seccion-icono">🐾</div>

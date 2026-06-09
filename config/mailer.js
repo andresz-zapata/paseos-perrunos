@@ -1,18 +1,18 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
+    pass: process.env.EMAIL_PASS,
+  },
 });
 
 const enviarBienvenida = async (nombre, email) => {
   await transporter.sendMail({
     from: `"Paseos Perrunos 🐶" <${process.env.EMAIL_USER}>`,
     to: email,
-    subject: '¡Bienvenido a Paseos Perrunos! 🐾',
+    subject: "¡Bienvenido a Paseos Perrunos! 🐾",
     html: `
       <div style="font-family: 'Poppins', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
         <div style="text-align: center; margin-bottom: 30px;">
@@ -38,24 +38,30 @@ const enviarBienvenida = async (nombre, email) => {
           <p style="color: #6b7280; font-size: 13px;">${process.env.EMAIL_USER}</p>
         </div>
       </div>
-    `
+    `,
   });
 };
 
-const enviarConfirmacionReserva = async (nombre, email, mascotaNombre, fecha, direccion) => {
-  const fechaFormateada = new Date(fecha).toLocaleString('es-CO', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+const enviarConfirmacionReserva = async (
+  nombre,
+  email,
+  mascotaNombre,
+  fecha,
+  direccion
+) => {
+  const fechaFormateada = new Date(fecha).toLocaleString("es-CO", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 
   await transporter.sendMail({
     from: `"Paseos Perrunos 🐶" <${process.env.EMAIL_USER}>`,
     to: email,
-    subject: '¡Tu reserva fue recibida! 📅',
+    subject: "¡Tu reserva fue recibida! 📅",
     html: `
       <div style="font-family: 'Poppins', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
         <div style="text-align: center; margin-bottom: 30px;">
@@ -84,8 +90,8 @@ const enviarConfirmacionReserva = async (nombre, email, mascotaNombre, fecha, di
           <p style="color: #6b7280; font-size: 13px;">${process.env.EMAIL_USER}</p>
         </div>
       </div>
-    `
+    `,
   });
 };
 
-module.exports = { enviarBienvenida, enviarConfirmacionReserva }; 
+module.exports = { enviarBienvenida, enviarConfirmacionReserva };

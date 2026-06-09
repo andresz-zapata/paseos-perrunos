@@ -16,6 +16,7 @@
     <nav class="navbar">
       <h2 class="logo">Paseos Perrunos 🐶</h2>
       <ul class="menu">
+        <li><button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button></li>
         <li id="nombre-usuario"></li>
         <li><a href="#" id="cerrar-sesion">Cerrar sesión</a></li>
       </ul>
@@ -24,6 +25,13 @@
       <div class="mascotas-header">
         <h1>Mis Mascotas 🐾</h1>
         <button class="btn-agregar" id="btn-agregar">+ Agregar mascota</button>
+      </div>
+      
+      <div class="mascotas-filtros" id="mascotas-filtros" style="display:none;">
+        <input type="text" id="buscar-mascota" placeholder="🔍 Buscar por nombre..." class="input-buscar" />
+        <select id="filtrar-raza" class="select-filtrar">
+          <option value="">Todas las razas</option>
+        </select>
       </div>
 
       <div
@@ -56,13 +64,43 @@
           <label class="label-foto">
             Foto de tu mascota (opcional)
             <div class="foto-input-wrapper">
-              <input type="file" id="mascota-foto" accept="image/jpg, image/jpeg, image/png, image/webp" />
-              <button type="button" id="btn-quitar-foto" style="display:none;">✕</button>
+              <input
+                type="file"
+                id="mascota-foto"
+                accept="image/jpg, image/jpeg, image/png, image/webp"
+              />
+              <button type="button" id="btn-quitar-foto" style="display: none">
+                ✕
+              </button>
             </div>
             <span id="foto-nombre" class="foto-nombre"></span>
           </label>
           <button type="submit">Registrar mascota</button>
           <p id="mascota-message"></p>
+        </form>
+      </div>
+
+      <div class="formulario-mascota" id="formulario-editar" style="display:none;">
+        <h2>Editar mascota ✏️</h2>
+        <form id="editar-form">
+          <input type="hidden" id="editar-id" />
+          <input type="text" id="editar-nombre" placeholder="Nombre de la mascota" required />
+          <input type="text" id="editar-raza" placeholder="Raza" required />
+          <input type="number" id="editar-edad" placeholder="Edad (años)" min="0" max="30" required />
+          <textarea id="editar-notas" placeholder="Notas especiales (opcional)" rows="3"></textarea>
+          <label class="label-foto">
+            Nueva foto (opcional, reemplaza la actual)
+            <div class="foto-input-wrapper">
+              <input type="file" id="editar-foto" accept="image/jpg, image/jpeg, image/png, image/webp" />
+              <button type="button" id="btn-quitar-foto-editar" style="display:none;">✕</button>
+            </div>
+            <span id="editar-foto-nombre" class="foto-nombre"></span>
+          </label>
+          <div class="editar-botones">
+            <button type="submit">Guardar cambios</button>
+            <button type="button" id="btn-cancelar-editar" class="btn-cancelar-editar">Cancelar</button>
+          </div>
+          <p id="editar-message"></p>
         </form>
       </div>
 

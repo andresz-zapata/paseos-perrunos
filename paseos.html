@@ -1,177 +1,172 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Paseos de Mascotas | Paseos Perrunos</title>
-  <link rel="stylesheet" href="assets/css/styles.css">
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Paseos de Mascotas | Paseos Perrunos</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
 
-<body>
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="logo">🐶 Paseos Perrunos</div>
+      <ul class="menu">
+        <li><button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button></li>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="paseos.html" class="activo">Paseos</a></li>
+        <li><a href="login.html">Mi cuenta</a></li>
+      </ul>
+    </nav>
 
-  <!-- NAVBAR -->
-  <nav class="navbar">
-    <div class="logo">🐶 Paseos Perrunos</div>
-    <ul class="menu">
-      <li><a href="index.html">Inicio</a></li>
-      <li><a href="paseos.html" class="activo">Paseos</a></li>
-      <li><a href="login.html">Mi cuenta</a></li>
-    </ul>
-  </nav>
+    <!-- HERO CONVERSIÓN -->
+    <section class="hero hero-paseos">
+      <h1>Paseos seguros, rastreados y felices para tu perro 🐾</h1>
+      <p>
+        Paseadores verificados + fotos en tiempo real + tranquilidad total
+        mientras tu mascota está en buenas manos.
+      </p>
 
-  <!-- HERO CONVERSIÓN -->
-  <section class="hero hero-paseos">
-    <h1>Paseos seguros, rastreados y felices para tu perro 🐾</h1>
-    <p>
-      Paseadores verificados + fotos en tiempo real + tranquilidad total mientras tu mascota está en buenas manos.
-    </p>
+      <div class="hero-cta">
+        <button id="btn-paseos" class="btn-agregar">Reservar paseo</button>
 
-    <div class="hero-cta">
-      <button id="btn-paseos" class="btn-agregar">
-        Reservar paseo
-      </button>
-
-      <a href="#paseadores" class="btn-secundario">
-        Ver paseadores
-      </a>
-    </div>
-  </section>
-
-  <!-- PROPUESTA DE VALOR -->
-  <section class="container">
-    <h2>Mucho más que un paseo 🐶</h2>
-    <p>
-      No es solo caminar. Es cuidado, seguridad y bienestar para tu mascota con seguimiento completo del servicio.
-    </p>
-
-    <div class="cards">
-      <div class="card">
-        <h3>📍 Seguimiento</h3>
-        <p>Sabes dónde está tu perro durante todo el paseo.</p>
+        <a href="#paseadores" class="btn-secundario"> Ver paseadores </a>
       </div>
+    </section>
 
-      <div class="card">
-        <h3>📸 Fotos en tiempo real</h3>
-        <p>Recibes imágenes mientras tu mascota disfruta su paseo.</p>
+    <!-- PROPUESTA DE VALOR -->
+    <section class="container">
+      <h2>Mucho más que un paseo 🐶</h2>
+      <p>
+        No es solo caminar. Es cuidado, seguridad y bienestar para tu mascota
+        con seguimiento completo del servicio.
+      </p>
+
+      <div class="cards">
+        <div class="card">
+          <h3>📍 Seguimiento</h3>
+          <p>Sabes dónde está tu perro durante todo el paseo.</p>
+        </div>
+
+        <div class="card">
+          <h3>📸 Fotos en tiempo real</h3>
+          <p>Recibes imágenes mientras tu mascota disfruta su paseo.</p>
+        </div>
+
+        <div class="card">
+          <h3>🛡️ Paseadores verificados</h3>
+          <p>Personas evaluadas y confiables para el cuidado de tu perro.</p>
+        </div>
       </div>
+    </section>
 
-      <div class="card">
-        <h3>🛡️ Paseadores verificados</h3>
-        <p>Personas evaluadas y confiables para el cuidado de tu perro.</p>
+    <!-- BENEFICIOS EMOCIONALES -->
+    <section class="container">
+      <h2>Tu perro feliz, tú tranquilo ❤️</h2>
+
+      <div class="cards">
+        <div class="card">
+          <h3>Menos ansiedad</h3>
+          <p>Evita estrés y comportamientos destructivos en casa.</p>
+        </div>
+
+        <div class="card">
+          <h3>Más energía</h3>
+          <p>Tu perro se mantiene activo y saludable todos los días.</p>
+        </div>
+
+        <div class="card">
+          <h3>Tiempo para ti</h3>
+          <p>Nosotros nos encargamos mientras tú trabajas o estudias.</p>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- BENEFICIOS EMOCIONALES -->
-  <section class="container">
-    <h2>Tu perro feliz, tú tranquilo ❤️</h2>
+    <!-- CÓMO FUNCIONA (MARKETPLACE) -->
+    <section class="container">
+      <h2>Cómo funciona 🐾</h2>
 
-    <div class="cards">
-      <div class="card">
-        <h3>Menos ansiedad</h3>
-        <p>Evita estrés y comportamientos destructivos en casa.</p>
+      <div class="cards">
+        <div class="card">
+          <h3>1. Elige tu mascota</h3>
+          <p>Selecciona el perfil de tu perro registrado.</p>
+        </div>
+
+        <div class="card">
+          <h3>2. Agenda el paseo</h3>
+          <p>Fecha, hora y ubicación en minutos.</p>
+        </div>
+
+        <div class="card">
+          <h3>3. Asignamos paseador</h3>
+          <p>Un profesional verificado se encarga del paseo.</p>
+        </div>
+
+        <div class="card">
+          <h3>4. Recibes reporte</h3>
+          <p>Fotos, resumen y estado del paseo.</p>
+        </div>
       </div>
+    </section>
 
-      <div class="card">
-        <h3>Más energía</h3>
-        <p>Tu perro se mantiene activo y saludable todos los días.</p>
+    <!-- PASEADORES (CLAVE PARA CONFIANZA) -->
+    <section class="container" id="paseadores">
+      <h2>Conoce a nuestros paseadores 👤</h2>
+      <p>Personas reales, verificadas y amantes de los animales.</p>
+
+      <div class="cards">
+        <div class="card">
+          <h3>Laura 🐕</h3>
+          <p>+120 paseos | 4.9 ⭐</p>
+        </div>
+
+        <div class="card">
+          <h3>Andrés 🐾</h3>
+          <p>+80 paseos | 4.8 ⭐</p>
+        </div>
+
+        <div class="card">
+          <h3>Camila 🐶</h3>
+          <p>+150 paseos | 5.0 ⭐</p>
+        </div>
       </div>
+    </section>
 
-      <div class="card">
-        <h3>Tiempo para ti</h3>
-        <p>Nosotros nos encargamos mientras tú trabajas o estudias.</p>
+    <!-- PRUEBA SOCIAL -->
+    <section class="container">
+      <h2>Lo que dicen los dueños 🐾</h2>
+
+      <div class="cards">
+        <div class="card">
+          <p>
+            "Ahora puedo trabajar tranquilo, sé que mi perro está bien cuidado."
+          </p>
+          <h3>- María</h3>
+        </div>
+
+        <div class="card">
+          <p>"Me encantan las fotos que me envían durante el paseo."</p>
+          <h3>- Juan</h3>
+        </div>
+
+        <div class="card">
+          <p>"Muy confiables, mi perro los ama."</p>
+          <h3>- Camila</h3>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- CÓMO FUNCIONA (MARKETPLACE) -->
-  <section class="container">
-    <h2>Cómo funciona 🐾</h2>
+    <!-- CTA FINAL -->
+    <section class="container">
+      <h2>¿Listo para el primer paseo? 🐶</h2>
+      <p>Reserva en minutos y dale a tu perro la mejor experiencia.</p>
 
-    <div class="cards">
-      <div class="card">
-        <h3>1. Elige tu mascota</h3>
-        <p>Selecciona el perfil de tu perro registrado.</p>
-      </div>
+      <button id="btn-paseos" class="btn-agregar">Reservar ahora</button>
+    </section>
 
-      <div class="card">
-        <h3>2. Agenda el paseo</h3>
-        <p>Fecha, hora y ubicación en minutos.</p>
-      </div>
-
-      <div class="card">
-        <h3>3. Asignamos paseador</h3>
-        <p>Un profesional verificado se encarga del paseo.</p>
-      </div>
-
-      <div class="card">
-        <h3>4. Recibes reporte</h3>
-        <p>Fotos, resumen y estado del paseo.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- PASEADORES (CLAVE PARA CONFIANZA) -->
-  <section class="container" id="paseadores">
-    <h2>Conoce a nuestros paseadores 👤</h2>
-    <p>Personas reales, verificadas y amantes de los animales.</p>
-
-    <div class="cards">
-
-      <div class="card">
-        <h3>Laura 🐕</h3>
-        <p>+120 paseos | 4.9 ⭐</p>
-      </div>
-
-      <div class="card">
-        <h3>Andrés 🐾</h3>
-        <p>+80 paseos | 4.8 ⭐</p>
-      </div>
-
-      <div class="card">
-        <h3>Camila 🐶</h3>
-        <p>+150 paseos | 5.0 ⭐</p>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- PRUEBA SOCIAL -->
-  <section class="container">
-    <h2>Lo que dicen los dueños 🐾</h2>
-
-    <div class="cards">
-      <div class="card">
-        <p>"Ahora puedo trabajar tranquilo, sé que mi perro está bien cuidado."</p>
-        <h3>- María</h3>
-      </div>
-
-      <div class="card">
-        <p>"Me encantan las fotos que me envían durante el paseo."</p>
-        <h3>- Juan</h3>
-      </div>
-
-      <div class="card">
-        <p>"Muy confiables, mi perro los ama."</p>
-        <h3>- Camila</h3>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA FINAL -->
-  <section class="container">
-    <h2>¿Listo para el primer paseo? 🐶</h2>
-    <p>Reserva en minutos y dale a tu perro la mejor experiencia.</p>
-
-    <button id="btn-paseos" class="btn-agregar">
-      Reservar ahora
-    </button>
-  </section>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <p>© 2026 Paseos Perrunos - Amor y cuidado para tu mascota 🐾</p>
-  </footer>
-
-</body>
+    <!-- Footer -->
+    <footer class="footer">
+      <p>© 2026 Paseos Perrunos - Amor y cuidado para tu mascota 🐾</p>
+    </footer>
+  </body>
 </html>

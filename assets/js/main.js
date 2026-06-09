@@ -1,4 +1,80 @@
 console.log("JavaScript conectado correctamente 🚀");
+
+// Toast notifications
+const toastContainer = document.createElement('div');
+toastContainer.classList.add('toast-container');
+document.body.appendChild(toastContainer);
+
+const showToast = (mensaje, tipo = 'success', duracion = 3000) => {
+  const toast = document.createElement('div');
+  toast.classList.add('toast', `toast-${tipo}`);
+  toast.textContent = mensaje;
+  toastContainer.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add('toast-saliendo');
+    setTimeout(() => toast.remove(), 300);
+  }, duracion);
+};
+
+// Modal de confirmación
+const showModal = ({ emoji, titulo, texto, textoBtnConfirmar, onConfirmar }) => {
+  const overlay = document.createElement('div');
+  overlay.classList.add('modal-overlay');
+
+  overlay.innerHTML = `
+    <div class="modal-card">
+      <div class="modal-emoji">${emoji}</div>
+      <h3 class="modal-titulo">${titulo}</h3>
+      <p class="modal-texto">${texto}</p>
+      <div class="modal-botones">
+        <button class="modal-btn-cancelar">Cancelar</button>
+        <button class="modal-btn-eliminar">${textoBtnConfirmar}</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  overlay.querySelector('.modal-btn-cancelar').addEventListener('click', () => {
+    overlay.remove();
+  });
+
+  overlay.querySelector('.modal-btn-eliminar').addEventListener('click', () => {
+    overlay.remove();
+    onConfirmar();
+  });
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.remove();
+  });
+};
+
+// Modo oscuro
+const aplicarModoOscuro = (activo) => {
+  if (activo) {
+    document.body.classList.add('dark-mode');
+  } else {
+    document.body.classList.remove('dark-mode');
+  }
+};
+
+const modoGuardado = localStorage.getItem('darkMode') === 'true';
+aplicarModoOscuro(modoGuardado);
+
+const toggleDarkMode = () => {
+  const activo = document.body.classList.toggle('dark-mode');
+  localStorage.setItem('darkMode', activo);
+  document.querySelectorAll('.btn-dark-mode').forEach(btn => {
+    btn.textContent = activo ? '☀️' : '🌙';
+  });
+};
+
+document.querySelectorAll('.btn-dark-mode').forEach(btn => {
+  btn.textContent = modoGuardado ? '☀️' : '🌙';
+  btn.addEventListener('click', toggleDarkMode);
+});
+
 const BASE_URL =
   window.location.hostname === "localhost" ||
   window.location.hostname === "127.0.0.1"
@@ -18,23 +94,30 @@ const loginPassword = document.querySelector("#login-password");
 const toggleLoginPassword = document.querySelector("#toggle-login-password");
 if (loginPassword && toggleLoginPassword) {
   toggleLoginPassword.addEventListener("click", () => {
-    loginPassword.type = loginPassword.type === "password" ? "text" : "password";
+    loginPassword.type =
+      loginPassword.type === "password" ? "text" : "password";
   });
 }
 
 const registerPassword = document.querySelector("#register-password");
-const toggleRegisterPassword = document.querySelector("#toggle-register-password");
+const toggleRegisterPassword = document.querySelector(
+  "#toggle-register-password"
+);
 if (registerPassword && toggleRegisterPassword) {
   toggleRegisterPassword.addEventListener("click", () => {
-    registerPassword.type = registerPassword.type === "password" ? "text" : "password";
+    registerPassword.type =
+      registerPassword.type === "password" ? "text" : "password";
   });
 }
 
 const confirmPassword = document.querySelector("#confirm-password");
-const toggleConfirmPassword = document.querySelector("#toggle-confirm-password");
+const toggleConfirmPassword = document.querySelector(
+  "#toggle-confirm-password"
+);
 if (confirmPassword && toggleConfirmPassword) {
   toggleConfirmPassword.addEventListener("click", () => {
-    confirmPassword.type = confirmPassword.type === "password" ? "text" : "password";
+    confirmPassword.type =
+      confirmPassword.type === "password" ? "text" : "password";
   });
 }
 
@@ -102,15 +185,10 @@ if (registerForm) {
       const data = await response.json();
 
       if (response.ok) {
-        message.textContent = data.message;
-        message.style.color = "green";
+        showToast(data.message, 'success');
         registerForm.reset();
-        setTimeout(() => {
-          message.textContent = "";
-        }, 2000);
       } else {
-        message.textContent = data.message;
-        message.style.color = "red";
+        showToast(data.message, 'error');
       }
     } catch (error) {
       message.textContent = "No se pudo conectar con el servidor";
@@ -145,8 +223,7 @@ if (loginForm && document.querySelector("#login-password")) {
       const data = await response.json();
 
       if (response.ok) {
-        message.textContent = data.message;
-        message.style.color = "green";
+        showToast(data.message, 'success');
         loginForm.reset();
 
         localStorage.setItem("token", data.token);
@@ -161,8 +238,7 @@ if (loginForm && document.querySelector("#login-password")) {
           }
         }, 1500);
       } else {
-        message.textContent = data.message;
-        message.style.color = "red";
+        showToast(data.message, 'error');
       }
     } catch (error) {
       message.textContent = "No se pudo conectar con el servidor";
@@ -217,11 +293,11 @@ if (perfilNombre) {
           nombreUsuario.textContent = `👤 ${data.nombre}`;
         }
         if (data.foto) {
-          const perfilFoto = document.querySelector('#perfil-foto');
-          const perfilEmoji = document.querySelector('#perfil-emoji');
+          const perfilFoto = document.querySelector("#perfil-foto");
+          const perfilEmoji = document.querySelector("#perfil-emoji");
           perfilFoto.src = data.foto;
-          perfilFoto.style.display = 'block';
-          perfilEmoji.style.display = 'none';
+          perfilFoto.style.display = "block";
+          perfilEmoji.style.display = "none";
         }
       })
       .catch(() => {
@@ -229,53 +305,128 @@ if (perfilNombre) {
       });
   }
 
-  const fotoPerfil = document.querySelector('#foto-perfil-input');
-  const fotoPerfilMessage = document.querySelector('#foto-perfil-message');
+  const fotoPerfil = document.querySelector("#foto-perfil-input");
+  const fotoPerfilMessage = document.querySelector("#foto-perfil-message");
 
   if (fotoPerfil) {
-    fotoPerfil.addEventListener('change', async () => {
+    fotoPerfil.addEventListener("change", async () => {
       const archivo = fotoPerfil.files[0];
       if (!archivo) return;
 
       const formData = new FormData();
-      formData.append('foto', archivo);
+      formData.append("foto", archivo);
 
-      fotoPerfilMessage.textContent = 'Subiendo foto...';
-      fotoPerfilMessage.style.color = 'var(--gris)';
+      fotoPerfilMessage.textContent = "Subiendo foto...";
+      fotoPerfilMessage.style.color = "var(--gris)";
 
       try {
         const response = await fetch(`${BASE_URL}/api/auth/foto`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Authorization': `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
-          body: formData
+          body: formData,
         });
 
         const data = await response.json();
 
         if (response.ok) {
-          const perfilFoto = document.querySelector('#perfil-foto');
-          const perfilEmoji = document.querySelector('#perfil-emoji');
+          const perfilFoto = document.querySelector("#perfil-foto");
+          const perfilEmoji = document.querySelector("#perfil-emoji");
           perfilFoto.src = data.foto;
-          perfilFoto.style.display = 'block';
-          perfilEmoji.style.display = 'none';
-          fotoPerfilMessage.textContent = data.message;
-          fotoPerfilMessage.style.color = 'green';
-          setTimeout(() => {
-            fotoPerfilMessage.textContent = '';
-          }, 3000);
+          perfilFoto.style.display = "block";
+          perfilEmoji.style.display = "none";
+          showToast(data.message, 'success');
         } else {
-          fotoPerfilMessage.textContent = data.message;
-          fotoPerfilMessage.style.color = 'red';
+          showToast(data.message, 'error');
         }
-
       } catch (error) {
-        fotoPerfilMessage.textContent = 'No se pudo conectar con el servidor';
-        fotoPerfilMessage.style.color = 'red';
+        fotoPerfilMessage.textContent = "No se pudo conectar con el servidor";
+        fotoPerfilMessage.style.color = "red";
       }
     });
   }
+}
+
+// Toggle editar perfil
+const perfilEditarToggle = document.querySelector('#perfil-editar-toggle');
+const perfilEditarForm = document.querySelector('#perfil-editar-form');
+const perfilEditarArrow = document.querySelector('.perfil-editar-arrow');
+
+if (perfilEditarToggle) {
+  perfilEditarToggle.addEventListener('click', () => {
+    const abierto = perfilEditarForm.style.display !== 'none';
+    perfilEditarForm.style.display = abierto ? 'none' : 'block';
+    perfilEditarArrow.classList.toggle('abierto', !abierto);
+  });
+}
+
+// Toggle contraseñas editar perfil
+const togglePasswordActual = document.querySelector('#toggle-password-actual');
+const passwordActualInput = document.querySelector('#editar-perfil-password-actual');
+if (togglePasswordActual && passwordActualInput) {
+  togglePasswordActual.addEventListener('click', () => {
+    passwordActualInput.type = passwordActualInput.type === 'password' ? 'text' : 'password';
+  });
+}
+
+const togglePasswordNueva = document.querySelector('#toggle-password-nueva');
+const passwordNuevaInput = document.querySelector('#editar-perfil-password-nueva');
+if (togglePasswordNueva && passwordNuevaInput) {
+  togglePasswordNueva.addEventListener('click', () => {
+    passwordNuevaInput.type = passwordNuevaInput.type === 'password' ? 'text' : 'password';
+  });
+}
+
+// Formulario editar perfil
+const editarPerfilForm = document.querySelector('#editar-perfil-form');
+if (editarPerfilForm) {
+  const nombreInput = document.querySelector('#editar-perfil-nombre');
+
+  fetch(`${BASE_URL}/api/auth/perfil`, {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${token}` }
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.nombre) nombreInput.value = data.nombre;
+    });
+
+  editarPerfilForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const nombre = document.querySelector('#editar-perfil-nombre').value;
+    const passwordActual = document.querySelector('#editar-perfil-password-actual').value;
+    const passwordNueva = document.querySelector('#editar-perfil-password-nueva').value;
+
+    try {
+      const response = await fetch(`${BASE_URL}/api/auth/perfil`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ nombre, passwordActual, passwordNueva })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showToast(data.message, 'success');
+        localStorage.setItem('nombre', data.nombre);
+        document.querySelector('#perfil-nombre').textContent = data.nombre;
+        if (nombreUsuario) nombreUsuario.textContent = `👤 ${data.nombre}`;
+        editarPerfilForm.reset();
+        nombreInput.value = data.nombre;
+        perfilEditarForm.style.display = 'none';
+        perfilEditarArrow.classList.remove('abierto');
+      } else {
+        showToast(data.message, 'error');
+      }
+    } catch (error) {
+      showToast('No se pudo conectar con el servidor', 'error');
+    }
+  });
 }
 
 if (cerrarSesion) {
@@ -317,6 +468,8 @@ if (mascotaForm) {
     window.location.href = "login.html";
   }
 
+  let todasLasMascotas = [];
+
   btnAgregar.addEventListener("click", () => {
     if (formularioMascota.style.display === "none") {
       formularioMascota.style.display = "block";
@@ -327,8 +480,200 @@ if (mascotaForm) {
     }
   });
 
+  const editarForm = document.querySelector('#editar-form');
+  const formularioEditar = document.querySelector('#formulario-editar');
+  const btnCancelarEditar = document.querySelector('#btn-cancelar-editar');
+  const editarFotoInput = document.querySelector('#editar-foto');
+  const btnQuitarFotoEditar = document.querySelector('#btn-quitar-foto-editar');
+  const editarFotoNombre = document.querySelector('#editar-foto-nombre');
+
+  if (editarFotoInput) {
+    editarFotoInput.addEventListener('change', () => {
+      if (editarFotoInput.files[0]) {
+        editarFotoNombre.textContent = editarFotoInput.files[0].name;
+        btnQuitarFotoEditar.style.display = 'flex';
+      }
+    });
+
+    btnQuitarFotoEditar.addEventListener('click', () => {
+      editarFotoInput.value = '';
+      editarFotoNombre.textContent = '';
+      btnQuitarFotoEditar.style.display = 'none';
+    });
+  }
+
+  if (btnCancelarEditar) {
+    btnCancelarEditar.addEventListener('click', () => {
+      formularioEditar.style.display = 'none';
+      editarForm.reset();
+    });
+  }
+
+  if (editarForm) {
+    editarForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const id = document.querySelector('#editar-id').value;
+      const formData = new FormData();
+
+      formData.append('nombre', document.querySelector('#editar-nombre').value);
+      formData.append('raza', document.querySelector('#editar-raza').value);
+      formData.append('edad', document.querySelector('#editar-edad').value);
+      formData.append('notas', document.querySelector('#editar-notas').value);
+
+      const foto = editarFotoInput.files[0];
+      if (foto) formData.append('foto', foto);
+
+      try {
+        const response = await fetch(`${BASE_URL}/api/mascotas/${id}`, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          showToast(data.message, 'success');
+          formularioEditar.style.display = 'none';
+          editarForm.reset();
+          cargarMascotas();
+        } else {
+          showToast(data.message, 'error');
+        }
+      } catch (error) {
+        showToast('No se pudo conectar con el servidor', 'error');
+      }
+    });
+  }
+
+  // Renderizar mascotas filtradas
+  const renderizarMascotas = (mascotas) => {
+    mascotasLista.innerHTML = '';
+
+    if (mascotas.length === 0) {
+      mascotasLista.innerHTML = '<p class="mascotas-no-resultados">No se encontraron mascotas con ese criterio.</p>';
+      return;
+    }
+
+    mascotasEmpty.style.display = 'none';
+
+    mascotas.forEach((mascota, index) => {
+      const card = document.createElement("div");
+      card.classList.add("mascota-card");
+
+      const fotoHTML = mascota.foto
+        ? `<div class="mascota-foto"><img src="${mascota.foto}" alt="${mascota.nombre}" /></div>`
+        : `<div class="mascota-foto">🐶</div>`;
+
+      card.innerHTML = `
+        ${fotoHTML}
+        <div class="mascota-info">
+          <h3>${mascota.nombre}</h3>
+          <p>🐾 Raza: ${mascota.raza}</p>
+          <p>🎂 Edad: ${mascota.edad} año${mascota.edad === 1 ? "" : "s"}</p>
+          ${mascota.notas ? `<p>📝 ${mascota.notas}</p>` : ""}
+        </div>
+        <div class="mascota-acciones">
+          <button class="btn-editar-mascota" data-id="${mascota._id}" data-nombre="${mascota.nombre}" data-raza="${mascota.raza}" data-edad="${mascota.edad}" data-notas="${mascota.notas || ''}">✏️ Editar</button>
+          <button class="btn-eliminar-mascota" data-id="${mascota._id}" data-nombre="${mascota.nombre}">🗑️ Eliminar</button>
+        </div>
+      `;
+
+      card.classList.add("animate-fadeInUp", "opacity-0");
+      const delay = `animate-delay-${Math.min(index + 1, 5)}`;
+      card.classList.add(delay);
+
+      mascotasLista.appendChild(card);
+    });
+
+    document.querySelectorAll('.btn-editar-mascota').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        const nombre = btn.dataset.nombre;
+        const raza = btn.dataset.raza;
+        const edad = btn.dataset.edad;
+        const notas = btn.dataset.notas;
+
+        document.querySelector('#editar-id').value = id;
+        document.querySelector('#editar-nombre').value = nombre;
+        document.querySelector('#editar-raza').value = raza;
+        document.querySelector('#editar-edad').value = edad;
+        document.querySelector('#editar-notas').value = notas;
+
+        const formularioEditar = document.querySelector('#formulario-editar');
+        formularioEditar.style.display = 'block';
+        formularioEditar.scrollIntoView({ behavior: 'smooth' });
+
+        formularioMascota.style.display = 'none';
+        btnAgregar.textContent = '+ Agregar mascota';
+      });
+    });
+
+    document.querySelectorAll('.btn-eliminar-mascota').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        const nombreMascota = btn.dataset.nombre;
+
+        showModal({
+          emoji: '🗑️',
+          titulo: '¿Eliminar mascota?',
+          texto: `¿Estás seguro de que quieres eliminar a ${nombreMascota}? Esta acción no se puede deshacer.`,
+          textoBtnConfirmar: 'Sí, eliminar',
+          onConfirmar: async () => {
+            try {
+              const response = await fetch(`${BASE_URL}/api/mascotas/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+              });
+
+              const data = await response.json();
+
+              if (response.ok) {
+                showToast(data.message, 'success');
+                cargarMascotas();
+              } else {
+                showToast(data.message, 'error');
+              }
+            } catch (error) {
+              showToast('No se pudo conectar con el servidor', 'error');
+            }
+          }
+        });
+      });
+    });
+  };
+
+  // Aplicar filtros de búsqueda
+  const aplicarFiltrosMascotas = () => {
+    const busqueda = document.querySelector('#buscar-mascota')?.value.toLowerCase() || '';
+    const razaFiltro = document.querySelector('#filtrar-raza')?.value || '';
+
+    const filtradas = todasLasMascotas.filter(mascota => {
+      const coincideNombre = mascota.nombre.toLowerCase().includes(busqueda);
+      const coincideRaza = razaFiltro === '' || mascota.raza === razaFiltro;
+      return coincideNombre && coincideRaza;
+    });
+
+    renderizarMascotas(filtradas);
+  };
+
   const cargarMascotas = async () => {
     try {
+      mascotasLista.innerHTML = `
+        ${[1,2,3].map(() => `
+          <div class="skeleton-card">
+            <div class="skeleton skeleton-foto"></div>
+            <div class="skeleton-info">
+              <div class="skeleton skeleton-titulo"></div>
+              <div class="skeleton skeleton-texto"></div>
+              <div class="skeleton skeleton-texto-corto"></div>
+            </div>
+          </div>
+        `).join('')}
+      `;
+      mascotasEmpty.style.display = 'none';
+
       const response = await fetch(`${BASE_URL}/api/mascotas`, {
         method: "GET",
         headers: {
@@ -339,56 +684,63 @@ if (mascotaForm) {
       const mascotas = await response.json();
 
       if (mascotas.length === 0) {
+        mascotasLista.innerHTML = '';
         mascotasEmpty.style.display = "block";
+        const mascotas_filtros = document.querySelector('#mascotas-filtros');
+        if (mascotas_filtros) mascotas_filtros.style.display = 'none';
         return;
       }
 
-      mascotasEmpty.style.display = "none";
-      mascotasLista.innerHTML = "";
+      todasLasMascotas = mascotas;
 
-      mascotas.forEach((mascota) => {
-        const card = document.createElement("div");
-        card.classList.add("mascota-card");
+      const mascotas_filtros = document.querySelector('#mascotas-filtros');
+      if (mascotas_filtros) mascotas_filtros.style.display = 'flex';
 
-        const fotoHTML = mascota.foto
-          ? `<div class="mascota-foto"><img src="${mascota.foto}" alt="${mascota.nombre}" /></div>`
-          : `<div class="mascota-foto">🐶</div>`;
+      const selectRaza = document.querySelector('#filtrar-raza');
+      if (selectRaza) {
+        const razas = [...new Set(mascotas.map(m => m.raza))];
+        const valorActual = selectRaza.value;
+        selectRaza.innerHTML = '<option value="">Todas las razas</option>';
+        razas.forEach(raza => {
+          const option = document.createElement('option');
+          option.value = raza;
+          option.textContent = raza;
+          selectRaza.appendChild(option);
+        });
+        selectRaza.value = valorActual;
+      }
 
-        card.innerHTML = `
-          ${fotoHTML}
-          <div class="mascota-info">
-            <h3>${mascota.nombre}</h3>
-            <p>🐾 Raza: ${mascota.raza}</p>
-            <p>🎂 Edad: ${mascota.edad} año${mascota.edad === 1 ? "" : "s"}</p>
-            ${mascota.notas ? `<p>📝 ${mascota.notas}</p>` : ""}
-          </div>
-        `;
+      aplicarFiltrosMascotas();
 
-        mascotasLista.appendChild(card);
-      });
     } catch (error) {
       console.error("Error al cargar mascotas:", error);
     }
   };
 
+  const buscarInput = document.querySelector('#buscar-mascota');
+  const filtrarSelect = document.querySelector('#filtrar-raza');
+
+  if (buscarInput) buscarInput.addEventListener('input', aplicarFiltrosMascotas);
+  if (filtrarSelect) filtrarSelect.addEventListener('change', aplicarFiltrosMascotas);
+
   cargarMascotas();
 
-  const mascotaFotoInput = document.querySelector('#mascota-foto');
-  const btnQuitarFoto = document.querySelector('#btn-quitar-foto');
-  const fotoNombre = document.querySelector('#foto-nombre');
+  const mascotaFotoInput = document.querySelector("#mascota-foto");
+  const btnQuitarFoto = document.querySelector("#btn-quitar-foto");
+  const fotoNombre = document.querySelector("#foto-nombre");
 
   if (mascotaFotoInput) {
-    mascotaFotoInput.addEventListener('change', () => {
+    mascotaFotoInput.addEventListener("change", () => {
       if (mascotaFotoInput.files[0]) {
         fotoNombre.textContent = mascotaFotoInput.files[0].name;
-        btnQuitarFoto.style.display = 'flex';
+        btnQuitarFoto.style.display = "flex";
       }
     });
 
-    btnQuitarFoto.addEventListener('click', () => {
-      mascotaFotoInput.value = '';
-      fotoNombre.textContent = '';
-      btnQuitarFoto.style.display = 'none';
+    btnQuitarFoto.addEventListener("click", () => {
+      mascotaFotoInput.value = "";
+      fotoNombre.textContent = "";
+      btnQuitarFoto.style.display = "none";
     });
   }
 
@@ -410,8 +762,8 @@ if (mascotaForm) {
     }
 
     try {
-      message.textContent = 'Subiendo mascota...';
-      message.style.color = 'var(--gris)';
+      message.textContent = "Subiendo mascota...";
+      message.style.color = "var(--gris)";
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000);
@@ -422,7 +774,7 @@ if (mascotaForm) {
           Authorization: `Bearer ${token}`,
         },
         body: formData,
-        signal: controller.signal
+        signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
@@ -430,24 +782,22 @@ if (mascotaForm) {
       const data = await response.json();
 
       if (response.ok) {
-        message.textContent = data.message;
-        message.style.color = "green";
+        showToast(data.message, 'success');
         mascotaForm.reset();
         formularioMascota.style.display = "none";
         btnAgregar.textContent = "+ Agregar mascota";
-        fotoInput.value = '';
-        document.querySelector('#btn-quitar-foto').style.display = 'none';
-        document.querySelector('#foto-nombre').textContent = '';
+        fotoInput.value = "";
+        document.querySelector("#btn-quitar-foto").style.display = "none";
+        document.querySelector("#foto-nombre").textContent = "";
         cargarMascotas();
       } else {
-        message.textContent = data.message;
-        message.style.color = "red";
+        showToast(data.message, 'error');
       }
     } catch (error) {
-      if (error.name === 'AbortError') {
-        message.textContent = 'El servidor tardó demasiado, intenta de nuevo';
+      if (error.name === "AbortError") {
+        message.textContent = "El servidor tardó demasiado, intenta de nuevo";
       } else {
-        message.textContent = 'No se pudo conectar con el servidor';
+        message.textContent = "No se pudo conectar con el servidor";
       }
       message.style.color = "red";
     }
@@ -525,6 +875,20 @@ if (reservaForm) {
 
   const cargarReservas = async () => {
     try {
+      reservasLista.innerHTML = `
+        ${[1,2].map(() => `
+          <div class="skeleton-reserva">
+            <div class="skeleton-reserva-info">
+              <div class="skeleton skeleton-titulo"></div>
+              <div class="skeleton skeleton-texto"></div>
+              <div class="skeleton skeleton-texto"></div>
+            </div>
+            <div class="skeleton skeleton-badge"></div>
+          </div>
+        `).join('')}
+      `;
+      reservasEmpty.style.display = 'none';
+
       const response = await fetch(`${BASE_URL}/api/reservas`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
@@ -532,72 +896,100 @@ if (reservaForm) {
 
       const reservas = await response.json();
 
-      if (reservas.length === 0) {
-        reservasEmpty.style.display = "block";
-        return;
-      }
+      const ahora = new Date();
+      const proximas = reservas.filter(r =>
+        (r.estado === 'pendiente' || r.estado === 'confirmada') && new Date(r.fecha) >= ahora
+      );
+      const historial = reservas.filter(r =>
+        r.estado === 'cancelada' || new Date(r.fecha) < ahora
+      );
 
-      reservasEmpty.style.display = "none";
-      reservasLista.innerHTML = "";
+      const historialLista = document.querySelector('#historial-lista');
+      const historialEmpty = document.querySelector('#historial-empty');
 
-      reservas.forEach((reserva) => {
-        const card = document.createElement("div");
-        card.classList.add("reserva-card");
+      const renderLista = (lista, contenedor, empty) => {
+        contenedor.innerHTML = '';
+        if (lista.length === 0) {
+          empty.style.display = 'block';
+          return;
+        }
+        empty.style.display = 'none';
 
-        const badgeClase = `badge-estado badge-${reserva.estado}`;
-        const mostrarCancelar = reserva.estado === "pendiente";
+        lista.forEach((reserva, index) => {
+          const card = document.createElement("div");
+          card.classList.add("reserva-card", "animate-fadeInUp", "opacity-0");
+          const delay = `animate-delay-${Math.min(index + 1, 5)}`;
+          card.classList.add(delay);
 
-        card.innerHTML = `
-          <div class="reserva-info">
-            <h3>🐾 Paseo de ${reserva.mascota.nombre}</h3>
-            <p>📅 ${formatearFecha(reserva.fecha)}</p>
-            <p>📍 ${reserva.direccion}</p>
-            ${reserva.notas ? `<p>📝 ${reserva.notas}</p>` : ""}
-          </div>
-          <div class="reserva-acciones">
-            <span class="${badgeClase}">${reserva.estado}</span>
-            ${
-              mostrarCancelar
-                ? `<button class="btn-cancelar" data-id="${reserva._id}">Cancelar</button>`
-                : ""
-            }
-          </div>
-        `;
+          const badgeClase = `badge-estado badge-${reserva.estado}`;
+          const mostrarCancelar = reserva.estado === "pendiente";
 
-        reservasLista.appendChild(card);
-      });
+          card.innerHTML = `
+            <div class="reserva-info">
+              <h3>🐾 Paseo de ${reserva.mascota.nombre}</h3>
+              <p>📅 ${formatearFecha(reserva.fecha)}</p>
+              <p>📍 ${reserva.direccion}</p>
+              ${reserva.notas ? `<p>📝 ${reserva.notas}</p>` : ""}
+            </div>
+            <div class="reserva-acciones">
+              <span class="${badgeClase}">${reserva.estado}</span>
+              ${mostrarCancelar ? `<button class="btn-cancelar" data-id="${reserva._id}">Cancelar</button>` : ""}
+            </div>
+          `;
 
-      document.querySelectorAll(".btn-cancelar").forEach((btn) => {
-        btn.addEventListener("click", async () => {
-          const id = btn.dataset.id;
-
-          try {
-            const response = await fetch(
-              `${BASE_URL}/api/reservas/${id}/cancelar`,
-              {
-                method: "PATCH",
-                headers: { Authorization: `Bearer ${token}` },
-              }
-            );
-
-            const data = await response.json();
-
-            if (response.ok) {
-              cargarReservas();
-            } else {
-              alert(data.message);
-            }
-          } catch (error) {
-            alert("No se pudo cancelar la reserva");
-          }
+          contenedor.appendChild(card);
         });
-      });
+
+        contenedor.querySelectorAll(".btn-cancelar").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            const id = btn.dataset.id;
+            showModal({
+              emoji: '❌',
+              titulo: '¿Cancelar reserva?',
+              texto: '¿Estás seguro de que quieres cancelar esta reserva?',
+              textoBtnConfirmar: 'Sí, cancelar',
+              onConfirmar: async () => {
+                try {
+                  const response = await fetch(`${BASE_URL}/api/reservas/${id}/cancelar`, {
+                    method: "PATCH",
+                    headers: { Authorization: `Bearer ${token}` },
+                  });
+                  const data = await response.json();
+                  if (response.ok) {
+                    showToast(data.message, 'success');
+                    cargarReservas();
+                  } else {
+                    showToast(data.message, 'error');
+                  }
+                } catch (error) {
+                  showToast('No se pudo cancelar la reserva', 'error');
+                }
+              }
+            });
+          });
+        });
+      };
+
+      renderLista(proximas, reservasLista, reservasEmpty);
+      renderLista(historial, historialLista, historialEmpty);
+
     } catch (error) {
       console.error("Error al cargar reservas:", error);
     }
   };
 
   cargarReservas();
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-activo'));
+      btn.classList.add('tab-activo');
+
+      const tab = btn.dataset.tab;
+      document.querySelector('#tab-proximas').style.display = tab === 'proximas' ? 'block' : 'none';
+      document.querySelector('#tab-historial').style.display = tab === 'historial' ? 'block' : 'none';
+    });
+  });
 
   reservaForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -627,18 +1019,13 @@ if (reservaForm) {
       const data = await response.json();
 
       if (response.ok) {
-        message.textContent = data.message;
-        message.style.color = "green";
+        showToast(data.message, 'success');
         reservaForm.reset();
         formularioReserva.style.display = "none";
         btnNuevaReserva.textContent = "+ Nueva reserva";
         cargarReservas();
-        setTimeout(() => {
-          message.textContent = "";
-        }, 3000);
       } else {
-        message.textContent = data.message;
-        message.style.color = "red";
+        showToast(data.message, 'error');
       }
     } catch (error) {
       message.textContent = "No se pudo conectar con el servidor";
@@ -685,7 +1072,7 @@ if (adminLista) {
       return;
     }
 
-    reservas.forEach((reserva) => {
+    reservas.forEach((reserva, index) => {
       const card = document.createElement("div");
       card.classList.add("admin-card");
 
@@ -695,65 +1082,76 @@ if (adminLista) {
       card.innerHTML = `
         <div class="admin-card-info">
           <h3>🐾 Paseo de ${reserva.mascota.nombre}</h3>
-          <p>👤 Cliente: ${reserva.usuario.nombre} (${
-        reserva.usuario.email
-      })</p>
+          <p>👤 Cliente: ${reserva.usuario.nombre} (${reserva.usuario.email})</p>
           <p>📅 ${formatearFechaAdmin(reserva.fecha)}</p>
           <p>📍 ${reserva.direccion}</p>
           ${reserva.notas ? `<p>📝 ${reserva.notas}</p>` : ""}
         </div>
         <div class="admin-card-acciones">
           <span class="${badgeClase}">${reserva.estado}</span>
-          ${
-            esPendiente
-              ? `
+          ${esPendiente ? `
             <button class="btn-confirmar" data-id="${reserva._id}" data-accion="confirmada">Confirmar</button>
             <button class="btn-cancelar-admin" data-id="${reserva._id}" data-accion="cancelada">Cancelar</button>
-          `
-              : ""
-          }
+          ` : ""}
         </div>
       `;
+
+      card.classList.add("animate-fadeInUp", "opacity-0");
+      const delay = `animate-delay-${Math.min(index + 1, 5)}`;
+      card.classList.add(delay);
 
       adminLista.appendChild(card);
     });
 
-    document
-      .querySelectorAll(".btn-confirmar, .btn-cancelar-admin")
-      .forEach((btn) => {
-        btn.addEventListener("click", async () => {
-          const id = btn.dataset.id;
-          const estado = btn.dataset.accion;
+    document.querySelectorAll(".btn-confirmar, .btn-cancelar-admin").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.dataset.id;
+        const estado = btn.dataset.accion;
 
-          try {
-            const response = await fetch(
-              `${BASE_URL}/api/reservas/admin/${id}/estado`,
-              {
-                method: "PATCH",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ estado }),
-              }
-            );
-
-            const data = await response.json();
-
-            if (response.ok) {
-              cargarTodasLasReservas();
-            } else {
-              alert(data.message);
+        try {
+          const response = await fetch(
+            `${BASE_URL}/api/reservas/admin/${id}/estado`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ estado }),
             }
-          } catch (error) {
-            alert("No se pudo actualizar la reserva");
+          );
+
+          const data = await response.json();
+
+          if (response.ok) {
+            showToast(data.message, 'success');
+            cargarTodasLasReservas();
+          } else {
+            showToast(data.message, 'error');
           }
-        });
+        } catch (error) {
+          showToast('No se pudo actualizar la reserva', 'error');
+        }
       });
+    });
   };
 
   const cargarTodasLasReservas = async () => {
     try {
+      adminLista.innerHTML = `
+        ${[1,2,3].map(() => `
+          <div class="skeleton-reserva">
+            <div class="skeleton-reserva-info">
+              <div class="skeleton skeleton-titulo"></div>
+              <div class="skeleton skeleton-texto"></div>
+              <div class="skeleton skeleton-texto"></div>
+              <div class="skeleton skeleton-texto-corto"></div>
+            </div>
+            <div class="skeleton skeleton-badge"></div>
+          </div>
+        `).join('')}
+      `;
+
       const response = await fetch(`${BASE_URL}/api/reservas/admin/todas`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
