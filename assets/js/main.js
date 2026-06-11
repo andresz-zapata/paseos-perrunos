@@ -17,6 +17,58 @@ const showToast = (mensaje, tipo = 'success', duracion = 3000) => {
   }, duracion);
 };
 
+// Refresh token automático
+const refreshAccessToken = async () => {
+  const refreshToken = localStorage.getItem('refreshToken');
+  if (!refreshToken) {
+    window.location.href = 'login.html';
+    return null;
+  }
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      localStorage.setItem('token', data.token);
+      return data.token;
+    } else {
+      localStorage.removeItem('token');
+      localStorage.removeItem('nombre');
+      localStorage.removeItem('rol');
+      localStorage.removeItem('refreshToken');
+      window.location.href = 'login.html';
+      return null;
+    }
+  } catch (error) {
+    console.error('Error al renovar token:', error);
+    return null;
+  }
+};
+
+const fetchConRefresh = async (url, opciones = {}) => {
+  let tokenActual = localStorage.getItem('token');
+  opciones.headers = opciones.headers || {};
+  opciones.headers['Authorization'] = `Bearer ${tokenActual}`;
+
+  let response = await fetch(url, opciones);
+
+  if (response.status === 401) {
+    const nuevoToken = await refreshAccessToken();
+    if (!nuevoToken) return null;
+
+    opciones.headers['Authorization'] = `Bearer ${nuevoToken}`;
+    response = await fetch(url, opciones);
+  }
+
+  return response;
+};
+
 // Modal de confirmación
 const showModal = ({ emoji, titulo, texto, textoBtnConfirmar, onConfirmar }) => {
   const overlay = document.createElement('div');
@@ -229,6 +281,7 @@ if (loginForm && document.querySelector("#login-password")) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("nombre", data.nombre);
         localStorage.setItem("rol", data.rol);
+        localStorage.setItem("refreshToken", data.refreshToken);
 
         setTimeout(() => {
           if (data.rol === "admin") {
@@ -280,11 +333,8 @@ if (perfilNombre) {
   } else {
     perfilNombre.textContent = nombre;
 
-    fetch(`${BASE_URL}/api/auth/perfil`, {
+    fetchConRefresh(`${BASE_URL}/api/auth/perfil`, {
       method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     })
       .then((res) => res.json())
       .then((data) => {
@@ -430,11 +480,20 @@ if (editarPerfilForm) {
 }
 
 if (cerrarSesion) {
-  cerrarSesion.addEventListener("click", (e) => {
+  cerrarSesion.addEventListener("click", async (e) => {
     e.preventDefault();
+    try {
+      await fetch(`${BASE_URL}/api/auth/logout`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
     localStorage.removeItem("token");
     localStorage.removeItem("nombre");
     localStorage.removeItem("rol");
+    localStorage.removeItem("refreshToken");
     window.location.href = "login.html";
   });
 }
@@ -674,11 +733,8 @@ if (mascotaForm) {
       `;
       mascotasEmpty.style.display = 'none';
 
-      const response = await fetch(`${BASE_URL}/api/mascotas`, {
+      const response = await fetchConRefresh(`${BASE_URL}/api/mascotas`, {
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
 
       const mascotas = await response.json();
@@ -833,9 +889,8 @@ if (reservaForm) {
 
   const cargarMascotasSelect = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/api/mascotas`, {
+      const response = await fetchConRefresh(`${BASE_URL}/api/mascotas`, {
         method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
       });
 
       const mascotas = await response.json();
@@ -889,9 +944,8 @@ if (reservaForm) {
       `;
       reservasEmpty.style.display = 'none';
 
-      const response = await fetch(`${BASE_URL}/api/reservas`, {
+      const response = await fetchConRefresh(`${BASE_URL}/api/reservas`, {
         method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
       });
 
       const reservas = await response.json();
@@ -1152,9 +1206,8 @@ if (adminLista) {
         `).join('')}
       `;
 
-      const response = await fetch(`${BASE_URL}/api/reservas/admin/todas`, {
+      const response = await fetchConRefresh(`${BASE_URL}/api/reservas/admin/todas`, {
         method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = await response.json();

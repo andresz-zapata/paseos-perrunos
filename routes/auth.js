@@ -7,24 +7,7 @@ const User = require("../models/user");
 const { enviarBienvenida } = require("../config/mailer");
 const { upload } = require("../config/cloudinary");
 
-const verificarToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-
-  if (!token) {
-    return res
-      .status(401)
-      .json({ message: "Acceso denegado, token no encontrado" });
-  }
-
-  try {
-    const verificado = jwt.verify(token, process.env.JWT_SECRET);
-    req.usuario = verificado;
-    next();
-  } catch (error) {
-    return res.status(403).json({ message: "Token inválido o expirado" });
-  }
-};
+const { verificarToken } = require('../middleware/auth');
 
 router.post(
   "/register",
@@ -125,15 +108,25 @@ router.post(
           .json({ message: "Correo o contraseña incorrectos" });
       }
 
-      const token = jwt.sign(
+      const accessToken = jwt.sign(
         { id: usuario._id, nombre: usuario.nombre, rol: usuario.rol },
         process.env.JWT_SECRET,
-        { expiresIn: "8h" }
+        { expiresIn: "15m" }
       );
+
+      const refreshToken = jwt.sign(
+        { id: usuario._id },
+        process.env.JWT_REFRESH_SECRET,
+        { expiresIn: "7d" }
+      );
+
+      usuario.refreshToken = refreshToken;
+      await usuario.save();
 
       res.status(200).json({
         message: `¡Bienvenido ${usuario.nombre}! 🐾`,
-        token,
+        token: accessToken,
+        refreshToken,
         nombre: usuario.nombre,
         rol: usuario.rol,
       });
@@ -241,6 +234,44 @@ router.put('/perfil', verificarToken, [
       nombre: usuario.nombre
     });
 
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error en el servidor' });
+  }
+});
+
+router.post('/refresh', async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return res.status(401).json({ message: 'Refresh token no encontrado' });
+    }
+
+    const verificado = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+
+    const usuario = await User.findById(verificado.id);
+    if (!usuario || usuario.refreshToken !== refreshToken) {
+      return res.status(403).json({ message: 'Refresh token inválido' });
+    }
+
+    const nuevoAccessToken = jwt.sign(
+      { id: usuario._id, nombre: usuario.nombre, rol: usuario.rol },
+      process.env.JWT_SECRET,
+      { expiresIn: '15m' }
+    );
+
+    res.status(200).json({ token: nuevoAccessToken });
+
+  } catch (error) {
+    return res.status(403).json({ message: 'Refresh token inválido o expirado' });
+  }
+});
+
+router.post('/logout', verificarToken, async (req, res) => {
+  try {
+    await User.findByIdAndUpdate(req.usuario.id, { refreshToken: '' });
+    res.status(200).json({ message: 'Sesión cerrada correctamente' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error en el servidor' });

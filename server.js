@@ -1,13 +1,17 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const dotenv = require("dotenv");
+const env = require('./config/env');
 const path = require("path");
 const rateLimit = require("express-rate-limit");
-
-dotenv.config();
+const helmet = require("helmet");
 
 const app = express();
+
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false
+}));
 
 app.use(
   cors({
@@ -27,30 +31,35 @@ app.use(express.static(path.join(__dirname, "/")));
 const limiterGeneral = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
-  message: { message: 'Demasiadas peticiones, intenta de nuevo en 15 minutos' },
+  message: { message: "Demasiadas peticiones, intenta de nuevo en 15 minutos" },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
 });
 
 const limiterLogin = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
-  message: { message: 'Demasiados intentos de inicio de sesión, intenta de nuevo en 15 minutos' },
+  message: {
+    message:
+      "Demasiados intentos de inicio de sesión, intenta de nuevo en 15 minutos",
+  },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
 });
 
 const limiterRegistro = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 5,
-  message: { message: 'Demasiados registros desde esta IP, intenta de nuevo en 1 hora' },
+  message: {
+    message: "Demasiados registros desde esta IP, intenta de nuevo en 1 hora",
+  },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
 });
 
-app.use('/api/', limiterGeneral);
-app.use('/api/auth/login', limiterLogin);
-app.use('/api/auth/register', limiterRegistro);
+app.use("/api/", limiterGeneral);
+app.use("/api/auth/login", limiterLogin);
+app.use("/api/auth/register", limiterRegistro);
 
 mongoose
   .connect(process.env.MONGODB_URI)
@@ -65,17 +74,24 @@ const reservasRoutes = require("./routes/reservas");
 app.use("/api/reservas", reservasRoutes);
 app.get(/^(?!\/api).*$/, (req, res) => {
   const paginasValidas = [
-    'index.html', 'login.html', 'registro.html', 'recuperar.html',
-    'perfil.html', 'mascotas.html', 'reservas.html', 'admin.html',
-    'paseos.html', '404.html'
+    "index.html",
+    "login.html",
+    "registro.html",
+    "recuperar.html",
+    "perfil.html",
+    "mascotas.html",
+    "reservas.html",
+    "admin.html",
+    "paseos.html",
+    "404.html",
   ];
 
-  const ruta = req.path.replace('/', '') || 'index.html';
+  const ruta = req.path.replace("/", "") || "index.html";
 
-  if (paginasValidas.includes(ruta) || ruta === '') {
-    res.sendFile(path.join(__dirname, ruta === '' ? 'index.html' : ruta));
+  if (paginasValidas.includes(ruta) || ruta === "") {
+    res.sendFile(path.join(__dirname, ruta === "" ? "index.html" : ruta));
   } else {
-    res.status(404).sendFile(path.join(__dirname, '404.html'));
+    res.status(404).sendFile(path.join(__dirname, "404.html"));
   }
 });
 
