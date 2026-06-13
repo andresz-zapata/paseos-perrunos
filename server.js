@@ -49,12 +49,10 @@ const limiterLogin = rateLimit({
 
 const limiterRegistro = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: 5,
-  message: {
-    message: "Demasiados registros desde esta IP, intenta de nuevo en 1 hora",
-  },
+  max: 20,
+  message: { message: 'Demasiados registros desde esta IP, intenta de nuevo en 1 hora' },
   standardHeaders: true,
-  legacyHeaders: false,
+  legacyHeaders: false
 });
 
 app.use("/api/", limiterGeneral);
