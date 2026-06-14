@@ -28,7 +28,9 @@ app.use(
   })
 );
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "/")));
+app.use(express.static(path.join(__dirname, "/"), {
+  index: false
+}));
 
 const limiterGeneral = rateLimit({
   windowMs: 15 * 60 * 1000,
