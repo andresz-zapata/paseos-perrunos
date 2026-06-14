@@ -1,18 +1,12 @@
-const nodemailer = require("nodemailer");
+const { Resend } = require('resend');
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const enviarBienvenida = async (nombre, email) => {
-  await transporter.sendMail({
-    from: `"Paseos Perrunos 🐶" <${process.env.EMAIL_USER}>`,
+  await resend.emails.send({
+    from: 'Paseos Perrunos <onboarding@resend.dev>',
     to: email,
-    subject: "¡Bienvenido a Paseos Perrunos! 🐾",
+    subject: '¡Bienvenido a Paseos Perrunos! 🐾',
     html: `
       <div style="font-family: 'Poppins', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
         <div style="text-align: center; margin-bottom: 30px;">
@@ -35,33 +29,27 @@ const enviarBienvenida = async (nombre, email) => {
         </div>
         <div style="text-align: center; margin-top: 30px;">
           <p style="color: #6b7280; font-size: 13px;">© 2026 Paseos Perrunos. Todos los derechos reservados.</p>
-          <p style="color: #6b7280; font-size: 13px;">${process.env.EMAIL_USER}</p>
+          <p style="color: #6b7280; font-size: 13px;">paseosperrunosmedellin@gmail.com</p>
         </div>
       </div>
-    `,
+    `
   });
 };
 
-const enviarConfirmacionReserva = async (
-  nombre,
-  email,
-  mascotaNombre,
-  fecha,
-  direccion
-) => {
-  const fechaFormateada = new Date(fecha).toLocaleString("es-CO", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+const enviarConfirmacionReserva = async (nombre, email, mascotaNombre, fecha, direccion) => {
+  const fechaFormateada = new Date(fecha).toLocaleString('es-CO', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
   });
 
-  await transporter.sendMail({
-    from: `"Paseos Perrunos 🐶" <${process.env.EMAIL_USER}>`,
+  await resend.emails.send({
+    from: 'Paseos Perrunos <onboarding@resend.dev>',
     to: email,
-    subject: "¡Tu reserva fue recibida! 📅",
+    subject: '¡Tu reserva fue recibida! 📅',
     html: `
       <div style="font-family: 'Poppins', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
         <div style="text-align: center; margin-bottom: 30px;">
@@ -87,10 +75,10 @@ const enviarConfirmacionReserva = async (
         </div>
         <div style="text-align: center; margin-top: 30px;">
           <p style="color: #6b7280; font-size: 13px;">© 2026 Paseos Perrunos. Todos los derechos reservados.</p>
-          <p style="color: #6b7280; font-size: 13px;">${process.env.EMAIL_USER}</p>
+          <p style="color: #6b7280; font-size: 13px;">paseosperrunosmedellin@gmail.com</p>
         </div>
       </div>
-    `,
+    `
   });
 };
 
