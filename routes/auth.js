@@ -69,76 +69,71 @@ router.post(
 
       res.status(201).json({ message: "¡Cuenta creada correctamente! 🎉" });
     } catch (error) {
-      console.error('ERROR LOGIN COMPLETO:', error.message, error.stack);
-      res.status(500).json({ message: error.message });
+      console.error(error);
+      res.status(500).json({ message: "Error en el servidor" });
     }
   }
 );
 
-async (req, res) => {
-  try {
-    console.log('🔍 1. Iniciando login...');
-    
-    const errores = validationResult(req);
-    if (!errores.isEmpty()) {
-      return res.status(400).json({ message: errores.array()[0].msg });
+router.post(
+  "/login",
+  [
+    body("email")
+      .trim()
+      .notEmpty()
+      .withMessage("El correo es obligatorio")
+      .isEmail()
+      .withMessage("El correo no tiene un formato válido"),
+    body("password").notEmpty().withMessage("La contraseña es obligatoria"),
+  ],
+  async (req, res) => {
+    try {
+      const errores = validationResult(req);
+      if (!errores.isEmpty()) {
+        return res.status(400).json({ message: errores.array()[0].msg });
+      }
+
+      const { email, password } = req.body;
+
+      const usuario = await User.findOne({ email });
+      if (!usuario) {
+        return res.status(400).json({ message: "Correo o contraseña incorrectos" });
+      }
+
+      const passwordCorrecta = await bcrypt.compare(password, usuario.password);
+      if (!passwordCorrecta) {
+        return res.status(400).json({ message: "Correo o contraseña incorrectos" });
+      }
+
+      const accessToken = jwt.sign(
+        { id: usuario._id, nombre: usuario.nombre, rol: usuario.rol },
+        process.env.JWT_SECRET,
+        { expiresIn: "15m" }
+      );
+
+      const refreshToken = jwt.sign(
+        { id: usuario._id },
+        process.env.JWT_REFRESH_SECRET,
+        { expiresIn: "7d" }
+      );
+
+      usuario.refreshToken = refreshToken;
+      await usuario.save();
+
+      res.status(200).json({
+        message: `¡Bienvenido ${usuario.nombre}! 🐾`,
+        token: accessToken,
+        refreshToken,
+        nombre: usuario.nombre,
+        rol: usuario.rol,
+      });
+
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Error en el servidor" });
     }
-
-    console.log('🔍 2. Validaciones pasadas');
-    
-    const { email, password } = req.body;
-    console.log('🔍 3. Email recibido:', email);
-
-    const usuario = await User.findOne({ email });
-    if (!usuario) {
-      return res.status(400).json({ message: "Correo o contraseña incorrectos" });
-    }
-
-    console.log('🔍 4. Usuario encontrado:', usuario.nombre);
-
-    const passwordCorrecta = await bcrypt.compare(password, usuario.password);
-    if (!passwordCorrecta) {
-      return res.status(400).json({ message: "Correo o contraseña incorrectos" });
-    }
-
-    console.log('🔍 5. Contraseña correcta');
-
-    const accessToken = jwt.sign(
-      { id: usuario._id, nombre: usuario.nombre, rol: usuario.rol },
-      process.env.JWT_SECRET,
-      { expiresIn: "15m" }
-    );
-
-    console.log('🔍 6. AccessToken generado');
-
-    const refreshToken = jwt.sign(
-      { id: usuario._id },
-      process.env.JWT_REFRESH_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    console.log('🔍 7. RefreshToken generado');
-
-    usuario.refreshToken = refreshToken;
-    await usuario.save();
-
-    console.log('🔍 8. Usuario guardado');
-
-    res.status(200).json({
-      message: `¡Bienvenido ${usuario.nombre}! 🐾`,
-      token: accessToken,
-      refreshToken,
-      nombre: usuario.nombre,
-      rol: usuario.rol,
-    });
-
-    console.log('🔍 9. Respuesta enviada');
-
-  } catch (error) {
-    console.error('❌ ERROR LOGIN:', error.message, error.stack);
-    res.status(500).json({ message: error.message });
   }
-}
+);
 
 router.get("/perfil", verificarToken, async (req, res) => {
   try {

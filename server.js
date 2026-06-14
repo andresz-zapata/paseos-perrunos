@@ -27,10 +27,8 @@ app.use(
     credentials: true,
   })
 );
+
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "/"), {
-  index: false
-}));
 
 const limiterGeneral = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -74,9 +72,14 @@ const mascotasRoutes = require("./routes/mascotas");
 app.use("/api/mascotas", mascotasRoutes);
 const reservasRoutes = require("./routes/reservas");
 app.use("/api/reservas", reservasRoutes);
+
+app.use(express.static(path.join(__dirname, "/"), {
+  index: false
+}));
+
 app.use((req, res, next) => {
   if (req.path.startsWith('/api')) return next();
-  
+
   const paginasValidas = [
     'index.html', 'login.html', 'registro.html', 'recuperar.html',
     'perfil.html', 'mascotas.html', 'reservas.html', 'admin.html',
