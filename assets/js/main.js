@@ -236,13 +236,19 @@ if (registerForm) {
     btnRegistro.textContent = "Creando cuenta...";
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
+
       const response = await fetch(`${BASE_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ nombre, email, password }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       const data = await response.json();
 
@@ -255,9 +261,13 @@ if (registerForm) {
       btnRegistro.disabled = false;
       btnRegistro.textContent = "Crear cuenta";
     } catch (error) {
-      showToast("No se pudo conectar con el servidor", "error");
+      if (error.name === 'AbortError') {
+        showToast('El servidor tardó demasiado, pero tu cuenta puede haberse creado. Intenta iniciar sesión.', 'info', 6000);
+      } else {
+        showToast('No se pudo conectar con el servidor', 'error');
+      }
       btnRegistro.disabled = false;
-      btnRegistro.textContent = "Crear cuenta";
+      btnRegistro.textContent = 'Crear cuenta';
     }
   });
 }
@@ -1126,6 +1136,9 @@ if (reservaForm) {
     }
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
+
       const response = await fetch(`${BASE_URL}/api/reservas`, {
         method: "POST",
         headers: {
@@ -1133,7 +1146,10 @@ if (reservaForm) {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ mascota, fecha, direccion, notas }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       const data = await response.json();
 
@@ -1149,9 +1165,14 @@ if (reservaForm) {
       btnReserva.disabled = false;
       btnReserva.textContent = "Crear reserva";
     } catch (error) {
-      showToast("No se pudo conectar con el servidor", "error");
+      if (error.name === 'AbortError') {
+        showToast('El servidor tardó demasiado, pero tu reserva puede haberse creado. Verifica en tu lista.', 'info', 6000);
+        cargarReservas();
+      } else {
+        showToast('No se pudo conectar con el servidor', 'error');
+      }
       btnReserva.disabled = false;
-      btnReserva.textContent = "Crear reserva";
+      btnReserva.textContent = 'Crear reserva';
     }
   });
 }

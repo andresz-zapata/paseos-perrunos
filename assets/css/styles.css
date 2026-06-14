@@ -1020,8 +1020,12 @@ h2 {
   }
 }
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 @keyframes scaleIn {
   from {
@@ -1042,13 +1046,25 @@ h2 {
 .animate-scaleIn {
   animation: scaleIn 0.3s ease forwards;
 }
-.animate-delay-1 { animation-delay: 0.05s; }
-.animate-delay-2 { animation-delay: 0.1s; }
-.animate-delay-3 { animation-delay: 0.15s; }
-.animate-delay-4 { animation-delay: 0.2s; }
-.animate-delay-5 { animation-delay: 0.25s; }
+.animate-delay-1 {
+  animation-delay: 0.05s;
+}
+.animate-delay-2 {
+  animation-delay: 0.1s;
+}
+.animate-delay-3 {
+  animation-delay: 0.15s;
+}
+.animate-delay-4 {
+  animation-delay: 0.2s;
+}
+.animate-delay-5 {
+  animation-delay: 0.25s;
+}
 
-.opacity-0 { opacity: 0; }
+.opacity-0 {
+  opacity: 0;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .animate-fadeInUp,
@@ -1061,8 +1077,12 @@ h2 {
 
 /* Skeleton Loading */
 @keyframes shimmer {
-  0% { background-position: -400px 0; }
-  100% { background-position: 400px 0; }
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
 }
 .skeleton {
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
@@ -1137,7 +1157,7 @@ h2 {
   border-radius: 12px;
   font-size: 15px;
   font-weight: 500;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.15);
   pointer-events: auto;
   animation: toastIn 0.3s ease forwards;
@@ -1327,7 +1347,11 @@ h2 {
 }
 .editar-botones button[type="submit"] {
   flex: 1;
-  background: linear-gradient(135deg, var(--verde-secundario), var(--verde-principal));
+  background: linear-gradient(
+    135deg,
+    var(--verde-secundario),
+    var(--verde-principal)
+  );
   color: white;
   border: none;
   padding: 10px;
@@ -1450,7 +1474,7 @@ h2 {
   font-weight: 500;
   cursor: pointer;
   transition: 0.3s;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 .modal-btn-cancelar:hover {
   border-color: var(--verde-principal);
@@ -1467,7 +1491,7 @@ h2 {
   font-weight: 500;
   cursor: pointer;
   transition: 0.3s;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 .modal-btn-eliminar:hover {
   background-color: #c53030;
@@ -1489,7 +1513,7 @@ h2 {
   padding: 8px 24px;
   border-radius: 20px;
   font-size: 14px;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: 500;
   cursor: pointer;
   transition: 0.3s;
@@ -1563,7 +1587,7 @@ h2 {
   border: 1px solid #d1d5db;
   border-radius: 10px;
   font-size: 15px;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   outline: none;
   transition: 0.3s;
   background-color: var(--blanco);
@@ -1578,7 +1602,7 @@ h2 {
   border: 1px solid #d1d5db;
   border-radius: 10px;
   font-size: 15px;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   outline: none;
   transition: 0.3s;
   background-color: var(--blanco);
@@ -1604,7 +1628,6 @@ h2 {
 
 /* Responsive Tablets (768px) */
 @media (max-width: 768px) {
-
   /* Navbar */
   .navbar {
     flex-direction: column;
@@ -1791,7 +1814,6 @@ h2 {
 
 /* Responsive - Móviles (480px) */
 @media (max-width: 480px) {
-
   /* Navbar */
   .navbar {
     padding: 12px 16px;
