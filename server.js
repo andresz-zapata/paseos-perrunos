@@ -72,26 +72,21 @@ const mascotasRoutes = require("./routes/mascotas");
 app.use("/api/mascotas", mascotasRoutes);
 const reservasRoutes = require("./routes/reservas");
 app.use("/api/reservas", reservasRoutes);
-app.get(/^(?!\/api).*$/, (req, res) => {
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api')) return next();
+  
   const paginasValidas = [
-    "index.html",
-    "login.html",
-    "registro.html",
-    "recuperar.html",
-    "perfil.html",
-    "mascotas.html",
-    "reservas.html",
-    "admin.html",
-    "paseos.html",
-    "404.html",
+    'index.html', 'login.html', 'registro.html', 'recuperar.html',
+    'perfil.html', 'mascotas.html', 'reservas.html', 'admin.html',
+    'paseos.html', '404.html'
   ];
 
-  const ruta = req.path.replace("/", "") || "index.html";
+  const ruta = req.path.replace('/', '') || 'index.html';
 
-  if (paginasValidas.includes(ruta) || ruta === "") {
-    res.sendFile(path.join(__dirname, ruta === "" ? "index.html" : ruta));
+  if (paginasValidas.includes(ruta) || ruta === '') {
+    res.sendFile(path.join(__dirname, ruta === '' ? 'index.html' : ruta));
   } else {
-    res.status(404).sendFile(path.join(__dirname, "404.html"));
+    res.status(404).sendFile(path.join(__dirname, '404.html'));
   }
 });
 
