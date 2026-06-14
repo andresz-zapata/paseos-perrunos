@@ -61,17 +61,13 @@ router.post(
 
       await nuevoUsuario.save();
 
-      try {
-        await enviarBienvenida(nombre, email);
-        console.log('✅ Email de bienvenida enviado a:', email);
-      } catch (emailError) {
-        console.error("❌ Error al enviar email de bienvenida:");
-        console.error("Mensaje:", emailError.message);
-        console.error("Código:", emailError.code);
-        console.error("Respuesta:", emailError.response);
-      }
-
       res.status(201).json({ message: "¡Cuenta creada correctamente! 🎉" });
+
+      enviarBienvenida(nombre, email)
+        .then(() => console.log('✅ Email de bienvenida enviado a:', email))
+        .catch((emailError) => {
+          console.error("❌ Error al enviar email de bienvenida:", emailError.message);
+        });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Error en el servidor" });
