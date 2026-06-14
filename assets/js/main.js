@@ -478,45 +478,56 @@ if (editarPerfilForm) {
       if (data.nombre) nombreInput.value = data.nombre;
     });
 
-  editarPerfilForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const nombre = document.querySelector("#editar-perfil-nombre").value;
-    const passwordActual = document.querySelector(
-      "#editar-perfil-password-actual"
-    ).value;
-    const passwordNueva = document.querySelector(
-      "#editar-perfil-password-nueva"
-    ).value;
-
-    try {
-      const response = await fetch(`${BASE_URL}/api/auth/perfil`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ nombre, passwordActual, passwordNueva }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        showToast(data.message, "success");
-        localStorage.setItem("nombre", data.nombre);
-        document.querySelector("#perfil-nombre").textContent = data.nombre;
-        if (nombreUsuario) nombreUsuario.textContent = `👤 ${data.nombre}`;
-        editarPerfilForm.reset();
-        nombreInput.value = data.nombre;
-        perfilEditarForm.style.display = "none";
-        perfilEditarArrow.classList.remove("abierto");
-      } else {
-        showToast(data.message, "error");
+    editarPerfilForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+  
+      const nombre = document.querySelector("#editar-perfil-nombre").value;
+      const emailNuevo = document.querySelector("#editar-perfil-email").value;
+      const passwordActual = document.querySelector(
+        "#editar-perfil-password-actual"
+      ).value;
+      const passwordNueva = document.querySelector(
+        "#editar-perfil-password-nueva"
+      ).value;
+  
+      const btnGuardar = editarPerfilForm.querySelector('button[type="submit"]');
+      btnGuardar.disabled = true;
+      btnGuardar.textContent = "Guardando...";
+  
+      try {
+        const response = await fetch(`${BASE_URL}/api/auth/perfil`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ nombre, emailNuevo, passwordActual, passwordNueva }),
+        });
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+          showToast(data.message, "success");
+          localStorage.setItem("nombre", data.nombre);
+          document.querySelector("#perfil-nombre").textContent = data.nombre;
+          if (nombreUsuario) nombreUsuario.textContent = `👤 ${data.nombre}`;
+          if (data.email) {
+            document.querySelector("#perfil-email").textContent = data.email;
+          }
+          editarPerfilForm.reset();
+          nombreInput.value = data.nombre;
+          perfilEditarForm.style.display = "none";
+          perfilEditarArrow.classList.remove("abierto");
+        } else {
+          showToast(data.message, "error");
+        }
+      } catch (error) {
+        showToast("No se pudo conectar con el servidor", "error");
+      } finally {
+        btnGuardar.disabled = false;
+        btnGuardar.textContent = "Guardar cambios";
       }
-    } catch (error) {
-      showToast("No se pudo conectar con el servidor", "error");
-    }
-  });
+    });
 }
 
 if (cerrarSesion) {

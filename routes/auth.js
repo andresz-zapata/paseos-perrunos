@@ -190,6 +190,10 @@ router.put('/perfil', verificarToken, [
     .trim()
     .notEmpty().withMessage('El nombre es obligatorio')
     .isLength({ min: 3 }).withMessage('El nombre debe tener mínimo 3 caracteres'),
+  body('email')
+    .optional({ checkFalsy: true })
+    .isEmail().withMessage('El correo no tiene un formato válido')
+    .normalizeEmail(),
   body('passwordActual')
     .optional({ checkFalsy: true }),
   body('passwordNueva')
@@ -211,9 +215,27 @@ router.put('/perfil', verificarToken, [
 
     usuario.nombre = req.body.nombre;
 
+    if (req.body.emailNuevo && req.body.emailNuevo !== usuario.email) {
+      if (!req.body.passwordActual) {
+        return res.status(400).json({ message: 'Debes ingresar tu contraseña actual para cambiar el correo' });
+      }
+
+      const passwordCorrecta = await bcrypt.compare(req.body.passwordActual, usuario.password);
+      if (!passwordCorrecta) {
+        return res.status(400).json({ message: 'La contraseña actual es incorrecta' });
+      }
+
+      const emailExiste = await User.findOne({ email: req.body.emailNuevo });
+      if (emailExiste) {
+        return res.status(400).json({ message: 'Ese correo ya está registrado por otro usuario' });
+      }
+
+      usuario.email = req.body.emailNuevo;
+    }
+
     if (req.body.passwordNueva) {
       if (!req.body.passwordActual) {
-        return res.status(400).json({ message: 'Debes ingresar tu contraseña actual' });
+        return res.status(400).json({ message: 'Debes ingresar tu contraseña actual para cambiarla' });
       }
 
       const passwordCorrecta = await bcrypt.compare(req.body.passwordActual, usuario.password);
@@ -229,7 +251,8 @@ router.put('/perfil', verificarToken, [
 
     res.status(200).json({
       message: '¡Perfil actualizado correctamente! 🎉',
-      nombre: usuario.nombre
+      nombre: usuario.nombre,
+      email: usuario.email
     });
 
   } catch (error) {
