@@ -225,6 +225,10 @@ if (registerForm) {
       return;
     }
 
+    const btnRegistro = registerForm.querySelector('button[type="submit"]');
+      btnRegistro.disabled = true;
+      btnRegistro.textContent = 'Creando cuenta...';
+
     try {
       const response = await fetch(`${BASE_URL}/api/auth/register`, {
         method: "POST",
@@ -242,9 +246,12 @@ if (registerForm) {
       } else {
         showToast(data.message, 'error');
       }
+      btnRegistro.disabled = false;
+      btnRegistro.textContent = 'Crear cuenta';
     } catch (error) {
-      message.textContent = "No se pudo conectar con el servidor";
-      message.style.color = "red";
+      showToast('No se pudo conectar con el servidor', 'error');
+      btnRegistro.disabled = false;
+      btnRegistro.textContent = 'Crear cuenta';
     }
   });
 }
@@ -262,6 +269,10 @@ if (loginForm && document.querySelector("#login-password")) {
     const message = document.createElement("p");
     message.style.marginTop = "10px";
     message.style.fontWeight = "500";
+
+    const btnLogin = loginForm.querySelector('button[type="submit"]');
+      btnLogin.disabled = true;
+      btnLogin.textContent = 'Entrando...';
 
     try {
       const response = await fetch(`${BASE_URL}/api/auth/login`, {
@@ -292,11 +303,14 @@ if (loginForm && document.querySelector("#login-password")) {
         }, 1500);
       } else {
         showToast(data.message, 'error');
+        btnLogin.disabled = false;
+        btnLogin.textContent = 'Entrar';
       }
     } catch (error) {
-      message.textContent = "No se pudo conectar con el servidor";
-      message.style.color = "red";
-    }
+      showToast('No se pudo conectar con el servidor', 'error');
+      btnLogin.disabled = false;
+      btnLogin.textContent = 'Entrar';
+    } 
 
     const form = document.querySelector(".auth-form");
     const existing = form.querySelector("p.login-msg");
@@ -1048,6 +1062,10 @@ if (reservaForm) {
   reservaForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    const btnReserva = reservaForm.querySelector('button[type="submit"]');
+    btnReserva.disabled = true;
+    btnReserva.textContent = 'Creando reserva...';
+
     const message = document.querySelector("#reserva-message");
     const mascota = document.querySelector("#reserva-mascota").value;
     const fecha = document.querySelector("#reserva-fecha").value;
@@ -1081,9 +1099,12 @@ if (reservaForm) {
       } else {
         showToast(data.message, 'error');
       }
+      btnReserva.disabled = false;
+      btnReserva.textContent = 'Crear reserva';
     } catch (error) {
-      message.textContent = "No se pudo conectar con el servidor";
-      message.style.color = "red";
+      showToast('No se pudo conectar con el servidor', 'error');
+      btnReserva.disabled = false;
+      btnReserva.textContent = 'Crear reserva';
     }
   });
 }
