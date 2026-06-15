@@ -261,13 +261,17 @@ if (registerForm) {
       btnRegistro.disabled = false;
       btnRegistro.textContent = "Crear cuenta";
     } catch (error) {
-      if (error.name === 'AbortError') {
-        showToast('El servidor tardó demasiado, pero tu cuenta puede haberse creado. Intenta iniciar sesión.', 'info', 6000);
+      if (error.name === "AbortError") {
+        showToast(
+          "El servidor tardó demasiado, pero tu cuenta puede haberse creado. Intenta iniciar sesión.",
+          "info",
+          6000
+        );
       } else {
-        showToast('No se pudo conectar con el servidor', 'error');
+        showToast("No se pudo conectar con el servidor", "error");
       }
       btnRegistro.disabled = false;
-      btnRegistro.textContent = 'Crear cuenta';
+      btnRegistro.textContent = "Crear cuenta";
     }
   });
 }
@@ -478,56 +482,61 @@ if (editarPerfilForm) {
       if (data.nombre) nombreInput.value = data.nombre;
     });
 
-    editarPerfilForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-  
-      const nombre = document.querySelector("#editar-perfil-nombre").value;
-      const emailNuevo = document.querySelector("#editar-perfil-email").value;
-      const passwordActual = document.querySelector(
-        "#editar-perfil-password-actual"
-      ).value;
-      const passwordNueva = document.querySelector(
-        "#editar-perfil-password-nueva"
-      ).value;
-  
-      const btnGuardar = editarPerfilForm.querySelector('button[type="submit"]');
-      btnGuardar.disabled = true;
-      btnGuardar.textContent = "Guardando...";
-  
-      try {
-        const response = await fetch(`${BASE_URL}/api/auth/perfil`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ nombre, emailNuevo, passwordActual, passwordNueva }),
-        });
-  
-        const data = await response.json();
-  
-        if (response.ok) {
-          showToast(data.message, "success");
-          localStorage.setItem("nombre", data.nombre);
-          document.querySelector("#perfil-nombre").textContent = data.nombre;
-          if (nombreUsuario) nombreUsuario.textContent = `👤 ${data.nombre}`;
-          if (data.email) {
-            document.querySelector("#perfil-email").textContent = data.email;
-          }
-          editarPerfilForm.reset();
-          nombreInput.value = data.nombre;
-          perfilEditarForm.style.display = "none";
-          perfilEditarArrow.classList.remove("abierto");
-        } else {
-          showToast(data.message, "error");
+  editarPerfilForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const nombre = document.querySelector("#editar-perfil-nombre").value;
+    const emailNuevo = document.querySelector("#editar-perfil-email").value;
+    const passwordActual = document.querySelector(
+      "#editar-perfil-password-actual"
+    ).value;
+    const passwordNueva = document.querySelector(
+      "#editar-perfil-password-nueva"
+    ).value;
+
+    const btnGuardar = editarPerfilForm.querySelector('button[type="submit"]');
+    btnGuardar.disabled = true;
+    btnGuardar.textContent = "Guardando...";
+
+    try {
+      const response = await fetch(`${BASE_URL}/api/auth/perfil`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          nombre,
+          emailNuevo,
+          passwordActual,
+          passwordNueva,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showToast(data.message, "success");
+        localStorage.setItem("nombre", data.nombre);
+        document.querySelector("#perfil-nombre").textContent = data.nombre;
+        if (nombreUsuario) nombreUsuario.textContent = `👤 ${data.nombre}`;
+        if (data.email) {
+          document.querySelector("#perfil-email").textContent = data.email;
         }
-      } catch (error) {
-        showToast("No se pudo conectar con el servidor", "error");
-      } finally {
-        btnGuardar.disabled = false;
-        btnGuardar.textContent = "Guardar cambios";
+        editarPerfilForm.reset();
+        nombreInput.value = data.nombre;
+        perfilEditarForm.style.display = "none";
+        perfilEditarArrow.classList.remove("abierto");
+      } else {
+        showToast(data.message, "error");
       }
-    });
+    } catch (error) {
+      showToast("No se pudo conectar con el servidor", "error");
+    } finally {
+      btnGuardar.disabled = false;
+      btnGuardar.textContent = "Guardar cambios";
+    }
+  });
 }
 
 if (cerrarSesion) {
@@ -1176,14 +1185,18 @@ if (reservaForm) {
       btnReserva.disabled = false;
       btnReserva.textContent = "Crear reserva";
     } catch (error) {
-      if (error.name === 'AbortError') {
-        showToast('El servidor tardó demasiado, pero tu reserva puede haberse creado. Verifica en tu lista.', 'info', 6000);
+      if (error.name === "AbortError") {
+        showToast(
+          "El servidor tardó demasiado, pero tu reserva puede haberse creado. Verifica en tu lista.",
+          "info",
+          6000
+        );
         cargarReservas();
       } else {
-        showToast('No se pudo conectar con el servidor', 'error');
+        showToast("No se pudo conectar con el servidor", "error");
       }
       btnReserva.disabled = false;
-      btnReserva.textContent = 'Crear reserva';
+      btnReserva.textContent = "Crear reserva";
     }
   });
 }

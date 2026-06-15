@@ -45,8 +45,10 @@ router.post(
       }
 
       const fechaReserva = new Date(fecha);
-      if (fechaReserva <= new Date()) {
-        return res.status(400).json({ message: "La fecha debe ser futura" });
+      const ahora = new Date();
+      ahora.setMinutes(ahora.getMinutes() - 30);
+      if (fechaReserva <= ahora) {
+        return res.status(400).json({ message: "La fecha debe ser al menos 30 minutos en el futuro" });
       }
 
       const reserva = new Reserva({
