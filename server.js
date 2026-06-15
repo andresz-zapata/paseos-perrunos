@@ -83,7 +83,7 @@ app.use((req, res, next) => {
   const paginasValidas = [
     'index.html', 'login.html', 'registro.html', 'recuperar.html',
     'perfil.html', 'mascotas.html', 'reservas.html', 'admin.html',
-    'paseos.html', '404.html'
+    'admin-perfil.html', 'paseos.html', '404.html'
   ];
 
   const ruta = req.path.replace('/', '') || 'index.html';

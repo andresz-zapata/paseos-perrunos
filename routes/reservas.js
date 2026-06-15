@@ -48,11 +48,9 @@ router.post(
       const ahora = new Date();
       ahora.setMinutes(ahora.getMinutes() - 30);
       if (fechaReserva <= ahora) {
-        return res
-          .status(400)
-          .json({
-            message: "La fecha debe ser al menos 30 minutos en el futuro",
-          });
+        return res.status(400).json({
+          message: "La fecha debe ser al menos 30 minutos en el futuro",
+        });
       }
 
       const reserva = new Reserva({
@@ -173,6 +171,28 @@ router.patch("/:id/cancelar", verificarToken, async (req, res) => {
     await reserva.save();
 
     res.status(200).json({ message: "Reserva cancelada correctamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error en el servidor" });
+  }
+});
+
+router.get("/stats", verificarToken, verificarAdmin, async (req, res) => {
+  try {
+    const totalReservas = await Reserva.countDocuments();
+    const pendientes = await Reserva.countDocuments({ estado: "pendiente" });
+    const confirmadas = await Reserva.countDocuments({ estado: "confirmada" });
+    const canceladas = await Reserva.countDocuments({ estado: "cancelada" });
+
+    const ingresoEstimado = confirmadas * 25000;
+
+    res.status(200).json({
+      totalReservas,
+      pendientes,
+      confirmadas,
+      canceladas,
+      ingresoEstimado,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error en el servidor" });

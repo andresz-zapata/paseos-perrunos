@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mi Perfil | Paseos Perrunos</title>
+    <title>Mi Perfil | Admin | Paseos Perrunos</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -17,15 +17,19 @@
       <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">
         ☰
       </button>
-      <h2 class="logo">Paseos Perrunos 🐶</h2>
+      <h2 class="logo">
+        Paseos Perrunos 🐶 <span class="badge-admin">Admin</span>
+      </h2>
       <ul class="menu">
         <li>
           <button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button>
         </li>
+        <li><a href="admin.html">← Panel Admin</a></li>
         <li id="nombre-usuario"></li>
         <li><a href="#" id="cerrar-sesion">Cerrar sesión</a></li>
       </ul>
     </nav>
+
     <section class="perfil-hero">
       <div class="perfil-hero-info">
         <div class="perfil-avatar" id="perfil-avatar">
@@ -35,12 +39,14 @@
             alt="Foto de perfil"
             style="display: none"
           />
-          <span id="perfil-emoji">🐾</span>
+          <span id="perfil-emoji">🛠️</span>
         </div>
         <div class="perfil-hero-texto">
           <h1 id="perfil-nombre">Cargando...</h1>
           <p id="perfil-email" class="perfil-email">Cargando...</p>
-          <p class="perfil-miembro">Miembro de Paseos Perrunos</p>
+          <p class="perfil-miembro" style="color: var(--acento)">
+            Administrador de Paseos Perrunos
+          </p>
           <label class="label-foto-perfil" id="label-foto-perfil">
             📷 Cambiar foto de perfil
             <input
@@ -119,24 +125,6 @@
       </div>
     </section>
 
-    <section class="perfil-secciones">
-      <a href="mascotas.html" class="perfil-seccion-card">
-        <div class="perfil-seccion-icono">🐾</div>
-        <div class="perfil-seccion-info">
-          <h2>Mis Mascotas</h2>
-          <p>Registra y gestiona las mascotas de tu hogar</p>
-        </div>
-        <span class="perfil-seccion-arrow">→</span>
-      </a>
-      <a href="reservas.html" class="perfil-seccion-card">
-        <div class="perfil-seccion-icono">📅</div>
-        <div class="perfil-seccion-info">
-          <h2>Mis Reservas</h2>
-          <p>Agenda y revisa tus paseos programados</p>
-        </div>
-        <span class="perfil-seccion-arrow">→</span>
-      </a>
-    </section>
     <script src="assets/js/main.js"></script>
   </body>
 </html>

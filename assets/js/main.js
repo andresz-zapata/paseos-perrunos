@@ -472,6 +472,26 @@ if (togglePasswordNueva && passwordNuevaInput) {
 const editarPerfilForm = document.querySelector("#editar-perfil-form");
 if (editarPerfilForm) {
   const nombreInput = document.querySelector("#editar-perfil-nombre");
+  const emailInput = document.querySelector("#editar-perfil-email");
+  const passwordNuevaInput2 = document.querySelector(
+    "#editar-perfil-password-nueva"
+  );
+  const campoPaswordActual = document.querySelector("#campo-password-actual");
+
+  const mostrarPasswordActual = () => {
+    const emailCambiado = emailInput.value.trim() !== "";
+    const passwordNueva = passwordNuevaInput2.value.trim() !== "";
+    if (emailCambiado || passwordNueva) {
+      campoPaswordActual.style.display = "block";
+    } else {
+      campoPaswordActual.style.display = "none";
+      document.querySelector("#editar-perfil-password-actual").value = "";
+    }
+  };
+
+  if (emailInput) emailInput.addEventListener("input", mostrarPasswordActual);
+  if (passwordNuevaInput2)
+    passwordNuevaInput2.addEventListener("input", mostrarPasswordActual);
 
   fetch(`${BASE_URL}/api/auth/perfil`, {
     method: "GET",
@@ -1215,6 +1235,197 @@ if (adminLista) {
     nombreUsuario.textContent = `👤 ${nombre}`;
   }
 
+  // Tabs
+  document.querySelectorAll(".admin-tab-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document
+        .querySelectorAll(".admin-tab-btn")
+        .forEach((b) => b.classList.remove("admin-tab-activo"));
+      btn.classList.add("admin-tab-activo");
+
+      const tab = btn.dataset.tab;
+      document.querySelector("#tab-dashboard").style.display =
+        tab === "dashboard" ? "block" : "none";
+      document.querySelector("#tab-reservas").style.display =
+        tab === "reservas" ? "block" : "none";
+      document.querySelector("#tab-usuarios").style.display =
+        tab === "usuarios" ? "block" : "none";
+
+      if (tab === "reservas") cargarTodasLasReservas();
+      if (tab === "usuarios") cargarUsuarios();
+    });
+  });
+
+  // Dashboard stats
+  const cargarStats = async () => {
+    try {
+      const [resAuth, resReservas] = await Promise.all([
+        fetchConRefresh(`${BASE_URL}/api/auth/stats`, { method: "GET" }),
+        fetchConRefresh(`${BASE_URL}/api/reservas/stats`, { method: "GET" }),
+      ]);
+
+      const authData = await resAuth.json();
+      const reservasData = await resReservas.json();
+
+      const statsGrid = document.querySelector("#stats-grid");
+      statsGrid.innerHTML = `
+        <div class="stat-card animate-fadeInUp opacity-0 animate-delay-1">
+          <div class="stat-icono">👥</div>
+          <div class="stat-valor">${authData.totalUsuarios}</div>
+          <div class="stat-label">Usuarios registrados</div>
+        </div>
+        <div class="stat-card animate-fadeInUp opacity-0 animate-delay-2">
+          <div class="stat-icono">🐾</div>
+          <div class="stat-valor">${authData.totalMascotas}</div>
+          <div class="stat-label">Mascotas registradas</div>
+        </div>
+        <div class="stat-card animate-fadeInUp opacity-0 animate-delay-3">
+          <div class="stat-icono">📅</div>
+          <div class="stat-valor">${reservasData.totalReservas}</div>
+          <div class="stat-label">Total de reservas</div>
+        </div>
+        <div class="stat-card animate-fadeInUp opacity-0 animate-delay-4">
+          <div class="stat-icono">⏳</div>
+          <div class="stat-valor">${reservasData.pendientes}</div>
+          <div class="stat-label">Reservas pendientes</div>
+        </div>
+        <div class="stat-card animate-fadeInUp opacity-0 animate-delay-5">
+          <div class="stat-icono">✅</div>
+          <div class="stat-valor">${reservasData.confirmadas}</div>
+          <div class="stat-label">Reservas confirmadas</div>
+        </div>
+        <div class="stat-card stat-ingreso animate-fadeInUp opacity-0 animate-delay-5">
+          <div class="stat-icono">💰</div>
+          <div class="stat-valor">$${reservasData.ingresoEstimado.toLocaleString(
+            "es-CO"
+          )}</div>
+          <div class="stat-label">Ingreso estimado COP</div>
+        </div>
+      `;
+    } catch (error) {
+      console.error("Error al cargar estadísticas:", error);
+    }
+  };
+
+  cargarStats();
+
+  // Usuarios
+  const cargarUsuarios = async () => {
+    const usuariosLista = document.querySelector("#usuarios-lista");
+    const usuariosEmpty = document.querySelector("#usuarios-empty");
+
+    usuariosLista.innerHTML = `
+      ${[1, 2, 3]
+        .map(
+          () => `
+        <div class="skeleton-reserva">
+          <div class="skeleton-reserva-info">
+            <div class="skeleton skeleton-titulo"></div>
+            <div class="skeleton skeleton-texto"></div>
+          </div>
+          <div class="skeleton skeleton-badge"></div>
+        </div>
+      `
+        )
+        .join("")}
+    `;
+
+    try {
+      const response = await fetchConRefresh(`${BASE_URL}/api/auth/usuarios`, {
+        method: "GET",
+      });
+
+      const usuarios = await response.json();
+
+      if (usuarios.length === 0) {
+        usuariosLista.innerHTML = "";
+        usuariosEmpty.style.display = "block";
+        return;
+      }
+
+      usuariosEmpty.style.display = "none";
+      usuariosLista.innerHTML = "";
+
+      usuarios.forEach((usuario, index) => {
+        const card = document.createElement("div");
+        card.classList.add("usuario-card", "animate-fadeInUp", "opacity-0");
+        card.classList.add(`animate-delay-${Math.min(index + 1, 5)}`);
+
+        const avatarHTML = usuario.foto
+          ? `<img src="${usuario.foto}" alt="${usuario.nombre}" />`
+          : "👤";
+
+        card.innerHTML = `
+          <div class="usuario-info">
+            <div class="usuario-avatar">${avatarHTML}</div>
+            <div class="usuario-datos">
+              <h3>${usuario.nombre}</h3>
+              <p>${usuario.email}</p>
+              <p>Miembro desde ${new Date(usuario.createdAt).toLocaleDateString(
+                "es-CO"
+              )}</p>
+            </div>
+          </div>
+          <div class="usuario-acciones">
+            <span class="badge-estado badge-confirmada">${usuario.rol}</span>
+            <button class="btn-hacer-admin" data-id="${
+              usuario._id
+            }" data-rol="${usuario.rol}">
+              ${
+                usuario.rol === "cliente"
+                  ? "⬆️ Hacer admin"
+                  : "⬇️ Hacer cliente"
+              }
+            </button>
+          </div>
+        `;
+
+        usuariosLista.appendChild(card);
+      });
+
+      document.querySelectorAll(".btn-hacer-admin").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.dataset.id;
+          const rolActual = btn.dataset.rol;
+          const nuevoRol = rolActual === "cliente" ? "admin" : "cliente";
+
+          showModal({
+            emoji: "👥",
+            titulo: `¿Cambiar rol a ${nuevoRol}?`,
+            texto: `¿Estás seguro de que quieres cambiar el rol de este usuario a ${nuevoRol}?`,
+            textoBtnConfirmar: "Sí, cambiar",
+            onConfirmar: async () => {
+              try {
+                const response = await fetchConRefresh(
+                  `${BASE_URL}/api/auth/usuarios/${id}/rol`,
+                  {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ rol: nuevoRol }),
+                  }
+                );
+
+                const data = await response.json();
+
+                if (response.ok) {
+                  showToast(data.message, "success");
+                  cargarUsuarios();
+                } else {
+                  showToast(data.message, "error");
+                }
+              } catch (error) {
+                showToast("No se pudo actualizar el rol", "error");
+              }
+            },
+          });
+        });
+      });
+    } catch (error) {
+      console.error("Error al cargar usuarios:", error);
+    }
+  };
+
+  // Reservas
   let todasLasReservas = [];
   let filtroActual = "todas";
 
@@ -1270,9 +1481,7 @@ if (adminLista) {
       `;
 
       card.classList.add("animate-fadeInUp", "opacity-0");
-      const delay = `animate-delay-${Math.min(index + 1, 5)}`;
-      card.classList.add(delay);
-
+      card.classList.add(`animate-delay-${Math.min(index + 1, 5)}`);
       adminLista.appendChild(card);
     });
 
@@ -1284,14 +1493,11 @@ if (adminLista) {
           const estado = btn.dataset.accion;
 
           try {
-            const response = await fetch(
+            const response = await fetchConRefresh(
               `${BASE_URL}/api/reservas/admin/${id}/estado`,
               {
                 method: "PATCH",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ estado }),
               }
             );
@@ -1381,8 +1587,14 @@ if (adminLista) {
       aplicarFiltro(btn.dataset.filtro);
     });
   });
+}
 
-  cargarTodasLasReservas();
+// Admin perfil
+const adminPerfilNombre = document.querySelector("#perfil-nombre");
+if (adminPerfilNombre && localStorage.getItem("rol") === "admin") {
+  if (!token) {
+    window.location.href = "login.html";
+  }
 }
 
 // Botón paseos
