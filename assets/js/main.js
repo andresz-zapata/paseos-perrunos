@@ -1386,10 +1386,8 @@ if (adminLista) {
 }
 
 // Botón paseos
-const btnPaseos = document.querySelector("#btn-paseos");
-
-if (btnPaseos) {
-  btnPaseos.addEventListener("click", () => {
+document.querySelectorAll(".btn-paseos").forEach((btn) => {
+  btn.addEventListener("click", () => {
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -1398,4 +1396,4 @@ if (btnPaseos) {
       window.location.href = "reservas.html";
     }
   });
-}
+});

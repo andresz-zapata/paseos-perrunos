@@ -7,7 +7,7 @@ const Mascota = require("../models/mascota");
 const User = require("../models/user");
 const { enviarConfirmacionReserva } = require("../config/mailer");
 
-const { verificarToken, verificarAdmin } = require('../middleware/auth');
+const { verificarToken, verificarAdmin } = require("../middleware/auth");
 
 router.post(
   "/",
@@ -48,7 +48,11 @@ router.post(
       const ahora = new Date();
       ahora.setMinutes(ahora.getMinutes() - 30);
       if (fechaReserva <= ahora) {
-        return res.status(400).json({ message: "La fecha debe ser al menos 30 minutos en el futuro" });
+        return res
+          .status(400)
+          .json({
+            message: "La fecha debe ser al menos 30 minutos en el futuro",
+          });
       }
 
       const reserva = new Reserva({
