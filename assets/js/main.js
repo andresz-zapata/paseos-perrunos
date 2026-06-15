@@ -225,11 +225,19 @@ if (registerForm) {
       return;
     }
 
+    message.textContent = "";
+
     if (password !== confirmPassword) {
       message.textContent = "Las contraseñas no coinciden";
       message.style.color = "red";
       return;
     }
+
+    registerForm.querySelectorAll('input').forEach(input => {
+      input.addEventListener('input', () => {
+        message.textContent = '';
+      });
+    });
 
     const btnRegistro = registerForm.querySelector('button[type="submit"]');
     btnRegistro.disabled = true;
@@ -363,7 +371,7 @@ if (nombreUsuario && token && nombre) {
 
 if (perfilNombre) {
   if (!token) {
-    window.location.href = "login.html";
+    window.location.replace("login.html");
   } else {
     perfilNombre.textContent = nombre;
 
@@ -574,7 +582,7 @@ if (cerrarSesion) {
     localStorage.removeItem("nombre");
     localStorage.removeItem("rol");
     localStorage.removeItem("refreshToken");
-    window.location.href = "login.html";
+    window.location.replace("login.html");
   });
 }
 
@@ -604,7 +612,7 @@ const mascotasEmpty = document.querySelector("#mascotas-empty");
 
 if (mascotaForm) {
   if (!token) {
-    window.location.href = "login.html";
+    window.location.replace("login.html");
   }
 
   let todasLasMascotas = [];
@@ -964,7 +972,7 @@ const reservasEmpty = document.querySelector("#reservas-empty");
 
 if (reservaForm) {
   if (!token) {
-    window.location.href = "login.html";
+    window.location.replace("login.html");
   }
 
   const fechaInput = document.querySelector("#reserva-fecha");
@@ -1228,7 +1236,7 @@ const rol = localStorage.getItem("rol");
 
 if (adminLista) {
   if (!token || rol !== "admin") {
-    window.location.href = "login.html";
+    window.location.replace("login.html");
   }
 
   if (nombreUsuario && token && nombre) {

@@ -1777,6 +1777,27 @@ h2 {
   background-color: #1e293b;
 }
 
+/* Botón volver admin */
+.btn-volver-admin {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--hero-fondo-1);
+  color: var(--verde-principal) !important;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-weight: 600 !important;
+  font-size: 14px;
+  transition: 0.3s;
+  text-decoration: none;
+}
+.btn-volver-admin:hover {
+  background-color: var(--verde-principal);
+  color: white !important;
+}
+
+/* Final CSS General */
+
 /* Responsive Tablets (768px) */
 @media (max-width: 768px) {
   /* Navbar */

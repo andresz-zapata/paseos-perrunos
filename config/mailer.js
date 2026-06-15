@@ -68,7 +68,7 @@ const enviarConfirmacionReserva = async (nombre, email, mascotaNombre, fecha, di
           </div>
           <div style="text-align: center;">
             <a href="https://andresz-zapata.github.io/paseos-perrunos/reservas.html"
-               style="background: linear-gradient(135deg, #27ae60, #1f7a63); color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 16px;">
+               style="background: linear-gradient(135deg, #27ae60, #1f7a63); color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block; mso-padding-alt: 0; text-align: center;">
               Ver mis reservas 📅
             </a>
           </div>
