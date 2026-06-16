@@ -10,14 +10,11 @@
   <body>
     <!-- NAVBAR -->
     <nav class="navbar">
+      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">☰</button>
       <div class="logo">🐶 Paseos Perrunos</div>
       <ul class="menu">
-        <li>
-          <button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button>
-        </li>
-        <li><a href="index.html">Inicio</a></li>
-        <li><a href="paseos.html" class="activo">Paseos</a></li>
-        <li><a href="login.html">Mi cuenta</a></li>
+        <li><button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button></li>
+        <li><a href="login.html" id="mi-cuenta-paseos">Mi cuenta</a></li>
       </ul>
     </nav>
 
@@ -62,27 +59,65 @@
       </div>
     </section>
 
-    <!-- BENEFICIOS EMOCIONALES -->
-    <section class="container">
-      <h2>Tu perro feliz, tú tranquilo ❤️</h2>
+    <!-- GALERÍA / CARRUSEL -->
+<section class="container carrusel-seccion">
+  <h2>Momentos que nos definen ❤️</h2>
+  <p>Cada paseo es una aventura llena de amor y cuidado.</p>
 
-      <div class="cards">
-        <div class="card">
-          <h3>Menos ansiedad</h3>
-          <p>Evita estrés y comportamientos destructivos en casa.</p>
+  <div class="carrusel-wrapper">
+    <button class="carrusel-btn carrusel-prev" aria-label="Anterior">&#8249;</button>
+
+    <div class="carrusel-track-container">
+      <div class="carrusel-track" id="carrusel-track">
+
+        <div class="carrusel-slide">
+          <img src="assets/img/Logan.jpeg" alt="Logan en un Paseo Perruno" />
+          <div class="carrusel-overlay">
+            <h3>Aventuras al aire libre</h3>
+            <p>Exploramos los mejores parques de la ciudad juntos.</p>
+          </div>
         </div>
 
-        <div class="card">
-          <h3>Más energía</h3>
-          <p>Tu perro se mantiene activo y saludable todos los días.</p>
+        <div class="carrusel-slide">
+          <img src="assets/img/Oslo.jpeg" alt="Oslo en un Paseo Perruno" />
+          <div class="carrusel-overlay">
+            <h3>Cuidado con amor</h3>
+            <p>Cada mascota recibe atención personalizada y cariñosa.</p>
+          </div>
         </div>
 
-        <div class="card">
-          <h3>Tiempo para ti</h3>
-          <p>Nosotros nos encargamos mientras tú trabajas o estudias.</p>
+        <div class="carrusel-slide">
+          <img src="assets/img/Anny.jpeg" alt="Anny Paseando" />
+          <div class="carrusel-overlay">
+            <h3>Energía y diversión</h3>
+            <p>Tus peludos regresan felices y bien ejercitados.</p>
+          </div>
         </div>
+
+        <div class="carrusel-slide">
+          <img src="assets/img/Mia.jpeg" alt="Mia Paseando" />
+          <div class="carrusel-overlay">
+            <h3>Confianza total</h3>
+            <p>Paseadores verificados que aman lo que hacen.</p>
+          </div>
+        </div>
+
+        <div class="carrusel-slide">
+          <img src="assets/img/paseo5.jpg" alt="Paseo 5" />
+          <div class="carrusel-overlay">
+            <h3>Momentos únicos</h3>
+            <p>Capturamos cada instante especial de tu mascota.</p>
+          </div>
+        </div>
+
       </div>
-    </section>
+    </div>
+
+    <button class="carrusel-btn carrusel-next" aria-label="Siguiente">&#8250;</button>
+  </div>
+
+  <div class="carrusel-dots" id="carrusel-dots"></div>
+</section>
 
     <!-- CÓMO FUNCIONA (MARKETPLACE) -->
     <section class="container">
@@ -162,8 +197,9 @@
     <section class="container">
       <h2>¿Listo para el primer paseo? 🐶</h2>
       <p>Reserva en minutos y dale a tu perro la mejor experiencia.</p>
-
-      <button class="btn-paseos btn-agregar">Reservar ahora</button>
+      <div style="margin-top: 30px;">
+        <button class="btn-paseos btn-agregar">Reservar ahora</button>
+      </div>
     </section>
 
     <!-- Footer -->

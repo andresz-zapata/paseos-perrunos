@@ -351,7 +351,7 @@ if (loginForm && document.querySelector("#login-password")) {
 const token = localStorage.getItem("token");
 const nombre = localStorage.getItem("nombre");
 
-// Navbar index.html
+// Navbar index.html y paseos.html
 const miCuentaLink = document.querySelector(".menu a[href='login.html']");
 if (miCuentaLink && token && nombre) {
   miCuentaLink.textContent = `👤 ${nombre}`;
@@ -1617,3 +1617,84 @@ document.querySelectorAll(".btn-paseos").forEach((btn) => {
     }
   });
 });
+
+// Carrusel
+const carruselTrack = document.querySelector('#carrusel-track');
+const carruselDots = document.querySelector('#carrusel-dots');
+
+if (carruselTrack) {
+  const slides = carruselTrack.querySelectorAll('.carrusel-slide');
+  const totalSlides = slides.length;
+  let slideActual = 0;
+  let intervalo;
+
+  // Crear puntos
+  slides.forEach((_, index) => {
+    const dot = document.createElement('button');
+    dot.classList.add('carrusel-dot');
+    dot.setAttribute('aria-label', `Ir a slide ${index + 1}`);
+    if (index === 0) dot.classList.add('activo');
+    dot.addEventListener('click', () => {
+      irASlide(index);
+      reiniciarIntervalo();
+    });
+    carruselDots.appendChild(dot);
+  });
+
+  const actualizarDots = () => {
+    document.querySelectorAll('.carrusel-dot').forEach((dot, index) => {
+      dot.classList.toggle('activo', index === slideActual);
+    });
+  };
+
+  const irASlide = (index) => {
+    slideActual = (index + totalSlides) % totalSlides;
+    carruselTrack.style.transform = `translateX(-${slideActual * 100}%)`;
+    actualizarDots();
+  };
+
+  const siguiente = () => irASlide(slideActual + 1);
+  const anterior = () => irASlide(slideActual - 1);
+
+  document.querySelector('.carrusel-next').addEventListener('click', () => {
+    siguiente();
+    reiniciarIntervalo();
+  });
+
+  document.querySelector('.carrusel-prev').addEventListener('click', () => {
+    anterior();
+    reiniciarIntervalo();
+  });
+
+  const iniciarIntervalo = () => {
+    intervalo = setInterval(siguiente, 4000);
+  };
+
+  const reiniciarIntervalo = () => {
+    clearInterval(intervalo);
+    iniciarIntervalo();
+  };
+
+  // Soporte táctil para móvil
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  carruselTrack.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  });
+
+  carruselTrack.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    const diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        siguiente();
+      } else {
+        anterior();
+      }
+      reiniciarIntervalo();
+    }
+  });
+
+  iniciarIntervalo();
+}
