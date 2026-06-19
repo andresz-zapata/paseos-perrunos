@@ -10,11 +10,30 @@
   <body>
     <!-- NAVBAR -->
     <nav class="navbar">
-      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">☰</button>
+      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">
+        ☰
+      </button>
       <div class="logo">🐶 Paseos Perrunos</div>
       <ul class="menu">
-        <li><button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button></li>
-        <li><a href="login.html" id="mi-cuenta-paseos">Mi cuenta</a></li>
+        <li>
+          <button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button>
+        </li>
+        <li
+          class="navbar-usuario-dropdown"
+          id="navbar-usuario-dropdown"
+          style="display: none"
+        >
+          <button class="btn-usuario-dropdown" id="btn-usuario-dropdown">
+            <span>👤</span>
+            <span id="nombre-usuario-paseos"></span>
+            <span class="dropdown-flecha">▾</span>
+          </button>
+          <div class="dropdown-menu" id="dropdown-menu" style="display: none">
+            <a href="perfil.html">Mi perfil</a>
+            <a href="reservas.html">Mis reservas</a>
+            <a href="#" id="cerrar-sesion-paseos">Cerrar sesión</a>
+          </div>
+        </li>
       </ul>
     </nav>
 
@@ -32,6 +51,38 @@
         <a href="#paseadores" class="btn-secundario"> Ver paseadores </a>
       </div>
     </section>
+
+    <div class="contadores-grid">
+      <div class="contador-item">
+        <div class="contador-numero-wrapper">
+          <span class="contador-numero" data-target="500">0</span>
+          <span class="contador-sufijo">+</span>
+        </div>
+        <p class="contador-label">Paseos realizados</p>
+      </div>
+      <div class="contador-item">
+        <div class="contador-numero-wrapper">
+          <span class="contador-numero" data-target="120">0</span>
+          <span class="contador-sufijo">+</span>
+        </div>
+        <p class="contador-label">Clientes felices</p>
+      </div>
+      <div class="contador-item">
+        <div class="contador-numero-wrapper">
+          <span class="contador-numero" data-target="3">0</span>
+        </div>
+        <p class="contador-label">Paseadores verificados</p>
+      </div>
+      <div class="contador-item">
+        <div class="contador-numero-wrapper">
+          <span class="contador-numero" data-target="4.9" data-decimal="true"
+            >0</span
+          >
+          <span class="contador-sufijo">⭐</span>
+        </div>
+        <p class="contador-label">Calificación promedio</p>
+      </div>
+    </div>
 
     <!-- PROPUESTA DE VALOR -->
     <section class="container">
@@ -60,64 +111,69 @@
     </section>
 
     <!-- GALERÍA / CARRUSEL -->
-<section class="container carrusel-seccion">
-  <h2>Momentos que nos definen ❤️</h2>
-  <p>Cada paseo es una aventura llena de amor y cuidado.</p>
+    <section class="container carrusel-seccion">
+      <h2>Momentos que nos definen ❤️</h2>
+      <p>Cada paseo es una aventura llena de amor y cuidado.</p>
 
-  <div class="carrusel-wrapper">
-    <button class="carrusel-btn carrusel-prev" aria-label="Anterior">&#8249;</button>
+      <div class="carrusel-wrapper">
+        <button class="carrusel-btn carrusel-prev" aria-label="Anterior">
+          &#8249;
+        </button>
 
-    <div class="carrusel-track-container">
-      <div class="carrusel-track" id="carrusel-track">
+        <div class="carrusel-track-container">
+          <div class="carrusel-track" id="carrusel-track">
+            <div class="carrusel-slide">
+              <img
+                src="assets/img/Logan.jpeg"
+                alt="Logan en un Paseo Perruno"
+              />
+              <div class="carrusel-overlay">
+                <h3>Aventuras al aire libre</h3>
+                <p>Exploramos los mejores parques de la ciudad juntos.</p>
+              </div>
+            </div>
 
-        <div class="carrusel-slide">
-          <img src="assets/img/Logan.jpeg" alt="Logan en un Paseo Perruno" />
-          <div class="carrusel-overlay">
-            <h3>Aventuras al aire libre</h3>
-            <p>Exploramos los mejores parques de la ciudad juntos.</p>
+            <div class="carrusel-slide">
+              <img src="assets/img/Oslo.jpeg" alt="Oslo en un Paseo Perruno" />
+              <div class="carrusel-overlay">
+                <h3>Cuidado con amor</h3>
+                <p>Cada mascota recibe atención personalizada y cariñosa.</p>
+              </div>
+            </div>
+
+            <div class="carrusel-slide">
+              <img src="assets/img/Anny.jpeg" alt="Anny Paseando" />
+              <div class="carrusel-overlay">
+                <h3>Energía y diversión</h3>
+                <p>Tus peludos regresan felices y bien ejercitados.</p>
+              </div>
+            </div>
+
+            <div class="carrusel-slide">
+              <img src="assets/img/Mia.jpeg" alt="Mia Paseando" />
+              <div class="carrusel-overlay">
+                <h3>Confianza total</h3>
+                <p>Paseadores verificados que aman lo que hacen.</p>
+              </div>
+            </div>
+
+            <div class="carrusel-slide">
+              <img src="assets/img/Luna.jpg" alt="Paseo Perruno con Luna" />
+              <div class="carrusel-overlay">
+                <h3>Momentos únicos</h3>
+                <p>Capturamos cada instante especial de tu mascota.</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="carrusel-slide">
-          <img src="assets/img/Oslo.jpeg" alt="Oslo en un Paseo Perruno" />
-          <div class="carrusel-overlay">
-            <h3>Cuidado con amor</h3>
-            <p>Cada mascota recibe atención personalizada y cariñosa.</p>
-          </div>
-        </div>
-
-        <div class="carrusel-slide">
-          <img src="assets/img/Anny.jpeg" alt="Anny Paseando" />
-          <div class="carrusel-overlay">
-            <h3>Energía y diversión</h3>
-            <p>Tus peludos regresan felices y bien ejercitados.</p>
-          </div>
-        </div>
-
-        <div class="carrusel-slide">
-          <img src="assets/img/Mia.jpeg" alt="Mia Paseando" />
-          <div class="carrusel-overlay">
-            <h3>Confianza total</h3>
-            <p>Paseadores verificados que aman lo que hacen.</p>
-          </div>
-        </div>
-
-        <div class="carrusel-slide">
-          <img src="assets/img/paseo5.jpg" alt="Paseo 5" />
-          <div class="carrusel-overlay">
-            <h3>Momentos únicos</h3>
-            <p>Capturamos cada instante especial de tu mascota.</p>
-          </div>
-        </div>
-
+        <button class="carrusel-btn carrusel-next" aria-label="Siguiente">
+          &#8250;
+        </button>
       </div>
-    </div>
 
-    <button class="carrusel-btn carrusel-next" aria-label="Siguiente">&#8250;</button>
-  </div>
-
-  <div class="carrusel-dots" id="carrusel-dots"></div>
-</section>
+      <div class="carrusel-dots" id="carrusel-dots"></div>
+    </section>
 
     <!-- CÓMO FUNCIONA (MARKETPLACE) -->
     <section class="container">
@@ -152,22 +208,85 @@
       <p>Personas reales, verificadas y amantes de los animales.</p>
 
       <div class="cards">
-        <div class="card">
-          <h3>Laura 🐕</h3>
-          <p>+120 paseos | 4.9 ⭐</p>
+        <div
+          class="paseador-card card"
+          data-nombre="Laura García"
+          data-emoji="🐕"
+          data-paseos="120"
+          data-calificacion="4.9"
+          data-experiencia="3 años"
+          data-especialidad="Perros de raza grande"
+          data-descripcion="Amante de los animales desde pequeña. Me especializo en perros de raza grande y tengo experiencia en primeros auxilios para mascotas."
+        >
+          <div class="paseador-emoji">🐕</div>
+          <h3>Laura García</h3>
+          <p class="paseador-stats">+120 paseos | 4.9 ⭐</p>
+          <p class="paseador-especialidad">Perros de raza grande</p>
+          <button class="btn-ver-paseador">Ver perfil</button>
         </div>
 
-        <div class="card">
-          <h3>Andrés 🐾</h3>
-          <p>+80 paseos | 4.8 ⭐</p>
+        <div
+          class="paseador-card card"
+          data-nombre="Andrés López"
+          data-emoji="🐾"
+          data-paseos="80"
+          data-calificacion="4.8"
+          data-experiencia="2 años"
+          data-especialidad="Cachorros y razas pequeñas"
+          data-descripcion="Veterinario en formación con pasión por el cuidado animal. Me especializo en cachorros y razas pequeñas que necesitan atención especial."
+        >
+          <div class="paseador-emoji">🐾</div>
+          <h3>Andrés López</h3>
+          <p class="paseador-stats">+80 paseos | 4.8 ⭐</p>
+          <p class="paseador-especialidad">Cachorros y razas pequeñas</p>
+          <button class="btn-ver-paseador">Ver perfil</button>
         </div>
 
-        <div class="card">
-          <h3>Camila 🐶</h3>
-          <p>+150 paseos | 5.0 ⭐</p>
+        <div
+          class="paseador-card card"
+          data-nombre="Camila Torres"
+          data-emoji="🐶"
+          data-paseos="150"
+          data-calificacion="5.0"
+          data-experiencia="4 años"
+          data-especialidad="Múltiples perros"
+          data-descripcion="La más experimentada del equipo. Puede manejar grupos de hasta 3 perros a la vez con total seguridad y profesionalismo."
+        >
+          <div class="paseador-emoji">🐶</div>
+          <h3>Camila Torres</h3>
+          <p class="paseador-stats">+150 paseos | 5.0 ⭐</p>
+          <p class="paseador-especialidad">Múltiples perros</p>
+          <button class="btn-ver-paseador">Ver perfil</button>
         </div>
       </div>
     </section>
+
+    <!-- MODAL PASEADOR -->
+    <div class="modal-overlay" id="modal-paseador" style="display: none">
+      <div class="modal-card modal-paseador-card">
+        <button class="modal-paseador-cerrar" id="modal-paseador-cerrar">
+          ✕
+        </button>
+        <div class="modal-paseador-emoji" id="modal-paseador-emoji"></div>
+        <h2 class="modal-paseador-nombre" id="modal-paseador-nombre"></h2>
+        <div class="modal-paseador-stats">
+          <span id="modal-paseador-calificacion"></span>
+          <span id="modal-paseador-paseos"></span>
+          <span id="modal-paseador-experiencia"></span>
+        </div>
+        <div
+          class="modal-paseador-badge"
+          id="modal-paseador-especialidad"
+        ></div>
+        <p
+          class="modal-paseador-descripcion"
+          id="modal-paseador-descripcion"
+        ></p>
+        <button class="btn-agregar modal-paseador-btn btn-paseos">
+          Reservar con este paseador
+        </button>
+      </div>
+    </div>
 
     <!-- PRUEBA SOCIAL -->
     <section class="container">
@@ -197,7 +316,7 @@
     <section class="container">
       <h2>¿Listo para el primer paseo? 🐶</h2>
       <p>Reserva en minutos y dale a tu perro la mejor experiencia.</p>
-      <div style="margin-top: 30px;">
+      <div style="margin-top: 30px">
         <button class="btn-paseos btn-agregar">Reservar ahora</button>
       </div>
     </section>

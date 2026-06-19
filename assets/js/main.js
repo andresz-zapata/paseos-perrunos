@@ -233,9 +233,9 @@ if (registerForm) {
       return;
     }
 
-    registerForm.querySelectorAll('input').forEach(input => {
-      input.addEventListener('input', () => {
-        message.textContent = '';
+    registerForm.querySelectorAll("input").forEach((input) => {
+      input.addEventListener("input", () => {
+        message.textContent = "";
       });
     });
 
@@ -351,12 +351,64 @@ if (loginForm && document.querySelector("#login-password")) {
 const token = localStorage.getItem("token");
 const nombre = localStorage.getItem("nombre");
 
-// Navbar index.html y paseos.html
+// Navbar index.html
 const miCuentaLink = document.querySelector(".menu a[href='login.html']");
-if (miCuentaLink && token && nombre) {
-  miCuentaLink.textContent = `👤 ${nombre}`;
-  const rolActual = localStorage.getItem("rol");
-  miCuentaLink.href = rolActual === "admin" ? "admin.html" : "perfil.html";
+if (miCuentaLink) {
+  if (token && nombre) {
+    const rolActual = localStorage.getItem("rol");
+    miCuentaLink.href = rolActual === "admin" ? "admin.html" : "perfil.html";
+    miCuentaLink.textContent = `👤 ${nombre}`;
+  }
+}
+
+// Navbar paseos.html dropdown
+const dropdownUsuario = document.querySelector("#navbar-usuario-dropdown");
+const btnDropdown = document.querySelector("#btn-usuario-dropdown");
+const dropdownMenu = document.querySelector("#dropdown-menu");
+const nombreUsuarioPaseos = document.querySelector("#nombre-usuario-paseos");
+const cerrarSesionPaseos = document.querySelector("#cerrar-sesion-paseos");
+const dropdownFlecha = document.querySelector(".dropdown-flecha");
+
+if (dropdownUsuario) {
+  if (token && nombre) {
+    dropdownUsuario.style.display = "list-item";
+    nombreUsuarioPaseos.textContent = nombre;
+  }
+
+  if (btnDropdown) {
+    btnDropdown.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const abierto = dropdownMenu.style.display !== "none";
+      dropdownMenu.style.display = abierto ? "none" : "block";
+      dropdownFlecha.classList.toggle("abierto", !abierto);
+    });
+  }
+
+  document.addEventListener("click", () => {
+    if (dropdownMenu) {
+      dropdownMenu.style.display = "none";
+      if (dropdownFlecha) dropdownFlecha.classList.remove("abierto");
+    }
+  });
+
+  if (cerrarSesionPaseos) {
+    cerrarSesionPaseos.addEventListener("click", async (e) => {
+      e.preventDefault();
+      try {
+        await fetch(`${BASE_URL}/api/auth/logout`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch (error) {
+        console.error("Error al cerrar sesión:", error);
+      }
+      localStorage.removeItem("token");
+      localStorage.removeItem("nombre");
+      localStorage.removeItem("rol");
+      localStorage.removeItem("refreshToken");
+      window.location.replace("login.html");
+    });
+  }
 }
 
 // Perfil y páginas protegidas
@@ -365,8 +417,16 @@ const perfilEmail = document.querySelector("#perfil-email");
 const nombreUsuario = document.querySelector("#nombre-usuario");
 const cerrarSesion = document.querySelector("#cerrar-sesion");
 
-if (nombreUsuario && token && nombre) {
-  nombreUsuario.textContent = `👤 ${nombre}`;
+if (nombreUsuario) {
+  if (token && nombre) {
+    nombreUsuario.textContent = `👤 ${nombre}`;
+    const cerrarSesionLi = document.querySelector("#cerrar-sesion-li");
+    if (cerrarSesionLi) cerrarSesionLi.style.display = "list-item";
+  } else {
+    nombreUsuario.style.display = "none";
+    const cerrarSesionLi = document.querySelector("#cerrar-sesion-li");
+    if (cerrarSesionLi) cerrarSesionLi.style.display = "none";
+  }
 }
 
 if (perfilNombre) {
@@ -1619,22 +1679,22 @@ document.querySelectorAll(".btn-paseos").forEach((btn) => {
 });
 
 // Carrusel
-const carruselTrack = document.querySelector('#carrusel-track');
-const carruselDots = document.querySelector('#carrusel-dots');
+const carruselTrack = document.querySelector("#carrusel-track");
+const carruselDots = document.querySelector("#carrusel-dots");
 
 if (carruselTrack) {
-  const slides = carruselTrack.querySelectorAll('.carrusel-slide');
+  const slides = carruselTrack.querySelectorAll(".carrusel-slide");
   const totalSlides = slides.length;
   let slideActual = 0;
   let intervalo;
 
   // Crear puntos
   slides.forEach((_, index) => {
-    const dot = document.createElement('button');
-    dot.classList.add('carrusel-dot');
-    dot.setAttribute('aria-label', `Ir a slide ${index + 1}`);
-    if (index === 0) dot.classList.add('activo');
-    dot.addEventListener('click', () => {
+    const dot = document.createElement("button");
+    dot.classList.add("carrusel-dot");
+    dot.setAttribute("aria-label", `Ir a slide ${index + 1}`);
+    if (index === 0) dot.classList.add("activo");
+    dot.addEventListener("click", () => {
       irASlide(index);
       reiniciarIntervalo();
     });
@@ -1642,8 +1702,8 @@ if (carruselTrack) {
   });
 
   const actualizarDots = () => {
-    document.querySelectorAll('.carrusel-dot').forEach((dot, index) => {
-      dot.classList.toggle('activo', index === slideActual);
+    document.querySelectorAll(".carrusel-dot").forEach((dot, index) => {
+      dot.classList.toggle("activo", index === slideActual);
     });
   };
 
@@ -1656,12 +1716,12 @@ if (carruselTrack) {
   const siguiente = () => irASlide(slideActual + 1);
   const anterior = () => irASlide(slideActual - 1);
 
-  document.querySelector('.carrusel-next').addEventListener('click', () => {
+  document.querySelector(".carrusel-next").addEventListener("click", () => {
     siguiente();
     reiniciarIntervalo();
   });
 
-  document.querySelector('.carrusel-prev').addEventListener('click', () => {
+  document.querySelector(".carrusel-prev").addEventListener("click", () => {
     anterior();
     reiniciarIntervalo();
   });
@@ -1679,11 +1739,11 @@ if (carruselTrack) {
   let touchStartX = 0;
   let touchEndX = 0;
 
-  carruselTrack.addEventListener('touchstart', (e) => {
+  carruselTrack.addEventListener("touchstart", (e) => {
     touchStartX = e.changedTouches[0].screenX;
   });
 
-  carruselTrack.addEventListener('touchend', (e) => {
+  carruselTrack.addEventListener("touchend", (e) => {
     touchEndX = e.changedTouches[0].screenX;
     const diff = touchStartX - touchEndX;
     if (Math.abs(diff) > 50) {
@@ -1697,4 +1757,106 @@ if (carruselTrack) {
   });
 
   iniciarIntervalo();
+}
+
+// Contadores animados
+const contadores = document.querySelectorAll(".contador-numero");
+
+if (contadores.length > 0) {
+  const animarContador = (elemento) => {
+    const target = parseFloat(elemento.dataset.target);
+    const esDecimal = elemento.dataset.decimal === "true";
+    const duracion = 2000;
+    const pasos = 60;
+    const incremento = target / pasos;
+    let actual = 0;
+    let paso = 0;
+
+    const intervalo = setInterval(() => {
+      paso++;
+      actual += incremento;
+
+      if (paso >= pasos) {
+        actual = target;
+        clearInterval(intervalo);
+      }
+
+      elemento.textContent = esDecimal ? actual.toFixed(1) : Math.floor(actual);
+    }, duracion / pasos);
+  };
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          animarContador(entry.target);
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.5 }
+  );
+
+  contadores.forEach((contador) => observer.observe(contador));
+}
+
+// Modal paseadores
+const modalPaseador = document.querySelector("#modal-paseador");
+const btnCerrarPaseador = document.querySelector("#modal-paseador-cerrar");
+
+if (modalPaseador) {
+  document.querySelectorAll(".btn-ver-paseador").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const card = btn.closest(".paseador-card");
+
+      document.querySelector("#modal-paseador-emoji").textContent =
+        card.dataset.emoji;
+      document.querySelector("#modal-paseador-nombre").textContent =
+        card.dataset.nombre;
+      document.querySelector(
+        "#modal-paseador-calificacion"
+      ).textContent = `⭐ ${card.dataset.calificacion}`;
+      document.querySelector(
+        "#modal-paseador-paseos"
+      ).textContent = `🐾 +${card.dataset.paseos} paseos`;
+      document.querySelector(
+        "#modal-paseador-experiencia"
+      ).textContent = `⏱️ ${card.dataset.experiencia}`;
+      document.querySelector("#modal-paseador-especialidad").textContent =
+        card.dataset.especialidad;
+      document.querySelector("#modal-paseador-descripcion").textContent =
+        card.dataset.descripcion;
+
+      modalPaseador.style.display = "flex";
+      document.body.style.overflow = "hidden";
+    });
+  });
+
+  const cerrarModal = () => {
+    modalPaseador.style.display = "none";
+    document.body.style.overflow = "";
+  };
+
+  btnCerrarPaseador.addEventListener("click", cerrarModal);
+
+  modalPaseador.addEventListener("click", (e) => {
+    if (e.target === modalPaseador) cerrarModal();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") cerrarModal();
+  });
+
+  document
+    .querySelector(".modal-paseador-btn")
+    .addEventListener("click", () => {
+      cerrarModal();
+      const token = localStorage.getItem("token");
+      if (!token) {
+        window.location.href = "login.html";
+      } else {
+        window.location.href = "reservas.html";
+      }
+    });
 }
