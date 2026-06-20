@@ -76,6 +76,8 @@ const productosRoutes = require("./routes/productos");
 app.use("/api/productos", productosRoutes);
 const carritoRoutes = require("./routes/carrito");
 app.use("/api/carrito", carritoRoutes);
+const pedidosRoutes = require("./routes/pedidos");
+app.use("/api/pedidos", pedidosRoutes);
 
 app.use(express.static(path.join(__dirname, "/"), {
   index: false
@@ -87,7 +89,8 @@ app.use((req, res, next) => {
   const paginasValidas = [
     'index.html', 'login.html', 'registro.html', 'recuperar.html',
     'perfil.html', 'mascotas.html', 'reservas.html', 'admin.html',
-    'admin-perfil.html', 'paseos.html', '404.html'
+    'admin-perfil.html', 'paseos.html', 'petshop.html', 'carrito.html',
+    'checkout.html', 'pedidos.html', '404.html'
   ];
 
   const ruta = req.path.replace('/', '') || 'index.html';

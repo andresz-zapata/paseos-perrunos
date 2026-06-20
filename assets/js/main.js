@@ -2381,3 +2381,170 @@ if (carritoItemsContainer) {
     window.location.href = 'checkout.html';
   });
 }
+
+// Checkout
+const checkoutForm = document.querySelector('#checkout-form');
+
+if (checkoutForm) {
+  if (!localStorage.getItem('token')) {
+    window.location.replace('login.html');
+  }
+
+  const cargarResumenCheckout = async () => {
+    try {
+      const response = await fetchConRefresh(`${BASE_URL}/api/carrito`, { method: 'GET' });
+      const items = await response.json();
+
+      if (items.length === 0) {
+        showToast('Tu carrito está vacío', 'error');
+        window.location.href = 'petshop.html';
+        return;
+      }
+
+      const contenedor = document.querySelector('#checkout-items-resumen');
+      contenedor.innerHTML = '';
+      let total = 0;
+
+      items.forEach(item => {
+        if (!item.producto) return;
+        const subtotal = item.producto.precio * item.cantidad;
+        total += subtotal;
+
+        const linea = document.createElement('div');
+        linea.classList.add('checkout-item-resumen');
+        linea.innerHTML = `
+          <span>${item.producto.nombre} x${item.cantidad}</span>
+          <span>$${subtotal.toLocaleString('es-CO')}</span>
+        `;
+        contenedor.appendChild(linea);
+      });
+
+      document.querySelector('#checkout-total').textContent = `$${total.toLocaleString('es-CO')}`;
+
+    } catch (error) {
+      console.error('Error al cargar resumen:', error);
+    }
+  };
+
+  cargarResumenCheckout();
+
+  checkoutForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const direccionEntrega = document.querySelector('#checkout-direccion').value;
+    const telefonoContacto = document.querySelector('#checkout-telefono').value;
+
+    const btnConfirmar = checkoutForm.querySelector('button[type="submit"]');
+    btnConfirmar.disabled = true;
+    btnConfirmar.textContent = 'Procesando pedido...';
+
+    try {
+      const response = await fetchConRefresh(`${BASE_URL}/api/pedidos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ direccionEntrega, telefonoContacto })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showToast(data.message, 'success');
+        actualizarBadgeCarrito();
+        setTimeout(() => {
+          window.location.href = `pedidos.html?nuevo=${data.pedido._id}`;
+        }, 1200);
+      } else {
+        showToast(data.message, 'error');
+        btnConfirmar.disabled = false;
+        btnConfirmar.textContent = 'Confirmar pedido';
+      }
+    } catch (error) {
+      showToast('No se pudo procesar el pedido', 'error');
+      btnConfirmar.disabled = false;
+      btnConfirmar.textContent = 'Confirmar pedido';
+    }
+  });
+}
+
+// Mis pedidos (cliente)
+const pedidosLista = document.querySelector('#pedidos-lista');
+
+if (pedidosLista) {
+  if (!localStorage.getItem('token')) {
+    window.location.replace('login.html');
+  }
+
+  const estadosPedidoInfo = {
+    pendiente_pago: { texto: 'Pendiente de pago', clase: 'badge-pendiente' },
+    pagado: { texto: 'Pagado', clase: 'badge-confirmada' },
+    enviado: { texto: 'Enviado', clase: 'badge-confirmada' },
+    entregado: { texto: 'Entregado', clase: 'badge-confirmada' },
+    cancelado: { texto: 'Cancelado', clase: 'badge-cancelada' }
+  };
+
+  const cargarPedidos = async () => {
+    const empty = document.querySelector('#pedidos-empty');
+
+    pedidosLista.innerHTML = `
+      ${[1, 2].map(() => `
+        <div class="skeleton-reserva">
+          <div class="skeleton-reserva-info">
+            <div class="skeleton skeleton-titulo"></div>
+            <div class="skeleton skeleton-texto"></div>
+          </div>
+          <div class="skeleton skeleton-badge"></div>
+        </div>
+      `).join('')}
+    `;
+
+    try {
+      const response = await fetchConRefresh(`${BASE_URL}/api/pedidos`, { method: 'GET' });
+      const pedidos = await response.json();
+
+      if (pedidos.length === 0) {
+        pedidosLista.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      pedidosLista.innerHTML = '';
+
+      pedidos.forEach((pedido, index) => {
+        const card = document.createElement('div');
+        card.classList.add('reserva-card', 'animate-fadeInUp', 'opacity-0');
+        card.classList.add(`animate-delay-${Math.min(index + 1, 5)}`);
+
+        const info = estadosPedidoInfo[pedido.estado] || { texto: pedido.estado, clase: 'badge-pendiente' };
+
+        const itemsTexto = pedido.items
+          .map(item => `${item.nombreSnapshot} x${item.cantidad}`)
+          .join(', ');
+
+        const fecha = new Date(pedido.createdAt).toLocaleDateString('es-CO', {
+          day: 'numeric', month: 'long', year: 'numeric'
+        });
+
+        card.innerHTML = `
+          <div class="reserva-info">
+            <h3>📦 Pedido #${pedido._id.slice(-6).toUpperCase()}</h3>
+            <p>🗓️ ${fecha}</p>
+            <p>🛍️ ${itemsTexto}</p>
+            <p>📍 ${pedido.direccionEntrega}</p>
+            <p>💰 Total: $${pedido.total.toLocaleString('es-CO')}</p>
+          </div>
+          <div class="reserva-acciones">
+            <span class="badge-estado ${info.clase}">${info.texto}</span>
+          </div>
+        `;
+
+        pedidosLista.appendChild(card);
+      });
+
+    } catch (error) {
+      console.error('Error al cargar pedidos:', error);
+    }
+  };
+
+  cargarPedidos();
+}

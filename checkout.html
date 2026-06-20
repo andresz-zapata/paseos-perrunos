@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Finalizar compra | Paseos Perrunos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">☰</button>
+      <div class="logo">🐶 Paseos Perrunos</div>
+      <ul class="menu" id="menu-principal" style="display:none;"></ul>
+      <div class="navbar-usuario-zona" id="navbar-usuario-zona" style="display:none;">
+        <button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button>
+        <a href="carrito.html" class="btn-carrito-link" id="btn-carrito-link">
+          🛒 <span class="carrito-badge" id="carrito-badge" style="display:none;">0</span>
+        </a>
+        <div class="user-pill-wrapper">
+          <button class="user-pill" id="user-pill-btn">
+            <span class="user-pill-avatar" id="user-pill-avatar">👤</span>
+            <span class="user-pill-nombre" id="user-pill-nombre"></span>
+            <span class="user-pill-flecha">▾</span>
+          </button>
+          <div class="user-pill-menu" id="user-pill-menu">
+            <a href="perfil.html">👤 Mi perfil</a>
+            <a href="mascotas.html">🐾 Mis mascotas</a>
+            <a href="reservas.html">📅 Mis reservas</a>
+            <a href="pedidos.html">📦 Mis pedidos</a>
+            <a href="#" id="user-pill-logout">🚪 Cerrar sesión</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <section class="checkout-container">
+      <a href="carrito.html" class="btn-volver">← Volver al carrito</a>
+      <h1>Finalizar compra 📦</h1>
+
+      <div class="checkout-layout">
+        <div class="checkout-form-card">
+          <h2>Datos de entrega</h2>
+          <form id="checkout-form">
+            <label class="label-campo">
+              Dirección de entrega
+              <input type="text" id="checkout-direccion" placeholder="Ej: Calle 10 #45-20, Medellín" required />
+            </label>
+            <label class="label-campo">
+              Teléfono de contacto
+              <input type="tel" id="checkout-telefono" placeholder="Ej: 3001234567" required />
+            </label>
+
+            <div class="checkout-aviso">
+              💳 Por ahora el pago se confirma manualmente por transferencia o contra entrega. Pronto integraremos pago en línea.
+            </div>
+
+            <button type="submit" class="btn-agregar checkout-btn-confirmar">Confirmar pedido</button>
+          </form>
+        </div>
+
+        <div class="checkout-resumen" id="checkout-resumen">
+          <h2>Resumen del pedido</h2>
+          <div id="checkout-items-resumen"></div>
+          <div class="carrito-resumen-total">
+            <span>Total</span>
+            <span id="checkout-total">$0</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>
