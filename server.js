@@ -74,6 +74,8 @@ const reservasRoutes = require("./routes/reservas");
 app.use("/api/reservas", reservasRoutes);
 const productosRoutes = require("./routes/productos");
 app.use("/api/productos", productosRoutes);
+const carritoRoutes = require("./routes/carrito");
+app.use("/api/carrito", carritoRoutes);
 
 app.use(express.static(path.join(__dirname, "/"), {
   index: false

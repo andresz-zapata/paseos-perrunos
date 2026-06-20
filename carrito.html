@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mi Carrito | Paseos Perrunos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">☰</button>
+      <div class="logo">🐶 Paseos Perrunos</div>
+      <ul class="menu" id="menu-principal" style="display:none;"></ul>
+      <div class="navbar-usuario-zona" id="navbar-usuario-zona" style="display:none;">
+        <button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button>
+        <a href="carrito.html" class="btn-carrito-link" id="btn-carrito-link">
+          🛒 <span class="carrito-badge" id="carrito-badge" style="display:none;">0</span>
+        </a>
+        <div class="user-pill-wrapper">
+          <button class="user-pill" id="user-pill-btn">
+            <span class="user-pill-avatar" id="user-pill-avatar">👤</span>
+            <span class="user-pill-nombre" id="user-pill-nombre"></span>
+            <span class="user-pill-flecha">▾</span>
+          </button>
+          <div class="user-pill-menu" id="user-pill-menu">
+            <a href="perfil.html">👤 Mi perfil</a>
+            <a href="mascotas.html">🐾 Mis mascotas</a>
+            <a href="reservas.html">📅 Mis reservas</a>
+            <a href="pedidos.html">📦 Mis pedidos</a>
+            <a href="#" id="user-pill-logout">🚪 Cerrar sesión</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <section class="carrito-container">
+      <h1>Mi Carrito 🛒</h1>
+
+      <div class="carrito-layout">
+        <div class="carrito-items" id="carrito-items">
+          <p class="reservas-empty" id="carrito-empty" style="display:none;">Tu carrito está vacío.</p>
+        </div>
+
+        <div class="carrito-resumen" id="carrito-resumen" style="display:none;">
+          <h2>Resumen</h2>
+          <div class="carrito-resumen-linea">
+            <span>Subtotal</span>
+            <span id="carrito-subtotal">$0</span>
+          </div>
+          <div class="carrito-resumen-total">
+            <span>Total</span>
+            <span id="carrito-total">$0</span>
+          </div>
+          <button class="btn-agregar carrito-btn-checkout" id="btn-ir-checkout">Continuar compra →</button>
+          <a href="petshop.html" class="carrito-seguir-comprando">← Seguir comprando</a>
+        </div>
+      </div>
+    </section>
+
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

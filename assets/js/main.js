@@ -2238,3 +2238,146 @@ const actualizarBadgeCarrito = async () => {
 if (document.querySelector('#carrito-badge')) {
   actualizarBadgeCarrito();
 }
+
+// Carrito de compras
+const carritoItemsContainer = document.querySelector('#carrito-items');
+
+if (carritoItemsContainer) {
+  if (!localStorage.getItem('token')) {
+    window.location.replace('login.html');
+  }
+
+  const formatearPrecioCarrito = (precio) => `$${precio.toLocaleString('es-CO')}`;
+
+  const cargarCarrito = async () => {
+    try {
+      const response = await fetchConRefresh(`${BASE_URL}/api/carrito`, { method: 'GET' });
+      const items = await response.json();
+
+      const empty = document.querySelector('#carrito-empty');
+      const resumen = document.querySelector('#carrito-resumen');
+
+      if (items.length === 0) {
+        carritoItemsContainer.innerHTML = '';
+        empty.style.display = 'block';
+        resumen.style.display = 'none';
+        return;
+      }
+
+      empty.style.display = 'none';
+      resumen.style.display = 'block';
+      carritoItemsContainer.innerHTML = '';
+
+      let subtotal = 0;
+
+      items.forEach(item => {
+        // Si el producto fue desactivado por el admin después de agregarlo al carrito
+        if (!item.producto || !item.producto.activo) return;
+
+        const subtotalItem = item.producto.precio * item.cantidad;
+        subtotal += subtotalItem;
+
+        const card = document.createElement('div');
+        card.classList.add('carrito-item-card');
+
+        const fotoHTML = item.producto.foto
+          ? `<img src="${item.producto.foto}" alt="${item.producto.nombre}" />`
+          : '📦';
+
+        const alertaStock = item.cantidad > item.producto.stock
+          ? `<p class="carrito-item-alerta">Solo quedan ${item.producto.stock} disponibles</p>`
+          : '';
+
+        card.innerHTML = `
+          <div class="carrito-item-foto">${fotoHTML}</div>
+          <div class="carrito-item-info">
+            <p class="carrito-item-nombre">${item.producto.nombre}</p>
+            <p class="carrito-item-precio-unidad">${formatearPrecioCarrito(item.producto.precio)} c/u</p>
+            ${alertaStock}
+          </div>
+          <div class="carrito-item-acciones">
+            <button class="cantidad-btn btn-restar-carrito" data-id="${item._id}" data-cantidad="${item.cantidad}">−</button>
+            <span>${item.cantidad}</span>
+            <button class="cantidad-btn btn-sumar-carrito" data-id="${item._id}" data-cantidad="${item.cantidad}" data-stock="${item.producto.stock}">+</button>
+            <span class="carrito-item-subtotal">${formatearPrecioCarrito(subtotalItem)}</span>
+            <button class="btn-quitar-item" data-id="${item._id}">🗑️</button>
+          </div>
+        `;
+
+        carritoItemsContainer.appendChild(card);
+      });
+
+      document.querySelector('#carrito-subtotal').textContent = formatearPrecioCarrito(subtotal);
+      document.querySelector('#carrito-total').textContent = formatearPrecioCarrito(subtotal);
+
+      // Eventos de cantidad
+      document.querySelectorAll('.btn-restar-carrito').forEach(btn => {
+        btn.addEventListener('click', () => cambiarCantidadCarrito(btn.dataset.id, parseInt(btn.dataset.cantidad) - 1));
+      });
+
+      document.querySelectorAll('.btn-sumar-carrito').forEach(btn => {
+        const nuevaCantidad = parseInt(btn.dataset.cantidad) + 1;
+        if (nuevaCantidad > parseInt(btn.dataset.stock)) {
+          btn.disabled = true;
+        }
+        btn.addEventListener('click', () => cambiarCantidadCarrito(btn.dataset.id, nuevaCantidad));
+      });
+
+      document.querySelectorAll('.btn-quitar-item').forEach(btn => {
+        btn.addEventListener('click', () => quitarDelCarrito(btn.dataset.id));
+      });
+
+    } catch (error) {
+      console.error('Error al cargar el carrito:', error);
+    }
+  };
+
+  const cambiarCantidadCarrito = async (id, nuevaCantidad) => {
+    if (nuevaCantidad < 1) {
+      quitarDelCarrito(id);
+      return;
+    }
+
+    try {
+      const response = await fetchConRefresh(`${BASE_URL}/api/carrito/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cantidad: nuevaCantidad })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        cargarCarrito();
+        actualizarBadgeCarrito();
+      } else {
+        showToast(data.message, 'error');
+      }
+    } catch (error) {
+      showToast('No se pudo actualizar el carrito', 'error');
+    }
+  };
+
+  const quitarDelCarrito = async (id) => {
+    try {
+      const response = await fetchConRefresh(`${BASE_URL}/api/carrito/${id}`, { method: 'DELETE' });
+      const data = await response.json();
+
+      if (response.ok) {
+        showToast(data.message, 'success');
+        cargarCarrito();
+        actualizarBadgeCarrito();
+      } else {
+        showToast(data.message, 'error');
+      }
+    } catch (error) {
+      showToast('No se pudo quitar el producto', 'error');
+    }
+  };
+
+  cargarCarrito();
+
+  document.querySelector('#btn-ir-checkout').addEventListener('click', () => {
+    window.location.href = 'checkout.html';
+  });
+}
