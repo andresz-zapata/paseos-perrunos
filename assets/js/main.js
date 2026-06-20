@@ -348,6 +348,83 @@ if (loginForm && document.querySelector("#login-password")) {
   });
 }
 
+// Componente User Pill (reutilizable en todas las páginas)
+const inicializarUserPill = () => {
+  const zona = document.querySelector('#navbar-usuario-zona');
+  const menuPrincipal = document.querySelector('#menu-principal');
+  const pillBtn = document.querySelector('#user-pill-btn');
+  const pillMenu = document.querySelector('#user-pill-menu');
+  const pillFlecha = document.querySelector('.user-pill-flecha');
+  const pillNombre = document.querySelector('#user-pill-nombre');
+  const pillAvatar = document.querySelector('#user-pill-avatar');
+  const pillLogout = document.querySelector('#user-pill-logout');
+
+  if (!zona) return;
+
+  const tok = localStorage.getItem('token');
+  const nom = localStorage.getItem('nombre');
+
+  const navbarSinSesion = document.querySelector('#navbar-sin-sesion');
+
+  if (!tok || !nom) {
+    if (navbarSinSesion) navbarSinSesion.style.display = 'flex';
+    return;
+  }
+
+  if (navbarSinSesion) navbarSinSesion.style.display = 'none';
+
+  zona.style.display = 'flex';
+  if (menuPrincipal) menuPrincipal.style.display = 'none';
+
+  pillNombre.textContent = nom;
+  pillAvatar.textContent = nom.charAt(0).toUpperCase();
+
+  fetch(`${BASE_URL}/api/auth/perfil`, {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${tok}` }
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.foto) {
+        pillAvatar.innerHTML = `<img src="${data.foto}" alt="${nom}" />`;
+      }
+    })
+    .catch(() => {});
+
+  pillBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const abierto = pillMenu.classList.contains('abierto');
+    pillMenu.classList.toggle('abierto', !abierto);
+    pillFlecha.classList.toggle('abierto', !abierto);
+  });
+
+  document.addEventListener('click', () => {
+    pillMenu.classList.remove('abierto');
+    pillFlecha.classList.remove('abierto');
+  });
+
+  if (pillLogout) {
+    pillLogout.addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        await fetch(`${BASE_URL}/api/auth/logout`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${tok}` }
+        });
+      } catch (error) {
+        console.error('Error al cerrar sesión:', error);
+      }
+      localStorage.removeItem('token');
+      localStorage.removeItem('nombre');
+      localStorage.removeItem('rol');
+      localStorage.removeItem('refreshToken');
+      window.location.replace('login.html');
+    });
+  }
+};
+
+inicializarUserPill();
+
 const token = localStorage.getItem("token");
 const nombre = localStorage.getItem("nombre");
 
@@ -361,73 +438,9 @@ if (miCuentaLink) {
   }
 }
 
-// Navbar paseos.html dropdown
-const dropdownUsuario = document.querySelector("#navbar-usuario-dropdown");
-const btnDropdown = document.querySelector("#btn-usuario-dropdown");
-const dropdownMenu = document.querySelector("#dropdown-menu");
-const nombreUsuarioPaseos = document.querySelector("#nombre-usuario-paseos");
-const cerrarSesionPaseos = document.querySelector("#cerrar-sesion-paseos");
-const dropdownFlecha = document.querySelector(".dropdown-flecha");
-
-if (dropdownUsuario) {
-  if (token && nombre) {
-    dropdownUsuario.style.display = "list-item";
-    nombreUsuarioPaseos.textContent = nombre;
-  }
-
-  if (btnDropdown) {
-    btnDropdown.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const abierto = dropdownMenu.style.display !== "none";
-      dropdownMenu.style.display = abierto ? "none" : "block";
-      dropdownFlecha.classList.toggle("abierto", !abierto);
-    });
-  }
-
-  document.addEventListener("click", () => {
-    if (dropdownMenu) {
-      dropdownMenu.style.display = "none";
-      if (dropdownFlecha) dropdownFlecha.classList.remove("abierto");
-    }
-  });
-
-  if (cerrarSesionPaseos) {
-    cerrarSesionPaseos.addEventListener("click", async (e) => {
-      e.preventDefault();
-      try {
-        await fetch(`${BASE_URL}/api/auth/logout`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      } catch (error) {
-        console.error("Error al cerrar sesión:", error);
-      }
-      localStorage.removeItem("token");
-      localStorage.removeItem("nombre");
-      localStorage.removeItem("rol");
-      localStorage.removeItem("refreshToken");
-      window.location.replace("login.html");
-    });
-  }
-}
-
 // Perfil y páginas protegidas
 const perfilNombre = document.querySelector("#perfil-nombre");
 const perfilEmail = document.querySelector("#perfil-email");
-const nombreUsuario = document.querySelector("#nombre-usuario");
-const cerrarSesion = document.querySelector("#cerrar-sesion");
-
-if (nombreUsuario) {
-  if (token && nombre) {
-    nombreUsuario.textContent = `👤 ${nombre}`;
-    const cerrarSesionLi = document.querySelector("#cerrar-sesion-li");
-    if (cerrarSesionLi) cerrarSesionLi.style.display = "list-item";
-  } else {
-    nombreUsuario.style.display = "none";
-    const cerrarSesionLi = document.querySelector("#cerrar-sesion-li");
-    if (cerrarSesionLi) cerrarSesionLi.style.display = "none";
-  }
-}
 
 if (perfilNombre) {
   if (!token) {
@@ -500,18 +513,17 @@ if (perfilNombre) {
   }
 }
 
-// Toggle editar perfil
-const perfilEditarToggle = document.querySelector("#perfil-editar-toggle");
-const perfilEditarForm = document.querySelector("#perfil-editar-form");
-const perfilEditarArrow = document.querySelector(".perfil-editar-arrow");
+// Tabs de configuración de perfil
+document.querySelectorAll('.config-tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.config-tab-btn').forEach(b => b.classList.remove('config-tab-activo'));
+    btn.classList.add('config-tab-activo');
 
-if (perfilEditarToggle) {
-  perfilEditarToggle.addEventListener("click", () => {
-    const abierto = perfilEditarForm.style.display !== "none";
-    perfilEditarForm.style.display = abierto ? "none" : "block";
-    perfilEditarArrow.classList.toggle("abierto", !abierto);
+    const tab = btn.dataset.configTab;
+    document.querySelector('#config-panel-general').style.display = tab === 'general' ? 'block' : 'none';
+    document.querySelector('#config-panel-seguridad').style.display = tab === 'seguridad' ? 'block' : 'none';
   });
-}
+});
 
 // Toggle contraseñas editar perfil
 const togglePasswordActual = document.querySelector("#toggle-password-actual");
@@ -607,14 +619,15 @@ if (editarPerfilForm) {
         showToast(data.message, "success");
         localStorage.setItem("nombre", data.nombre);
         document.querySelector("#perfil-nombre").textContent = data.nombre;
-        if (nombreUsuario) nombreUsuario.textContent = `👤 ${data.nombre}`;
+        const pillNombre = document.querySelector('#user-pill-nombre');
+        if (pillNombre) pillNombre.textContent = data.nombre;
         if (data.email) {
           document.querySelector("#perfil-email").textContent = data.email;
         }
-        editarPerfilForm.reset();
+        document.querySelector('#editar-perfil-password-actual').value = '';
+        document.querySelector('#editar-perfil-password-nueva').value = '';
+        document.querySelector('#campo-password-actual').style.display = 'none';
         nombreInput.value = data.nombre;
-        perfilEditarForm.style.display = "none";
-        perfilEditarArrow.classList.remove("abierto");
       } else {
         showToast(data.message, "error");
       }
@@ -624,25 +637,6 @@ if (editarPerfilForm) {
       btnGuardar.disabled = false;
       btnGuardar.textContent = "Guardar cambios";
     }
-  });
-}
-
-if (cerrarSesion) {
-  cerrarSesion.addEventListener("click", async (e) => {
-    e.preventDefault();
-    try {
-      await fetch(`${BASE_URL}/api/auth/logout`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-    } catch (error) {
-      console.error("Error al cerrar sesión:", error);
-    }
-    localStorage.removeItem("token");
-    localStorage.removeItem("nombre");
-    localStorage.removeItem("rol");
-    localStorage.removeItem("refreshToken");
-    window.location.replace("login.html");
   });
 }
 
@@ -1297,10 +1291,6 @@ const rol = localStorage.getItem("rol");
 if (adminLista) {
   if (!token || rol !== "admin") {
     window.location.replace("login.html");
-  }
-
-  if (nombreUsuario && token && nombre) {
-    nombreUsuario.textContent = `👤 ${nombre}`;
   }
 
   // Tabs

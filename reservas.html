@@ -16,13 +16,22 @@
     <nav class="navbar">
       <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">☰</button>
       <h2 class="logo">Paseos Perrunos 🐶</h2>
-      <ul class="menu">
-        <li>
-          <button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button>
-        </li>
-        <li id="nombre-usuario" class="navbar-nombre-usuario"></li>
-        <li id="cerrar-sesion-li" style="display:none;"><a href="#" id="cerrar-sesion">Cerrar sesión</a></li>
-      </ul>
+      <ul class="menu" id="menu-principal" style="display:none;"></ul>
+      <div class="navbar-usuario-zona" id="navbar-usuario-zona" style="display:none;">
+        <button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button>
+        <div class="user-pill-wrapper">
+          <button class="user-pill" id="user-pill-btn">
+            <span class="user-pill-avatar" id="user-pill-avatar">👤</span>
+            <span class="user-pill-nombre" id="user-pill-nombre"></span>
+            <span class="user-pill-flecha">▾</span>
+          </button>
+          <div class="user-pill-menu" id="user-pill-menu">
+            <a href="perfil.html">👤 Mi perfil</a>
+            <a href="mascotas.html">🐾 Mis mascotas</a>
+            <a href="#" id="user-pill-logout">🚪 Cerrar sesión</a>
+          </div>
+        </div>
+      </div>
     </nav>
 
     <section class="reservas-container">

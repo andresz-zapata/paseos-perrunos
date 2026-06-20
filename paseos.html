@@ -14,27 +14,26 @@
         ☰
       </button>
       <div class="logo">🐶 Paseos Perrunos</div>
-      <ul class="menu">
-        <li>
-          <button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button>
-        </li>
-        <li
-          class="navbar-usuario-dropdown"
-          id="navbar-usuario-dropdown"
-          style="display: none"
-        >
-          <button class="btn-usuario-dropdown" id="btn-usuario-dropdown">
-            <span>👤</span>
-            <span id="nombre-usuario-paseos"></span>
-            <span class="dropdown-flecha">▾</span>
+      <ul class="menu" id="menu-principal" style="display:none;"></ul>
+      <div class="navbar-usuario-zona" id="navbar-usuario-zona" style="display:none;">
+        <button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button>
+        <div class="user-pill-wrapper">
+          <button class="user-pill" id="user-pill-btn">
+            <span class="user-pill-avatar" id="user-pill-avatar">👤</span>
+            <span class="user-pill-nombre" id="user-pill-nombre"></span>
+            <span class="user-pill-flecha">▾</span>
           </button>
-          <div class="dropdown-menu" id="dropdown-menu" style="display: none">
-            <a href="perfil.html">Mi perfil</a>
-            <a href="reservas.html">Mis reservas</a>
-            <a href="#" id="cerrar-sesion-paseos">Cerrar sesión</a>
+          <div class="user-pill-menu" id="user-pill-menu">
+            <a href="perfil.html">👤 Mi perfil</a>
+            <a href="mascotas.html">🐾 Mis mascotas</a>
+            <a href="reservas.html">📅 Mis reservas</a>
+            <a href="#" id="user-pill-logout">🚪 Cerrar sesión</a>
           </div>
-        </li>
-      </ul>
+        </div>
+      </div>
+      <div class="navbar-sin-sesion" id="navbar-sin-sesion">
+        <button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button>
+      </div>
     </nav>
 
     <!-- HERO CONVERSIÓN -->

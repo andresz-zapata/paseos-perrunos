@@ -1531,46 +1531,122 @@ h2 {
   color: white;
 }
 
-/* Editar perfil */
-.perfil-editar-container {
-  max-width: 1000px;
-  margin: 0 auto 20px;
+/* Configuración de perfil */
+.config-container {
+  max-width: 700px;
+  margin: 0 auto 50px;
   padding: 0 40px;
 }
-.perfil-editar-header {
+.config-tabs {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  background-color: var(--hero-fondo-1);
+  padding: 6px;
+  border-radius: 14px;
+  width: fit-content;
+}
+.config-tab-btn {
+  background: none;
+  border: none;
+  color: var(--gris);
+  padding: 9px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.config-tab-btn:hover {
+  color: var(--verde-principal);
+}
+.config-tab-activo {
+  background-color: var(--blanco);
+  color: var(--verde-principal);
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.08);
+}
+.config-panel {
   background-color: var(--blanco);
   border-radius: 20px;
-  padding: 20px 30px;
-  cursor: pointer;
+  padding: 35px;
   box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.05);
-  transition: 0.3s;
-  border: 1px solid transparent;
 }
-.perfil-editar-header:hover {
-  border-color: rgba(31, 122, 99, 0.2);
+.config-grupo {
+  margin-bottom: 22px;
 }
-.perfil-editar-header h2 {
-  color: var(--verde-principal);
-  font-size: 18px;
-  margin-bottom: 0;
-}
-.perfil-editar-arrow {
-  color: var(--verde-principal);
+.config-label {
+  display: block;
   font-size: 14px;
+  font-weight: 600;
+  color: var(--oscuro);
+  margin-bottom: 8px;
+}
+.config-input {
+  width: 100%;
+  padding: 11px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: 'Poppins', sans-serif;
+  outline: none;
   transition: 0.3s;
-}
-.perfil-editar-arrow.abierto {
-  transform: rotate(180deg);
-}
-.perfil-editar-form {
   background-color: var(--blanco);
-  border-radius: 0 0 20px 20px;
-  padding: 30px;
-  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.05);
-  margin-top: -10px;
+  color: var(--oscuro);
+}
+.config-input:focus {
+  border-color: var(--verde-principal);
+  box-shadow: 0px 0px 0px 4px rgba(31, 122, 99, 0.1);
+}
+.config-ayuda {
+  display: block;
+  font-size: 12.5px;
+  color: var(--gris);
+  margin-top: 6px;
+}
+.config-grupo-alerta {
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 12px;
+  padding: 16px;
+}
+.config-grupo-alerta .config-ayuda {
+  color: #92400e;
+}
+.config-btn-guardar {
+  background: linear-gradient(135deg, var(--verde-secundario), var(--verde-principal));
+  color: white;
+  border: none;
+  padding: 12px;
+  width: 100%;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: 'Poppins', sans-serif;
+  margin-top: 5px;
+}
+.config-btn-guardar:hover {
+  transform: scale(1.01);
+}
+.dark-mode .config-tabs {
+  background-color: rgba(46, 204, 113, 0.08);
+}
+.dark-mode .config-tab-activo {
+  background-color: #1e293b;
+}
+.dark-mode .config-panel {
+  background-color: #1e293b;
+}
+.dark-mode .config-input {
+  background-color: #0f172a;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+.dark-mode .config-grupo-alerta {
+  background-color: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.3);
 }
 
 /* Búsqueda y filtros mascotas */
@@ -2191,6 +2267,121 @@ h2 {
   background-color: #0f172a;
 }
 
+/* User Pill Component */
+.navbar-usuario-zona {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.user-pill-wrapper {
+  position: relative;
+}
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--hero-fondo-1);
+  border: 1px solid rgba(31, 122, 99, 0.15);
+  border-radius: 30px;
+  padding: 5px 14px 5px 5px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: 'Poppins', sans-serif;
+}
+.user-pill:hover {
+  background-color: rgba(31, 122, 99, 0.15);
+  border-color: var(--verde-principal);
+}
+.user-pill-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--verde-principal);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.user-pill-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.user-pill-nombre {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--verde-principal);
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.user-pill-flecha {
+  font-size: 11px;
+  color: var(--verde-principal);
+  transition: 0.3s;
+}
+.user-pill-flecha.abierto {
+  transform: rotate(180deg);
+}
+.user-pill-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background-color: var(--blanco);
+  border-radius: 14px;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.12);
+  padding: 8px 0;
+  min-width: 190px;
+  z-index: 1001;
+  animation: fadeIn 0.2s ease forwards;
+}
+.user-pill-menu.abierto {
+  display: block;
+}
+.user-pill-menu a {
+  display: block;
+  padding: 11px 18px;
+  color: var(--oscuro);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+.user-pill-menu a:hover {
+  background-color: var(--hero-fondo-1);
+  color: var(--verde-principal);
+}
+.user-pill-menu a:last-child {
+  color: #e53e3e;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  margin-top: 4px;
+  padding-top: 13px;
+}
+.user-pill-menu a:last-child:hover {
+  background-color: #fee2e2;
+  color: #c53030;
+}
+.dark-mode .user-pill {
+  background-color: rgba(46, 204, 113, 0.1);
+  border-color: rgba(46, 204, 113, 0.2);
+}
+.dark-mode .user-pill:hover {
+  background-color: rgba(46, 204, 113, 0.18);
+}
+.dark-mode .user-pill-menu {
+  background-color: #1e293b;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+}
+.dark-mode .user-pill-menu a:hover {
+  background-color: #0f172a;
+}
+
 /* Final CSS General */
 
 /* Responsive Tablets (768px) */
@@ -2412,6 +2603,10 @@ h2 {
   .contador-plus {
     font-size: 22px;
     margin-top: -32px;
+  }
+
+  .config-container {
+    padding: 0 20px;
   }
 }
 
@@ -2808,5 +3003,36 @@ h2 {
   .dropdown-menu {
     right: -10px;
     min-width: 160px;
+  }
+
+  .navbar-usuario-zona {
+    gap: 8px;
+  }
+  .user-pill-nombre {
+    max-width: 90px;
+    font-size: 13px;
+  }
+  .user-pill {
+    padding: 4px 10px 4px 4px;
+  }
+  .user-pill-menu {
+    right: -10px;
+    min-width: 170px;
+  }
+
+  .config-container {
+    padding: 0 16px;
+  }
+  .config-tabs {
+    width: 100%;
+  }
+  .config-tab-btn {
+    flex: 1;
+    font-size: 13px;
+    padding: 9px 12px;
+  }
+  .config-panel {
+    padding: 24px 20px;
+    border-radius: 16px;
   }
 }

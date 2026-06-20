@@ -14,19 +14,24 @@
   </head>
   <body>
     <nav class="navbar">
-      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">
-        ☰
-      </button>
+      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">☰</button>
       <h2 class="logo">Paseos Perrunos 🐶</h2>
-      <ul class="menu">
-        <li>
-          <button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button>
-        </li>
-        <li id="nombre-usuario" class="navbar-nombre-usuario"></li>
-        <li id="cerrar-sesion-li" style="display: none">
-          <a href="#" id="cerrar-sesion">Cerrar sesión</a>
-        </li>
-      </ul>
+      <ul class="menu" id="menu-principal" style="display:none;"></ul>
+      <div class="navbar-usuario-zona" id="navbar-usuario-zona" style="display:none;">
+        <button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button>
+        <div class="user-pill-wrapper">
+          <button class="user-pill" id="user-pill-btn">
+            <span class="user-pill-avatar" id="user-pill-avatar">👤</span>
+            <span class="user-pill-nombre" id="user-pill-nombre"></span>
+            <span class="user-pill-flecha">▾</span>
+          </button>
+          <div class="user-pill-menu" id="user-pill-menu">
+            <a href="mascotas.html">🐾 Mis mascotas</a>
+            <a href="reservas.html">📅 Mis reservas</a>
+            <a href="#" id="user-pill-logout">🚪 Cerrar sesión</a>
+          </div>
+        </div>
+      </div>
     </nav>
     <section class="perfil-hero">
       <div class="perfil-hero-info">
@@ -56,68 +61,49 @@
       </div>
     </section>
 
-    <section class="perfil-editar-container">
-      <div class="perfil-editar-header" id="perfil-editar-toggle">
-        <h2>✏️ Editar perfil</h2>
-        <span class="perfil-editar-arrow">▼</span>
+    <section class="config-container">
+      <div class="config-tabs">
+        <button class="config-tab-btn config-tab-activo" data-config-tab="general">👤 General</button>
+        <button class="config-tab-btn" data-config-tab="seguridad">🔒 Seguridad</button>
       </div>
-      <div
-        class="perfil-editar-form"
-        id="perfil-editar-form"
-        style="display: none"
-      >
+
+      <div class="config-panel" id="config-panel-general">
         <form id="editar-perfil-form">
-          <label class="label-campo">
-            Nombre completo
-            <input
-              type="text"
-              id="editar-perfil-nombre"
-              placeholder="Tu nombre completo"
-              required
-            />
-          </label>
-          <label class="label-campo">
-            Nuevo correo electrónico (opcional)
-            <input
-              type="email"
-              id="editar-perfil-email"
-              placeholder="nuevo@correo.com"
-            />
-          </label>
-          <div id="campo-password-actual" style="display: none">
-            <label class="label-campo">
-              Contraseña actual (requerida para confirmar cambios)
-              <div class="password-container">
-                <input
-                  type="password"
-                  id="editar-perfil-password-actual"
-                  placeholder="Contraseña actual"
-                />
-                <span class="toggle-password" id="toggle-password-actual"
-                  >👁️</span
-                >
-              </div>
-            </label>
+          <div class="config-grupo">
+            <label class="config-label" for="editar-perfil-nombre">Nombre completo</label>
+            <input type="text" id="editar-perfil-nombre" class="config-input" placeholder="Tu nombre completo" required />
+            <span class="config-ayuda">Este es el nombre que verán en tu perfil y reservas.</span>
           </div>
-          <label class="label-campo">
-            Nueva contraseña (opcional)
+
+          <div class="config-grupo">
+            <label class="config-label" for="editar-perfil-email">Correo electrónico</label>
+            <input type="email" id="editar-perfil-email" class="config-input" placeholder="nuevo@correo.com" />
+            <span class="config-ayuda">Déjalo vacío si no quieres cambiar tu correo actual.</span>
+          </div>
+
+          <div id="campo-password-actual" class="config-grupo config-grupo-alerta" style="display:none;">
+            <label class="config-label" for="editar-perfil-password-actual">Confirma tu contraseña actual</label>
             <div class="password-container">
-              <input
-                type="password"
-                id="editar-perfil-password-nueva"
-                placeholder="Nueva contraseña"
-              />
-              <span class="toggle-password" id="toggle-password-nueva">👁️</span>
+              <input type="password" id="editar-perfil-password-actual" class="config-input" placeholder="Contraseña actual" />
+              <span class="toggle-password" id="toggle-password-actual">👁️</span>
             </div>
-          </label>
-          <button
-            type="submit"
-            class="btn-agregar"
-            style="width: 100%; margin-top: 10px"
-          >
-            Guardar cambios
-          </button>
+            <span class="config-ayuda">Necesaria para confirmar el cambio de correo o contraseña.</span>
+          </div>
+
+          <button type="submit" class="config-btn-guardar">Guardar cambios</button>
         </form>
+      </div>
+
+      <div class="config-panel" id="config-panel-seguridad" style="display:none;">
+        <div class="config-grupo">
+          <label class="config-label">Nueva contraseña</label>
+          <div class="password-container">
+            <input type="password" id="editar-perfil-password-nueva" class="config-input" placeholder="Déjalo vacío para no cambiarla" form="editar-perfil-form" />
+            <span class="toggle-password" id="toggle-password-nueva">👁️</span>
+          </div>
+          <span class="config-ayuda">Mínimo 6 caracteres, con al menos una letra y un número.</span>
+        </div>
+        <button type="submit" form="editar-perfil-form" class="config-btn-guardar">Actualizar contraseña</button>
       </div>
     </section>
 

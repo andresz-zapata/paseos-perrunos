@@ -28,16 +28,29 @@
         ☰
       </button>
       <h2 class="logo">Paseos Perrunos 🐶</h2>
-      <ul class="menu">
-        <li>
-          <button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button>
-        </li>
+      <ul class="menu" id="menu-principal">
         <li><a href="#inicio">Inicio</a></li>
-        <li><a href="login.html">Mi cuenta</a></li>
+        <li><a href="login.html" id="mi-cuenta-link">Mi cuenta</a></li>
         <li><a href="#servicios">Servicios</a></li>
         <li><a href="#sobre-mi">Sobre mí</a></li>
         <li><a href="#contacto">Contacto</a></li>
       </ul>
+      <div class="navbar-usuario-zona" id="navbar-usuario-zona" style="display:none;">
+        <button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button>
+        <div class="user-pill-wrapper">
+          <button class="user-pill" id="user-pill-btn">
+            <span class="user-pill-avatar" id="user-pill-avatar">👤</span>
+            <span class="user-pill-nombre" id="user-pill-nombre"></span>
+            <span class="user-pill-flecha">▾</span>
+          </button>
+          <div class="user-pill-menu" id="user-pill-menu">
+            <a href="perfil.html">👤 Mi perfil</a>
+            <a href="mascotas.html">🐾 Mis mascotas</a>
+            <a href="reservas.html">📅 Mis reservas</a>
+            <a href="#" id="user-pill-logout">🚪 Cerrar sesión</a>
+          </div>
+        </div>
+      </div>
     </nav>
     <header class="hero" id="inicio">
       <h1>Paseos felices y seguros para tu perro 🐾❤️​</h1>
