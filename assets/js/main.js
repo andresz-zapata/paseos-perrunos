@@ -1308,9 +1308,12 @@ if (adminLista) {
         tab === "reservas" ? "block" : "none";
       document.querySelector("#tab-usuarios").style.display =
         tab === "usuarios" ? "block" : "none";
+      document.querySelector("#tab-productos").style.display =
+        tab === "productos" ? "block" : "none";
 
       if (tab === "reservas") cargarTodasLasReservas();
       if (tab === "usuarios") cargarUsuarios();
+      if (tab === "productos") cargarProductosAdmin();
     });
   });
 
@@ -1645,6 +1648,193 @@ if (adminLista) {
       aplicarFiltro(btn.dataset.filtro);
     });
   });
+
+  // Productos - Admin
+  const btnNuevoProducto = document.querySelector('#btn-nuevo-producto');
+  const formularioProducto = document.querySelector('#formulario-producto');
+  const productoForm = document.querySelector('#producto-form');
+  const btnCancelarProducto = document.querySelector('#btn-cancelar-producto');
+  const productosAdminLista = document.querySelector('#productos-admin-lista');
+  const productosAdminEmpty = document.querySelector('#productos-admin-empty');
+
+  const resetearFormularioProducto = () => {
+    productoForm.reset();
+    document.querySelector('#producto-id').value = '';
+    document.querySelector('#producto-form-titulo').textContent = 'Nuevo producto';
+    formularioProducto.style.display = 'none';
+  };
+
+  if (btnNuevoProducto) {
+    btnNuevoProducto.addEventListener('click', () => {
+      resetearFormularioProducto();
+      formularioProducto.style.display = 'block';
+      formularioProducto.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  if (btnCancelarProducto) {
+    btnCancelarProducto.addEventListener('click', resetearFormularioProducto);
+  }
+
+  const cargarProductosAdmin = async () => {
+    productosAdminLista.innerHTML = `
+      ${[1, 2, 3].map(() => `
+        <div class="skeleton-card">
+          <div class="skeleton skeleton-foto"></div>
+          <div class="skeleton-info">
+            <div class="skeleton skeleton-titulo"></div>
+            <div class="skeleton skeleton-texto"></div>
+          </div>
+        </div>
+      `).join('')}
+    `;
+
+    try {
+      const response = await fetchConRefresh(`${BASE_URL}/api/productos/admin/todos`, {
+        method: 'GET'
+      });
+
+      const productos = await response.json();
+
+      if (productos.length === 0) {
+        productosAdminLista.innerHTML = '';
+        productosAdminEmpty.style.display = 'block';
+        return;
+      }
+
+      productosAdminEmpty.style.display = 'none';
+      productosAdminLista.innerHTML = '';
+
+      productos.forEach((producto, index) => {
+        const card = document.createElement('div');
+        card.classList.add('producto-admin-card', 'animate-fadeInUp', 'opacity-0');
+        card.classList.add(`animate-delay-${Math.min(index + 1, 5)}`);
+        if (!producto.activo) card.classList.add('inactivo');
+
+        const fotoHTML = producto.foto
+          ? `<div class="producto-admin-foto"><img src="${producto.foto}" alt="${producto.nombre}" /></div>`
+          : `<div class="producto-admin-foto">📦</div>`;
+
+        let stockClase = '';
+        let stockTexto = `${producto.stock} unidades`;
+        if (producto.stock === 0) {
+          stockClase = 'agotado';
+          stockTexto = 'Agotado';
+        } else if (producto.stock <= 5) {
+          stockClase = 'bajo';
+          stockTexto = `${producto.stock} unidades (stock bajo)`;
+        }
+
+        card.innerHTML = `
+          ${fotoHTML}
+          <div class="producto-admin-info">
+            <span class="producto-admin-categoria">${producto.categoria}</span>
+            <h3>${producto.nombre}</h3>
+            <p class="producto-admin-precio">$${producto.precio.toLocaleString('es-CO')}</p>
+            <p class="producto-admin-stock ${stockClase}">${stockTexto}</p>
+            <div class="producto-admin-acciones">
+              <button class="btn-editar-producto" data-id="${producto._id}">✏️ Editar</button>
+              <button class="btn-toggle-producto" data-id="${producto._id}">
+                ${producto.activo ? '🚫 Desactivar' : '✅ Activar'}
+              </button>
+            </div>
+          </div>
+        `;
+
+        productosAdminLista.appendChild(card);
+
+        card.querySelector('.btn-editar-producto').addEventListener('click', () => {
+          document.querySelector('#producto-id').value = producto._id;
+          document.querySelector('#producto-nombre').value = producto.nombre;
+          document.querySelector('#producto-descripcion').value = producto.descripcion;
+          document.querySelector('#producto-precio').value = producto.precio;
+          document.querySelector('#producto-stock').value = producto.stock;
+          document.querySelector('#producto-categoria').value = producto.categoria;
+          document.querySelector('#producto-form-titulo').textContent = 'Editar producto';
+          formularioProducto.style.display = 'block';
+          formularioProducto.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        card.querySelector('.btn-toggle-producto').addEventListener('click', () => {
+          showModal({
+            emoji: producto.activo ? '🚫' : '✅',
+            titulo: producto.activo ? '¿Desactivar producto?' : '¿Activar producto?',
+            texto: producto.activo
+              ? 'El producto dejará de aparecer en el catálogo público.'
+              : 'El producto volverá a aparecer en el catálogo público.',
+            textoBtnConfirmar: 'Confirmar',
+            onConfirmar: async () => {
+              try {
+                const response = await fetchConRefresh(`${BASE_URL}/api/productos/${producto._id}/estado`, {
+                  method: 'PATCH'
+                });
+                const data = await response.json();
+                if (response.ok) {
+                  showToast(data.message, 'success');
+                  cargarProductosAdmin();
+                } else {
+                  showToast(data.message, 'error');
+                }
+              } catch (error) {
+                showToast('No se pudo actualizar el producto', 'error');
+              }
+            }
+          });
+        });
+      });
+
+    } catch (error) {
+      console.error('Error al cargar productos:', error);
+    }
+  };
+
+  if (productoForm) {
+    productoForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const id = document.querySelector('#producto-id').value;
+      const message = document.querySelector('#producto-message');
+      const formData = new FormData();
+
+      formData.append('nombre', document.querySelector('#producto-nombre').value);
+      formData.append('descripcion', document.querySelector('#producto-descripcion').value);
+      formData.append('precio', document.querySelector('#producto-precio').value);
+      formData.append('stock', document.querySelector('#producto-stock').value);
+      formData.append('categoria', document.querySelector('#producto-categoria').value);
+
+      const foto = document.querySelector('#producto-foto').files[0];
+      if (foto) formData.append('foto', foto);
+
+      const btnGuardar = productoForm.querySelector('button[type="submit"]');
+      btnGuardar.disabled = true;
+      btnGuardar.textContent = 'Guardando...';
+
+      try {
+        const url = id ? `${BASE_URL}/api/productos/${id}` : `${BASE_URL}/api/productos`;
+        const method = id ? 'PUT' : 'POST';
+
+        const response = await fetchConRefresh(url, {
+          method,
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          showToast(data.message, 'success');
+          resetearFormularioProducto();
+          cargarProductosAdmin();
+        } else {
+          showToast(data.message, 'error');
+        }
+      } catch (error) {
+        showToast('No se pudo conectar con el servidor', 'error');
+      } finally {
+        btnGuardar.disabled = false;
+        btnGuardar.textContent = 'Guardar producto';
+      }
+    });
+  }
 }
 
 // Admin perfil

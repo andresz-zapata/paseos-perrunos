@@ -72,6 +72,8 @@ const mascotasRoutes = require("./routes/mascotas");
 app.use("/api/mascotas", mascotasRoutes);
 const reservasRoutes = require("./routes/reservas");
 app.use("/api/reservas", reservasRoutes);
+const productosRoutes = require("./routes/productos");
+app.use("/api/productos", productosRoutes);
 
 app.use(express.static(path.join(__dirname, "/"), {
   index: false

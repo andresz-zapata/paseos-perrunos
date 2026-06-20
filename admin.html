@@ -44,11 +44,10 @@
       </div>
 
       <div class="admin-tabs">
-        <button class="admin-tab-btn admin-tab-activo" data-tab="dashboard">
-          📊 Dashboard
-        </button>
+        <button class="admin-tab-btn admin-tab-activo" data-tab="dashboard">📊 Dashboard</button>
         <button class="admin-tab-btn" data-tab="reservas">📅 Reservas</button>
         <button class="admin-tab-btn" data-tab="usuarios">👥 Usuarios</button>
+        <button class="admin-tab-btn" data-tab="productos">📦 Productos</button>
       </div>
 
       <div id="tab-dashboard">
@@ -99,6 +98,47 @@
       <div id="tab-usuarios" style="display: none">
         <div class="usuarios-lista" id="usuarios-lista">
           <p class="reservas-empty" id="usuarios-empty">Cargando usuarios...</p>
+        </div>
+      </div>
+      <div id="tab-productos" style="display:none;">
+        <div class="productos-admin-header">
+          <button class="btn-agregar" id="btn-nuevo-producto">+ Nuevo producto</button>
+        </div>
+
+        <div class="formulario-producto" id="formulario-producto" style="display:none;">
+          <h2 id="producto-form-titulo">Nuevo producto</h2>
+          <form id="producto-form">
+            <input type="hidden" id="producto-id" />
+            <input type="text" id="producto-nombre" placeholder="Nombre del producto" required />
+            <textarea id="producto-descripcion" placeholder="Descripción del producto" rows="3" required></textarea>
+            <div class="producto-form-grid">
+              <input type="number" id="producto-precio" placeholder="Precio (COP)" min="0" step="100" required />
+              <input type="number" id="producto-stock" placeholder="Stock disponible" min="0" required />
+            </div>
+            <select id="producto-categoria" required>
+              <option value="">Selecciona una categoría</option>
+              <option value="Salud e Higiene">Salud e Higiene</option>
+              <option value="Accesorios y Confort">Accesorios y Confort</option>
+              <option value="Juguetes">Juguetes</option>
+              <option value="Farmacia y Bienestar">Farmacia y Bienestar</option>
+            </select>
+            <label class="label-foto">
+              Foto del producto
+              <div class="foto-input-wrapper">
+                <input type="file" id="producto-foto" accept="image/jpg, image/jpeg, image/png, image/webp" />
+              </div>
+              <span id="producto-foto-nombre" class="foto-nombre"></span>
+            </label>
+            <div class="editar-botones">
+              <button type="submit">Guardar producto</button>
+              <button type="button" id="btn-cancelar-producto" class="btn-cancelar-editar">Cancelar</button>
+            </div>
+            <p id="producto-message"></p>
+          </form>
+        </div>
+
+        <div class="productos-admin-lista" id="productos-admin-lista">
+          <p class="reservas-empty" id="productos-admin-empty">Cargando productos...</p>
         </div>
       </div>
     </section>
