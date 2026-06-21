@@ -48,6 +48,7 @@
         <button class="admin-tab-btn" data-tab="reservas">📅 Reservas</button>
         <button class="admin-tab-btn" data-tab="usuarios">👥 Usuarios</button>
         <button class="admin-tab-btn" data-tab="productos">📦 Productos</button>
+        <button class="admin-tab-btn" data-tab="pedidos">🛍️ Pedidos</button>
       </div>
 
       <div id="tab-dashboard">
@@ -139,6 +140,21 @@
 
         <div class="productos-admin-lista" id="productos-admin-lista">
           <p class="reservas-empty" id="productos-admin-empty">Cargando productos...</p>
+        </div>
+      </div>
+
+      <div id="tab-pedidos" style="display:none;">
+        <div class="admin-filtros">
+          <button class="filtro-btn-pedido filtro-pedido-activo" data-filtro-pedido="todos">Todos</button>
+          <button class="filtro-btn-pedido" data-filtro-pedido="pendiente_pago">Pendiente pago</button>
+          <button class="filtro-btn-pedido" data-filtro-pedido="pagado">Pagados</button>
+          <button class="filtro-btn-pedido" data-filtro-pedido="enviado">Enviados</button>
+          <button class="filtro-btn-pedido" data-filtro-pedido="entregado">Entregados</button>
+          <button class="filtro-btn-pedido" data-filtro-pedido="cancelado">Cancelados</button>
+        </div>
+
+        <div class="admin-lista" id="pedidos-admin-lista">
+          <p class="reservas-empty" id="pedidos-admin-empty">Cargando pedidos...</p>
         </div>
       </div>
     </section>

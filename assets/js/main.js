@@ -1310,10 +1310,150 @@ if (adminLista) {
         tab === "usuarios" ? "block" : "none";
       document.querySelector("#tab-productos").style.display =
         tab === "productos" ? "block" : "none";
+      document.querySelector("#tab-pedidos").style.display =
+        tab === "pedidos" ? "block" : "none";
 
       if (tab === "reservas") cargarTodasLasReservas();
       if (tab === "usuarios") cargarUsuarios();
       if (tab === "productos") cargarProductosAdmin();
+      if (tab === "pedidos") cargarPedidosAdmin();
+    });
+  });
+
+  // Pedidos - Admin
+  const pedidosAdminLista = document.querySelector('#pedidos-admin-lista');
+  const pedidosAdminEmpty = document.querySelector('#pedidos-admin-empty');
+  let todosLosPedidos = [];
+  let filtroPedidoActual = 'todos';
+
+  const estadosPedidoAdminInfo = {
+    pendiente_pago: { texto: 'Pendiente pago', clase: 'badge-pendiente' },
+    pagado: { texto: 'Pagado', clase: 'badge-confirmada' },
+    enviado: { texto: 'Enviado', clase: 'badge-confirmada' },
+    entregado: { texto: 'Entregado', clase: 'badge-confirmada' },
+    cancelado: { texto: 'Cancelado', clase: 'badge-cancelada' }
+  };
+
+  const renderizarPedidosAdmin = (pedidos) => {
+    pedidosAdminLista.innerHTML = '';
+
+    if (pedidos.length === 0) {
+      pedidosAdminLista.innerHTML = '<p class="reservas-empty">No hay pedidos en esta categoría.</p>';
+      return;
+    }
+
+    pedidos.forEach((pedido, index) => {
+      const card = document.createElement('div');
+      card.classList.add('admin-card', 'animate-fadeInUp', 'opacity-0');
+      card.classList.add(`animate-delay-${Math.min(index + 1, 5)}`);
+
+      const info = estadosPedidoAdminInfo[pedido.estado] || { texto: pedido.estado, clase: 'badge-pendiente' };
+
+      const itemsTexto = pedido.items
+        .map(item => `${item.nombreSnapshot} x${item.cantidad}`)
+        .join(', ');
+
+      const fecha = new Date(pedido.createdAt).toLocaleDateString('es-CO', {
+        day: 'numeric', month: 'long', year: 'numeric'
+      });
+
+      card.innerHTML = `
+        <div class="admin-card-info">
+          <h3>📦 Pedido #${pedido._id.slice(-6).toUpperCase()}</h3>
+          <p>👤 Cliente: ${pedido.usuario.nombre} (${pedido.usuario.email})</p>
+          <p>🗓️ ${fecha}</p>
+          <p>🛍️ ${itemsTexto}</p>
+          <p>📍 ${pedido.direccionEntrega} | 📞 ${pedido.telefonoContacto}</p>
+          <p>💰 Total: $${pedido.total.toLocaleString('es-CO')}</p>
+        </div>
+        <div class="admin-card-acciones">
+          <span class="badge-estado ${info.clase}">${info.texto}</span>
+          <select class="pedido-admin-select" data-id="${pedido._id}">
+            <option value="pendiente_pago" ${pedido.estado === 'pendiente_pago' ? 'selected' : ''}>Pendiente pago</option>
+            <option value="pagado" ${pedido.estado === 'pagado' ? 'selected' : ''}>Pagado</option>
+            <option value="enviado" ${pedido.estado === 'enviado' ? 'selected' : ''}>Enviado</option>
+            <option value="entregado" ${pedido.estado === 'entregado' ? 'selected' : ''}>Entregado</option>
+            <option value="cancelado" ${pedido.estado === 'cancelado' ? 'selected' : ''}>Cancelado</option>
+          </select>
+        </div>
+      `;
+
+      pedidosAdminLista.appendChild(card);
+
+      card.querySelector('.pedido-admin-select').addEventListener('change', (e) => {
+        const nuevoEstado = e.target.value;
+
+        showModal({
+          emoji: '📦',
+          titulo: `¿Cambiar estado a "${estadosPedidoAdminInfo[nuevoEstado].texto}"?`,
+          texto: nuevoEstado === 'cancelado'
+            ? 'Al cancelar, el stock de los productos será devuelto automáticamente.'
+            : 'Esta acción notificará el cambio de estado del pedido.',
+          textoBtnConfirmar: 'Confirmar',
+          onConfirmar: async () => {
+            try {
+              const response = await fetchConRefresh(`${BASE_URL}/api/pedidos/admin/${pedido._id}/estado`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ estado: nuevoEstado })
+              });
+              const data = await response.json();
+              if (response.ok) {
+                showToast(data.message, 'success');
+                cargarPedidosAdmin();
+              } else {
+                showToast(data.message, 'error');
+                e.target.value = pedido.estado;
+              }
+            } catch (error) {
+              showToast('No se pudo actualizar el pedido', 'error');
+              e.target.value = pedido.estado;
+            }
+          }
+        });
+      });
+    });
+  };
+
+  const cargarPedidosAdmin = async () => {
+    pedidosAdminLista.innerHTML = `
+      ${[1, 2, 3].map(() => `
+        <div class="skeleton-reserva">
+          <div class="skeleton-reserva-info">
+            <div class="skeleton skeleton-titulo"></div>
+            <div class="skeleton skeleton-texto"></div>
+            <div class="skeleton skeleton-texto"></div>
+          </div>
+          <div class="skeleton skeleton-badge"></div>
+        </div>
+      `).join('')}
+    `;
+
+    try {
+      const response = await fetchConRefresh(`${BASE_URL}/api/pedidos/admin/todos`, { method: 'GET' });
+      const pedidos = await response.json();
+
+      todosLosPedidos = pedidos;
+      aplicarFiltroPedido(filtroPedidoActual);
+
+    } catch (error) {
+      console.error('Error al cargar pedidos:', error);
+    }
+  };
+
+  const aplicarFiltroPedido = (filtro) => {
+    filtroPedidoActual = filtro;
+    const filtrados = filtro === 'todos'
+      ? todosLosPedidos
+      : todosLosPedidos.filter(p => p.estado === filtro);
+    renderizarPedidosAdmin(filtrados);
+  };
+
+  document.querySelectorAll('.filtro-btn-pedido').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filtro-btn-pedido').forEach(b => b.classList.remove('filtro-pedido-activo'));
+      btn.classList.add('filtro-pedido-activo');
+      aplicarFiltroPedido(btn.dataset.filtroPedido);
     });
   });
 

@@ -3037,6 +3037,47 @@ h2 {
   border-color: rgba(245, 158, 11, 0.3);
 }
 
+/* Filtros pedidos admin (reutiliza visual de filtro-btn pero clase distinta para no chocar con reservas) */
+.filtro-btn-pedido {
+  background: none;
+  border: 1px solid #d1d5db;
+  color: var(--gris);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.filtro-btn-pedido:hover {
+  border-color: var(--verde-principal);
+  color: var(--verde-principal);
+}
+.filtro-pedido-activo {
+  background-color: var(--verde-principal);
+  border-color: var(--verde-principal);
+  color: white;
+}
+.filtro-pedido-activo:hover {
+  color: white;
+}
+.pedido-admin-select {
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 13px;
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--blanco);
+  color: var(--oscuro);
+  cursor: pointer;
+}
+.dark-mode .pedido-admin-select {
+  background-color: #0f172a;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+
 /* Final CSS General */
 
 /* Responsive Tablets (768px) */
