@@ -3078,6 +3078,116 @@ h2 {
   color: #f1f5f9;
 }
 
+/* Paseadores admin */
+.filtro-btn-paseador {
+  background: none;
+  border: 1px solid #d1d5db;
+  color: var(--gris);
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.filtro-btn-paseador:hover {
+  border-color: var(--verde-principal);
+  color: var(--verde-principal);
+}
+.filtro-paseador-activo {
+  background-color: var(--verde-principal);
+  border-color: var(--verde-principal);
+  color: white;
+}
+.filtro-paseador-activo:hover {
+  color: white;
+}
+.paseador-admin-card {
+  background-color: var(--blanco);
+  border-radius: 20px;
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  text-align: center;
+  transition: 0.3s;
+}
+.paseador-admin-card.inactivo {
+  opacity: 0.55;
+}
+.paseador-admin-foto {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-color: var(--hero-fondo-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  margin: 0 auto 12px;
+  overflow: hidden;
+}
+.paseador-admin-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.paseador-admin-card h3 {
+  color: var(--verde-principal);
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+.paseador-admin-zona {
+  font-size: 12px;
+  color: var(--gris);
+  margin-bottom: 8px;
+}
+.paseador-admin-badge-estado {
+  display: inline-block;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.paseador-admin-acciones {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.btn-aprobar-paseador {
+  background: linear-gradient(135deg, var(--verde-secundario), var(--verde-principal));
+  color: white;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.btn-aprobar-paseador:hover {
+  transform: scale(1.03);
+}
+.btn-rechazar-paseador {
+  background: none;
+  border: 1px solid #e53e3e;
+  color: #e53e3e;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.btn-rechazar-paseador:hover {
+  background-color: #e53e3e;
+  color: white;
+}
+.dark-mode .paseador-admin-card {
+  background-color: #1e293b;
+}
+
 /* Final CSS General */
 
 /* Responsive Tablets (768px) */
@@ -3775,5 +3885,9 @@ h2 {
     width: 100%;
     justify-content: space-between;
     margin-top: 10px;
+  }
+
+  .paseador-admin-card {
+    padding: 16px;
   }
 }

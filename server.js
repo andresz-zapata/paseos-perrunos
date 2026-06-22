@@ -78,6 +78,8 @@ const carritoRoutes = require("./routes/carrito");
 app.use("/api/carrito", carritoRoutes);
 const pedidosRoutes = require("./routes/pedidos");
 app.use("/api/pedidos", pedidosRoutes);
+const paseadoresRoutes = require("./routes/paseadores");
+app.use("/api/paseadores", paseadoresRoutes);
 
 app.use(express.static(path.join(__dirname, "/"), {
   index: false

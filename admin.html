@@ -49,6 +49,7 @@
         <button class="admin-tab-btn" data-tab="usuarios">👥 Usuarios</button>
         <button class="admin-tab-btn" data-tab="productos">📦 Productos</button>
         <button class="admin-tab-btn" data-tab="pedidos">🛍️ Pedidos</button>
+        <button class="admin-tab-btn" data-tab="paseadores">🐕 Paseadores</button>
       </div>
 
       <div id="tab-dashboard">
@@ -155,6 +156,49 @@
 
         <div class="admin-lista" id="pedidos-admin-lista">
           <p class="reservas-empty" id="pedidos-admin-empty">Cargando pedidos...</p>
+        </div>
+      </div>
+      <div id="tab-paseadores" style="display:none;">
+        <div class="admin-filtros">
+          <button class="filtro-btn-paseador filtro-paseador-activo" data-filtro-paseador="aprobado">Aprobados</button>
+          <button class="filtro-btn-paseador" data-filtro-paseador="pendiente">Solicitudes pendientes</button>
+          <button class="filtro-btn-paseador" data-filtro-paseador="rechazado">Rechazados</button>
+        </div>
+
+        <div class="productos-admin-header">
+          <button class="btn-agregar" id="btn-nuevo-paseador">+ Agregar paseador</button>
+        </div>
+
+        <div class="formulario-producto" id="formulario-paseador" style="display:none;">
+          <h2 id="paseador-form-titulo">Nuevo paseador</h2>
+          <form id="paseador-form">
+            <input type="hidden" id="paseador-id" />
+            <input type="text" id="paseador-nombre" placeholder="Nombre completo" required />
+            <div class="producto-form-grid">
+              <input type="email" id="paseador-email" placeholder="Correo (opcional)" />
+              <input type="tel" id="paseador-telefono" placeholder="Teléfono (opcional)" />
+            </div>
+            <input type="text" id="paseador-zona" placeholder="Zona de cobertura (ej: El Poblado, Laureles)" required />
+            <input type="text" id="paseador-especialidad" placeholder="Especialidad (ej: Razas grandes)" required />
+            <input type="text" id="paseador-experiencia" placeholder="Experiencia (ej: 3 años)" required />
+            <textarea id="paseador-descripcion" placeholder="Descripción para mostrar a los clientes" rows="3" required></textarea>
+            <label class="label-foto">
+              Foto del paseador
+              <div class="foto-input-wrapper">
+                <input type="file" id="paseador-foto" accept="image/jpg, image/jpeg, image/png, image/webp" />
+              </div>
+              <span id="paseador-foto-nombre" class="foto-nombre"></span>
+            </label>
+            <div class="editar-botones">
+              <button type="submit">Guardar paseador</button>
+              <button type="button" id="btn-cancelar-paseador" class="btn-cancelar-editar">Cancelar</button>
+            </div>
+            <p id="paseador-message"></p>
+          </form>
+        </div>
+
+        <div class="productos-admin-lista" id="paseadores-admin-lista">
+          <p class="reservas-empty" id="paseadores-admin-empty">Cargando paseadores...</p>
         </div>
       </div>
     </section>

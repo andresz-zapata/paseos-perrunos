@@ -26,6 +26,15 @@ const storageProductos = new CloudinaryStorage({
   },
 });
 
+const storagePaseadores = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "paseos-perrunos/paseadores",
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    transformation: [{ width: 500, height: 500, crop: "fill" }],
+  },
+});
+
 const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 },
@@ -36,4 +45,9 @@ const uploadProducto = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-module.exports = { cloudinary, upload, uploadProducto };
+const uploadPaseador = multer({
+  storage: storagePaseadores,
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
+
+module.exports = { cloudinary, upload, uploadProducto, uploadPaseador };
