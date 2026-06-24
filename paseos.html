@@ -260,6 +260,39 @@
       </div>
     </section>
 
+    <!-- CONVOCATORIA PASEADORES -->
+<section class="container convocatoria-seccion">
+  <div class="convocatoria-card">
+    <div class="convocatoria-texto">
+      <h2>¿Te apasionan los perros? 🐕‍🦺</h2>
+      <p>Únete a nuestro equipo de paseadores verificados y gana dinero haciendo lo que amas.</p>
+      <button class="btn-agregar" id="btn-abrir-solicitud-paseador">Quiero ser paseador</button>
+    </div>
+    <div class="convocatoria-emoji">🐾</div>
+  </div>
+</section>
+
+<!-- MODAL SOLICITUD PASEADOR -->
+<div class="modal-overlay" id="modal-solicitud-paseador" style="display:none;">
+  <div class="modal-card modal-solicitud-card">
+    <button class="modal-paseador-cerrar" id="modal-solicitud-cerrar">✕</button>
+    <h2 class="modal-paseador-nombre">Solicitud para ser paseador 🐾</h2>
+    <p class="modal-solicitud-intro">Cuéntanos sobre ti, te contactaremos pronto.</p>
+
+    <form id="solicitud-paseador-form" class="solicitud-paseador-form">
+      <input type="text" id="solicitud-nombre" placeholder="Nombre completo" required />
+      <input type="email" id="solicitud-email" placeholder="Correo electrónico" required />
+      <input type="tel" id="solicitud-telefono" placeholder="Teléfono / WhatsApp" required />
+      <input type="text" id="solicitud-zona" placeholder="Zona donde puedes pasear (ej: El Poblado)" required />
+      <input type="text" id="solicitud-especialidad" placeholder="¿Con qué tipo de perros tienes más experiencia?" required />
+      <input type="text" id="solicitud-experiencia" placeholder="Años de experiencia (ej: 2 años)" required />
+      <textarea id="solicitud-descripcion" placeholder="Cuéntanos por qué quieres ser paseador con nosotros" rows="3" required></textarea>
+      <button type="submit" class="btn-agregar modal-producto-btn">Enviar solicitud</button>
+      <p id="solicitud-message"></p>
+    </form>
+  </div>
+</div>
+
     <!-- MODAL PASEADOR -->
     <div class="modal-overlay" id="modal-paseador" style="display: none">
       <div class="modal-card modal-paseador-card">

@@ -3188,6 +3188,98 @@ h2 {
   background-color: #1e293b;
 }
 
+/* Convocatoria paseadores */
+.convocatoria-seccion {
+  padding: 50px 20px;
+}
+
+.convocatoria-card {
+  background: linear-gradient(135deg, var(--verde-secundario), var(--verde-principal));
+  border-radius: 24px;
+  padding: 45px 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.convocatoria-texto h2 {
+  color: white;
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+
+.convocatoria-texto p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 15px;
+  margin-bottom: 18px;
+  max-width: 420px;
+}
+
+.convocatoria-texto .btn-agregar {
+  background-color: white;
+  color: var(--verde-principal);
+}
+
+.convocatoria-texto .btn-agregar:hover {
+  background-color: #f0fdf4;
+}
+
+.convocatoria-emoji {
+  font-size: 70px;
+  flex-shrink: 0;
+}
+
+/* Modal solicitud paseador */
+.modal-solicitud-card {
+  max-width: 460px;
+  text-align: center;
+  padding: 40px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.modal-solicitud-intro {
+  color: var(--gris);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+.solicitud-paseador-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+}
+.solicitud-paseador-form input,
+.solicitud-paseador-form textarea {
+  width: 100%;
+  padding: 10px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  outline: none;
+  transition: 0.3s;
+}
+.solicitud-paseador-form input:focus,
+.solicitud-paseador-form textarea:focus {
+  border-color: var(--verde-principal);
+  box-shadow: 0px 0px 0px 4px rgba(31, 122, 99, 0.1);
+}
+#solicitud-message {
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+}
+.dark-mode .solicitud-paseador-form input,
+.dark-mode .solicitud-paseador-form textarea {
+  background-color: #0f172a;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+
 /* Final CSS General */
 
 /* Responsive Tablets (768px) */
@@ -3427,6 +3519,15 @@ h2 {
   }
   .checkout-resumen {
     position: static;
+  }
+
+  .convocatoria-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 35px 25px;
+  }
+  .convocatoria-texto p {
+    max-width: 100%;
   }
 }
 
@@ -3889,5 +3990,12 @@ h2 {
 
   .paseador-admin-card {
     padding: 16px;
+  }
+
+  .convocatoria-emoji {
+    font-size: 50px;
+  }
+  .modal-solicitud-card {
+    padding: 28px 22px;
   }
 }

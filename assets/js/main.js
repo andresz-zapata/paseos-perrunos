@@ -2939,3 +2939,71 @@ if (pedidosLista) {
 
   cargarPedidos();
 }
+
+// Solicitud para ser paseador
+const modalSolicitudPaseador = document.querySelector('#modal-solicitud-paseador');
+const btnAbrirSolicitud = document.querySelector('#btn-abrir-solicitud-paseador');
+
+if (modalSolicitudPaseador) {
+  const btnCerrarSolicitud = document.querySelector('#modal-solicitud-cerrar');
+  const solicitudForm = document.querySelector('#solicitud-paseador-form');
+
+  btnAbrirSolicitud.addEventListener('click', () => {
+    modalSolicitudPaseador.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  });
+
+  const cerrarModalSolicitud = () => {
+    modalSolicitudPaseador.style.display = 'none';
+    document.body.style.overflow = '';
+  };
+
+  btnCerrarSolicitud.addEventListener('click', cerrarModalSolicitud);
+  modalSolicitudPaseador.addEventListener('click', (e) => {
+    if (e.target === modalSolicitudPaseador) cerrarModalSolicitud();
+  });
+
+  solicitudForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const message = document.querySelector('#solicitud-message');
+    const datos = {
+      nombre: document.querySelector('#solicitud-nombre').value,
+      email: document.querySelector('#solicitud-email').value,
+      telefono: document.querySelector('#solicitud-telefono').value,
+      zonaCobertura: document.querySelector('#solicitud-zona').value,
+      especialidad: document.querySelector('#solicitud-especialidad').value,
+      experiencia: document.querySelector('#solicitud-experiencia').value,
+      descripcion: document.querySelector('#solicitud-descripcion').value
+    };
+
+    const btnEnviar = solicitudForm.querySelector('button[type="submit"]');
+    btnEnviar.disabled = true;
+    btnEnviar.textContent = 'Enviando...';
+
+    try {
+      const response = await fetch(`${BASE_URL}/api/paseadores/solicitud`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datos)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showToast(data.message, 'success');
+        solicitudForm.reset();
+        setTimeout(cerrarModalSolicitud, 1500);
+      } else {
+        message.textContent = data.message;
+        message.style.color = '#e53e3e';
+      }
+    } catch (error) {
+      message.textContent = 'No se pudo enviar la solicitud, intenta de nuevo';
+      message.style.color = '#e53e3e';
+    } finally {
+      btnEnviar.disabled = false;
+      btnEnviar.textContent = 'Enviar solicitud';
+    }
+  });
+}
