@@ -768,7 +768,13 @@ h2 {
   text-align: center;
   position: relative;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;  
+  transition: transform 0.3s ease, box-shadow 0.3s ease; 
+  padding: 35px; 
+  border-radius: 18px;
+}
+.plan-card h3{
+  margin-bottom:25px;
+  font-size:1.5rem;
 }
 .precio {
   font-size: 20px;
@@ -794,6 +800,9 @@ h2 {
 }
 .btn-plan:hover {
   transform: scale(1.03);
+  background: #43a047;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(76, 175, 80, .3);
 }
 .destacado{
   border:3px solid #4CAF50;
@@ -831,6 +840,7 @@ h2 {
   padding: 0;
   margin: 20px 0;
   text-align: left;
+  flex-grow: 1;
 }
 .plan-beneficios li {
   margin: 12px 0;
@@ -3426,6 +3436,8 @@ h2 {
   .plan-card {
     width: 100%;
     max-width: 340px;
+    display: flex;
+    flex-direction: column;
   }
   .precio {
     font-size: 18px;

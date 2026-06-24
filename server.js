@@ -82,7 +82,12 @@ const paseadoresRoutes = require("./routes/paseadores");
 app.use("/api/paseadores", paseadoresRoutes);
 
 app.use(express.static(path.join(__dirname, "/"), {
-  index: false
+  index: false,
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache');
+    }
+  }
 }));
 
 app.use((req, res, next) => {

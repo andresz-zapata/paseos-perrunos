@@ -206,58 +206,25 @@
       <h2>Conoce a nuestros paseadores 👤</h2>
       <p>Personas reales, verificadas y amantes de los animales.</p>
 
-      <div class="cards">
-        <div
-          class="paseador-card card"
-          data-nombre="Laura García"
-          data-emoji="🐕"
-          data-paseos="120"
-          data-calificacion="4.9"
-          data-experiencia="3 años"
-          data-especialidad="Perros de raza grande"
-          data-descripcion="Amante de los animales desde pequeña. Me especializo en perros de raza grande y tengo experiencia en primeros auxilios para mascotas."
-        >
-          <div class="paseador-emoji">🐕</div>
-          <h3>Laura García</h3>
-          <p class="paseador-stats">+120 paseos | 4.9 ⭐</p>
-          <p class="paseador-especialidad">Perros de raza grande</p>
-          <button class="btn-ver-paseador">Ver perfil</button>
+      <div class="cards" id="paseadores-publico-grid">
+        <div class="paseador-card card skeleton-card" style="text-align:center; padding:25px;">
+          <div class="skeleton" style="width:80px; height:80px; border-radius:50%; margin:0 auto 12px;"></div>
+          <div class="skeleton skeleton-titulo" style="margin:0 auto 8px;"></div>
+          <div class="skeleton skeleton-texto" style="margin:0 auto;"></div>
         </div>
-
-        <div
-          class="paseador-card card"
-          data-nombre="Andrés López"
-          data-emoji="🐾"
-          data-paseos="80"
-          data-calificacion="4.8"
-          data-experiencia="2 años"
-          data-especialidad="Cachorros y razas pequeñas"
-          data-descripcion="Veterinario en formación con pasión por el cuidado animal. Me especializo en cachorros y razas pequeñas que necesitan atención especial."
-        >
-          <div class="paseador-emoji">🐾</div>
-          <h3>Andrés López</h3>
-          <p class="paseador-stats">+80 paseos | 4.8 ⭐</p>
-          <p class="paseador-especialidad">Cachorros y razas pequeñas</p>
-          <button class="btn-ver-paseador">Ver perfil</button>
+        <div class="paseador-card card skeleton-card" style="text-align:center; padding:25px;">
+          <div class="skeleton" style="width:80px; height:80px; border-radius:50%; margin:0 auto 12px;"></div>
+          <div class="skeleton skeleton-titulo" style="margin:0 auto 8px;"></div>
+          <div class="skeleton skeleton-texto" style="margin:0 auto;"></div>
         </div>
-
-        <div
-          class="paseador-card card"
-          data-nombre="Camila Torres"
-          data-emoji="🐶"
-          data-paseos="150"
-          data-calificacion="5.0"
-          data-experiencia="4 años"
-          data-especialidad="Múltiples perros"
-          data-descripcion="La más experimentada del equipo. Puede manejar grupos de hasta 3 perros a la vez con total seguridad y profesionalismo."
-        >
-          <div class="paseador-emoji">🐶</div>
-          <h3>Camila Torres</h3>
-          <p class="paseador-stats">+150 paseos | 5.0 ⭐</p>
-          <p class="paseador-especialidad">Múltiples perros</p>
-          <button class="btn-ver-paseador">Ver perfil</button>
+        <div class="paseador-card card skeleton-card" style="text-align:center; padding:25px;">
+          <div class="skeleton" style="width:80px; height:80px; border-radius:50%; margin:0 auto 12px;"></div>
+          <div class="skeleton skeleton-titulo" style="margin:0 auto 8px;"></div>
+          <div class="skeleton skeleton-texto" style="margin:0 auto;"></div>
         </div>
       </div>
+
+      <p class="petshop-empty" id="paseadores-publico-empty" style="display:none;">Aún no tenemos paseadores publicados. ¡Pronto los tendremos!</p>
     </section>
 
     <!-- CONVOCATORIA PASEADORES -->
@@ -357,6 +324,6 @@
     <footer class="footer">
       <p>© 2026 Paseos Perrunos - Amor y cuidado para tu mascota 🐾</p>
     </footer>
-    <script src="assets/js/main.js"></script>
+    <script src="assets/js/main.js?v=2"></script>
   </body>
 </html>

@@ -2039,6 +2039,7 @@ const renderizarPaseadoresAdmin = (paseadores) => {
 
     if (paseador.estado === 'pendiente') {
       accionesHTML = `
+        <button class="btn-editar-mascota btn-ver-detalle-paseador" data-id="${paseador._id}">👁️ Ver detalle</button>
         <button class="btn-aprobar-paseador" data-id="${paseador._id}" data-accion="aprobado">✅ Aprobar</button>
         <button class="btn-rechazar-paseador" data-id="${paseador._id}" data-accion="rechazado">✕ Rechazar</button>
       `;
@@ -2093,6 +2094,26 @@ const renderizarPaseadoresAdmin = (paseadores) => {
         });
       });
     });
+
+    const btnVerDetalle = card.querySelector('.btn-ver-detalle-paseador');
+      if (btnVerDetalle) {
+        btnVerDetalle.addEventListener('click', () => {
+          showModal({
+            emoji: '🐕',
+            titulo: paseador.nombre,
+            texto: `
+              📍 Zona: ${paseador.zonaCobertura}<br>
+              🎯 Especialidad: ${paseador.especialidad}<br>
+              ⏱️ Experiencia: ${paseador.experiencia}<br>
+              📧 ${paseador.email || 'No proporcionado'}<br>
+              📞 ${paseador.telefono || 'No proporcionado'}<br><br>
+              "${paseador.descripcion}"
+            `,
+            textoBtnConfirmar: 'Cerrar',
+            onConfirmar: () => {}
+          });
+        });
+      }
 
     // Editar
     const btnEditar = card.querySelector('.btn-editar-paseador');
@@ -2371,65 +2392,106 @@ if (contadores.length > 0) {
   contadores.forEach((contador) => observer.observe(contador));
 }
 
-// Modal paseadores
-const modalPaseador = document.querySelector("#modal-paseador");
-const btnCerrarPaseador = document.querySelector("#modal-paseador-cerrar");
+// Paseadores públicos - cargados desde la API real
+const paseadoresPublicoGrid = document.querySelector('#paseadores-publico-grid');
+const modalPaseador = document.querySelector('#modal-paseador');
 
-if (modalPaseador) {
-  document.querySelectorAll(".btn-ver-paseador").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const card = btn.closest(".paseador-card");
+const abrirModalPaseadorReal = (paseador) => {
+  if (!modalPaseador) return;
 
-      document.querySelector("#modal-paseador-emoji").textContent =
-        card.dataset.emoji;
-      document.querySelector("#modal-paseador-nombre").textContent =
-        card.dataset.nombre;
-      document.querySelector(
-        "#modal-paseador-calificacion"
-      ).textContent = `⭐ ${card.dataset.calificacion}`;
-      document.querySelector(
-        "#modal-paseador-paseos"
-      ).textContent = `🐾 +${card.dataset.paseos} paseos`;
-      document.querySelector(
-        "#modal-paseador-experiencia"
-      ).textContent = `⏱️ ${card.dataset.experiencia}`;
-      document.querySelector("#modal-paseador-especialidad").textContent =
-        card.dataset.especialidad;
-      document.querySelector("#modal-paseador-descripcion").textContent =
-        card.dataset.descripcion;
+  const fotoHTML = paseador.foto
+    ? `<img src="${paseador.foto}" alt="${paseador.nombre}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />`
+    : '🐕';
 
-      modalPaseador.style.display = "flex";
-      document.body.style.overflow = "hidden";
-    });
-  });
+  document.querySelector('#modal-paseador-emoji').innerHTML = fotoHTML;
+  document.querySelector('#modal-paseador-nombre').textContent = paseador.nombre;
+  document.querySelector('#modal-paseador-calificacion').textContent = `⭐ ${paseador.calificacionPromedio.toFixed(1)}`;
+  document.querySelector('#modal-paseador-paseos').textContent = `🐾 +${paseador.totalPaseos} paseos`;
+  document.querySelector('#modal-paseador-experiencia').textContent = `⏱️ ${paseador.experiencia}`;
+  document.querySelector('#modal-paseador-especialidad').textContent = paseador.especialidad;
+  document.querySelector('#modal-paseador-descripcion').textContent = paseador.descripcion;
 
-  const cerrarModal = () => {
-    modalPaseador.style.display = "none";
-    document.body.style.overflow = "";
+  modalPaseador.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+};
+
+if (paseadoresPublicoGrid) {
+  const cargarPaseadoresPublico = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/api/paseadores`);
+      const paseadores = await response.json();
+
+      const empty = document.querySelector('#paseadores-publico-empty');
+
+      if (paseadores.length === 0) {
+        paseadoresPublicoGrid.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      paseadoresPublicoGrid.innerHTML = '';
+
+      paseadores.forEach((paseador, index) => {
+        const card = document.createElement('div');
+        card.classList.add('paseador-card', 'card', 'animate-fadeInUp', 'opacity-0');
+        card.classList.add(`animate-delay-${Math.min(index + 1, 5)}`);
+
+        const fotoHTML = paseador.foto
+          ? `<img src="${paseador.foto}" alt="${paseador.nombre}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />`
+          : '🐕';
+
+        card.innerHTML = `
+          <div class="paseador-emoji">${fotoHTML}</div>
+          <h3>${paseador.nombre}</h3>
+          <p class="paseador-stats">+${paseador.totalPaseos} paseos | ${paseador.calificacionPromedio.toFixed(1)} ⭐</p>
+          <p class="paseador-especialidad">${paseador.especialidad}</p>
+          <button class="btn-ver-paseador" type="button">Ver perfil</button>
+        `;
+
+        card.querySelector('.btn-ver-paseador').addEventListener('click', (e) => {
+          e.stopPropagation();
+          abrirModalPaseadorReal(paseador);
+        });
+
+        paseadoresPublicoGrid.appendChild(card);
+      });
+
+    } catch (error) {
+      console.error('Error al cargar paseadores:', error);
+    }
   };
 
-  btnCerrarPaseador.addEventListener("click", cerrarModal);
+  cargarPaseadoresPublico();
+}
 
-  modalPaseador.addEventListener("click", (e) => {
+if (modalPaseador) {
+  const btnCerrarPaseador = document.querySelector('#modal-paseador-cerrar');
+
+  const cerrarModal = () => {
+    modalPaseador.style.display = 'none';
+    document.body.style.overflow = '';
+  };
+
+  btnCerrarPaseador.addEventListener('click', cerrarModal);
+
+  modalPaseador.addEventListener('click', (e) => {
     if (e.target === modalPaseador) cerrarModal();
   });
 
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") cerrarModal();
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') cerrarModal();
   });
 
-  document
-    .querySelector(".modal-paseador-btn")
-    .addEventListener("click", () => {
-      cerrarModal();
-      const token = localStorage.getItem("token");
-      if (!token) {
-        window.location.href = "login.html";
-      } else {
-        window.location.href = "reservas.html";
-      }
-    });
+  document.querySelector('.modal-paseador-btn').addEventListener('click', () => {
+    cerrarModal();
+    const tok = localStorage.getItem('token');
+    if (!tok) {
+      window.location.href = 'login.html';
+    } else {
+      window.location.href = 'reservas.html';
+    }
+  });
 }
 
 // Pet Shop - Catálogo público
