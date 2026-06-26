@@ -31,6 +31,15 @@ const reservaSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+    paseadorAsignado: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Paseador',
+      default: null
+    },
+    paseadorElegidoPorCliente: {
+      type: Boolean,
+      default: false
+    },
     estado: {
       type: String,
       enum: ["pendiente", "confirmada", "cancelada"],

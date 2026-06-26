@@ -455,7 +455,6 @@ if (perfilNombre) {
       .then((data) => {
         if (data.email) {
           perfilEmail.textContent = data.email;
-          nombreUsuario.textContent = `👤 ${data.nombre}`;
         }
         if (data.foto) {
           const perfilFoto = document.querySelector("#perfil-foto");
@@ -1073,6 +1072,27 @@ if (reservaForm) {
 
   cargarMascotasSelect();
 
+  const cargarPaseadoresSelect = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/api/paseadores`);
+      const paseadores = await response.json();
+
+      const select = document.querySelector('#reserva-paseador');
+
+      paseadores.forEach(paseador => {
+        const option = document.createElement('option');
+        option.value = paseador._id;
+        option.textContent = `${paseador.nombre} (${paseador.calificacionPromedio.toFixed(1)} ⭐)`;
+        select.appendChild(option);
+      });
+
+    } catch (error) {
+      console.error('Error al cargar paseadores:', error);
+    }
+  };
+
+  cargarPaseadoresSelect();
+
   const formatearFecha = (fechaISO) => {
     const fecha = new Date(fechaISO);
     return fecha.toLocaleString("es-CO", {
@@ -1141,11 +1161,16 @@ if (reservaForm) {
           const badgeClase = `badge-estado badge-${reserva.estado}`;
           const mostrarCancelar = reserva.estado === "pendiente";
 
+          const paseadorHTML = reserva.paseadorAsignado
+            ? `<p>🐕 Paseador: ${reserva.paseadorAsignado.nombre}</p>`
+            : `<p>🐕 Paseador: por asignar</p>`;
+
           card.innerHTML = `
             <div class="reserva-info">
               <h3>🐾 Paseo de ${reserva.mascota.nombre}</h3>
               <p>📅 ${formatearFecha(reserva.fecha)}</p>
               <p>📍 ${reserva.direccion}</p>
+              ${paseadorHTML}
               ${reserva.notas ? `<p>📝 ${reserva.notas}</p>` : ""}
             </div>
             <div class="reserva-acciones">
@@ -1230,6 +1255,7 @@ if (reservaForm) {
     const fecha = document.querySelector("#reserva-fecha").value;
     const direccion = document.querySelector("#reserva-direccion").value;
     const notas = document.querySelector("#reserva-notas").value;
+    const paseadorId = document.querySelector("#reserva-paseador").value;
 
     if (!mascota) {
       message.textContent = "Debes seleccionar una mascota";
@@ -1247,7 +1273,7 @@ if (reservaForm) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ mascota, fecha, direccion, notas }),
+        body: JSON.stringify({ mascota, fecha, direccion, notas, paseadorId }),
         signal: controller.signal,
       });
 
@@ -1292,6 +1318,13 @@ if (adminLista) {
   if (!token || rol !== "admin") {
     window.location.replace("login.html");
   }
+
+  // Cache de paseadores para llenar los <select> de reasignación sin pedirlo por cada tarjeta
+  window.__paseadoresCache = [];
+  fetch(`${BASE_URL}/api/paseadores`)
+    .then(res => res.json())
+    .then(data => { window.__paseadoresCache = data; })
+    .catch(err => console.error('Error al cargar cache de paseadores:', err));
 
   // Tabs
   document.querySelectorAll(".admin-tab-btn").forEach((btn) => {
@@ -1661,6 +1694,8 @@ if (adminLista) {
       const badgeClase = `badge-estado badge-${reserva.estado}`;
       const esPendiente = reserva.estado === "pendiente";
 
+      const paseadorActual = reserva.paseadorAsignado ? reserva.paseadorAsignado._id : '';
+
       card.innerHTML = `
         <div class="admin-card-info">
           <h3>🐾 Paseo de ${reserva.mascota.nombre}</h3>
@@ -1669,6 +1704,10 @@ if (adminLista) {
       })</p>
           <p>📅 ${formatearFechaAdmin(reserva.fecha)}</p>
           <p>📍 ${reserva.direccion}</p>
+          <p>🐕 Paseador: ${reserva.paseadorAsignado ? reserva.paseadorAsignado.nombre : 'Sin asignar'} ${reserva.paseadorElegidoPorCliente ? '<span style="font-size:11px; color:var(--gris);">(elegido por cliente)</span>' : ''}</p>
+          <select class="pedido-admin-select select-paseador-reserva" data-id="${reserva._id}" data-paseador-actual="${paseadorActual}">
+            <option value="">Sin asignar</option>
+          </select>
           ${reserva.notas ? `<p>📝 ${reserva.notas}</p>` : ""}
         </div>
         <div class="admin-card-acciones">
@@ -1687,6 +1726,51 @@ if (adminLista) {
       card.classList.add("animate-fadeInUp", "opacity-0");
       card.classList.add(`animate-delay-${Math.min(index + 1, 5)}`);
       adminLista.appendChild(card);
+
+      // Llenar el select de paseadores y marcar el actual
+      const selectPaseador = card.querySelector('.select-paseador-reserva');
+      if (selectPaseador && window.__paseadoresCache) {
+        window.__paseadoresCache.forEach(p => {
+          const option = document.createElement('option');
+          option.value = p._id;
+          option.textContent = p.nombre;
+          if (p._id === paseadorActual) option.selected = true;
+          selectPaseador.appendChild(option);
+        });
+
+        selectPaseador.addEventListener('change', (e) => {
+          const nuevoPaseadorId = e.target.value;
+
+          showModal({
+            emoji: '🐕',
+            titulo: '¿Reasignar paseador?',
+            texto: nuevoPaseadorId
+              ? 'Se asignará el paseador seleccionado a esta reserva.'
+              : 'La reserva quedará sin paseador asignado.',
+            textoBtnConfirmar: 'Confirmar',
+            onConfirmar: async () => {
+              try {
+                const response = await fetchConRefresh(`${BASE_URL}/api/reservas/admin/${reserva._id}/paseador`, {
+                  method: 'PATCH',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ paseadorId: nuevoPaseadorId || null })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                  showToast(data.message, 'success');
+                  cargarTodasLasReservas();
+                } else {
+                  showToast(data.message, 'error');
+                  e.target.value = paseadorActual;
+                }
+              } catch (error) {
+                showToast('No se pudo reasignar el paseador', 'error');
+                e.target.value = paseadorActual;
+              }
+            }
+          });
+        });
+      }
     });
 
     document
@@ -1978,275 +2062,275 @@ if (adminLista) {
       }
     });
   }
-}
 
-// Paseadores - Admin
-const btnNuevoPaseador = document.querySelector('#btn-nuevo-paseador');
-const formularioPaseador = document.querySelector('#formulario-paseador');
-const paseadorForm = document.querySelector('#paseador-form');
-const btnCancelarPaseador = document.querySelector('#btn-cancelar-paseador');
-const paseadoresAdminLista = document.querySelector('#paseadores-admin-lista');
-const paseadoresAdminEmpty = document.querySelector('#paseadores-admin-empty');
-let filtroPaseadorActual = 'aprobado';
-let todosLosPaseadores = [];
+  // Paseadores - Admin
+  const btnNuevoPaseador = document.querySelector('#btn-nuevo-paseador');
+  const formularioPaseador = document.querySelector('#formulario-paseador');
+  const paseadorForm = document.querySelector('#paseador-form');
+  const btnCancelarPaseador = document.querySelector('#btn-cancelar-paseador');
+  const paseadoresAdminLista = document.querySelector('#paseadores-admin-lista');
+  const paseadoresAdminEmpty = document.querySelector('#paseadores-admin-empty');
+  let filtroPaseadorActual = 'aprobado';
+  let todosLosPaseadores = [];
 
-const resetearFormularioPaseador = () => {
-  paseadorForm.reset();
-  document.querySelector('#paseador-id').value = '';
-  document.querySelector('#paseador-form-titulo').textContent = 'Nuevo paseador';
-  formularioPaseador.style.display = 'none';
-};
-
-if (btnNuevoPaseador) {
-  btnNuevoPaseador.addEventListener('click', () => {
-    resetearFormularioPaseador();
-    formularioPaseador.style.display = 'block';
-    formularioPaseador.scrollIntoView({ behavior: 'smooth' });
-  });
-}
-
-if (btnCancelarPaseador) {
-  btnCancelarPaseador.addEventListener('click', resetearFormularioPaseador);
-}
-
-const renderizarPaseadoresAdmin = (paseadores) => {
-  paseadoresAdminLista.innerHTML = '';
-
-  if (paseadores.length === 0) {
-    paseadoresAdminLista.innerHTML = '<p class="reservas-empty">No hay paseadores en esta categoría.</p>';
-    return;
-  }
-
-  const infoEstado = {
-    pendiente: { texto: 'Pendiente', clase: 'badge-pendiente' },
-    aprobado: { texto: 'Aprobado', clase: 'badge-confirmada' },
-    rechazado: { texto: 'Rechazado', clase: 'badge-cancelada' }
+  const resetearFormularioPaseador = () => {
+    paseadorForm.reset();
+    document.querySelector('#paseador-id').value = '';
+    document.querySelector('#paseador-form-titulo').textContent = 'Nuevo paseador';
+    formularioPaseador.style.display = 'none';
   };
 
-  paseadores.forEach((paseador, index) => {
-    const card = document.createElement('div');
-    card.classList.add('paseador-admin-card', 'animate-fadeInUp', 'opacity-0');
-    card.classList.add(`animate-delay-${Math.min((index % 5) + 1, 5)}`);
-    if (!paseador.activo) card.classList.add('inactivo');
+  if (btnNuevoPaseador) {
+    btnNuevoPaseador.addEventListener('click', () => {
+      resetearFormularioPaseador();
+      formularioPaseador.style.display = 'block';
+      formularioPaseador.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
 
-    const fotoHTML = paseador.foto
-      ? `<img src="${paseador.foto}" alt="${paseador.nombre}" />`
-      : '🐕';
+  if (btnCancelarPaseador) {
+    btnCancelarPaseador.addEventListener('click', resetearFormularioPaseador);
+  }
 
-    const info = infoEstado[paseador.estado];
+  const renderizarPaseadoresAdmin = (paseadores) => {
+    paseadoresAdminLista.innerHTML = '';
 
-    let accionesHTML = '';
-
-    if (paseador.estado === 'pendiente') {
-      accionesHTML = `
-        <button class="btn-editar-mascota btn-ver-detalle-paseador" data-id="${paseador._id}">👁️ Ver detalle</button>
-        <button class="btn-aprobar-paseador" data-id="${paseador._id}" data-accion="aprobado">✅ Aprobar</button>
-        <button class="btn-rechazar-paseador" data-id="${paseador._id}" data-accion="rechazado">✕ Rechazar</button>
-      `;
-    } else if (paseador.estado === 'aprobado') {
-      accionesHTML = `
-        <button class="btn-editar-mascota btn-editar-paseador" data-id="${paseador._id}">✏️ Editar</button>
-        <button class="btn-toggle-producto btn-toggle-paseador" data-id="${paseador._id}">
-          ${paseador.activo ? '🚫 Desactivar' : '✅ Activar'}
-        </button>
-      `;
+    if (paseadores.length === 0) {
+      paseadoresAdminLista.innerHTML = '<p class="reservas-empty">No hay paseadores en esta categoría.</p>';
+      return;
     }
 
-    card.innerHTML = `
-      <div class="paseador-admin-foto">${fotoHTML}</div>
-      <h3>${paseador.nombre}</h3>
-      <p class="paseador-admin-zona">📍 ${paseador.zonaCobertura}</p>
-      <span class="badge-estado paseador-admin-badge-estado ${info.clase}">${info.texto}</span>
-      <div class="paseador-admin-acciones">${accionesHTML}</div>
-    `;
+    const infoEstado = {
+      pendiente: { texto: 'Pendiente', clase: 'badge-pendiente' },
+      aprobado: { texto: 'Aprobado', clase: 'badge-confirmada' },
+      rechazado: { texto: 'Rechazado', clase: 'badge-cancelada' }
+    };
 
-    paseadoresAdminLista.appendChild(card);
+    paseadores.forEach((paseador, index) => {
+      const card = document.createElement('div');
+      card.classList.add('paseador-admin-card', 'animate-fadeInUp', 'opacity-0');
+      card.classList.add(`animate-delay-${Math.min((index % 5) + 1, 5)}`);
+      if (!paseador.activo) card.classList.add('inactivo');
 
-    // Aprobar / rechazar
-    card.querySelectorAll('.btn-aprobar-paseador, .btn-rechazar-paseador').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const accion = btn.dataset.accion;
-        showModal({
-          emoji: accion === 'aprobado' ? '✅' : '✕',
-          titulo: accion === 'aprobado' ? '¿Aprobar este paseador?' : '¿Rechazar esta solicitud?',
-          texto: accion === 'aprobado'
-            ? 'El paseador aparecerá públicamente en el sitio.'
-            : 'La solicitud quedará marcada como rechazada.',
-          textoBtnConfirmar: 'Confirmar',
-          onConfirmar: async () => {
-            try {
-              const response = await fetchConRefresh(`${BASE_URL}/api/paseadores/${paseador._id}/revision`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ estado: accion })
-              });
-              const data = await response.json();
-              if (response.ok) {
-                showToast(data.message, 'success');
-                cargarPaseadoresAdmin();
-              } else {
-                showToast(data.message, 'error');
+      const fotoHTML = paseador.foto
+        ? `<img src="${paseador.foto}" alt="${paseador.nombre}" />`
+        : '🐕';
+
+      const info = infoEstado[paseador.estado];
+
+      let accionesHTML = '';
+
+      if (paseador.estado === 'pendiente') {
+        accionesHTML = `
+          <button class="btn-editar-mascota btn-ver-detalle-paseador" data-id="${paseador._id}">👁️ Ver detalle</button>
+          <button class="btn-aprobar-paseador" data-id="${paseador._id}" data-accion="aprobado">✅ Aprobar</button>
+          <button class="btn-rechazar-paseador" data-id="${paseador._id}" data-accion="rechazado">✕ Rechazar</button>
+        `;
+      } else if (paseador.estado === 'aprobado') {
+        accionesHTML = `
+          <button class="btn-editar-mascota btn-editar-paseador" data-id="${paseador._id}">✏️ Editar</button>
+          <button class="btn-toggle-producto btn-toggle-paseador" data-id="${paseador._id}">
+            ${paseador.activo ? '🚫 Desactivar' : '✅ Activar'}
+          </button>
+        `;
+      }
+
+      card.innerHTML = `
+        <div class="paseador-admin-foto">${fotoHTML}</div>
+        <h3>${paseador.nombre}</h3>
+        <p class="paseador-admin-zona">📍 ${paseador.zonaCobertura}</p>
+        <span class="badge-estado paseador-admin-badge-estado ${info.clase}">${info.texto}</span>
+        <div class="paseador-admin-acciones">${accionesHTML}</div>
+      `;
+
+      paseadoresAdminLista.appendChild(card);
+
+      // Aprobar / rechazar
+      card.querySelectorAll('.btn-aprobar-paseador, .btn-rechazar-paseador').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const accion = btn.dataset.accion;
+          showModal({
+            emoji: accion === 'aprobado' ? '✅' : '✕',
+            titulo: accion === 'aprobado' ? '¿Aprobar este paseador?' : '¿Rechazar esta solicitud?',
+            texto: accion === 'aprobado'
+              ? 'El paseador aparecerá públicamente en el sitio.'
+              : 'La solicitud quedará marcada como rechazada.',
+            textoBtnConfirmar: 'Confirmar',
+            onConfirmar: async () => {
+              try {
+                const response = await fetchConRefresh(`${BASE_URL}/api/paseadores/${paseador._id}/revision`, {
+                  method: 'PATCH',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ estado: accion })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                  showToast(data.message, 'success');
+                  cargarPaseadoresAdmin();
+                } else {
+                  showToast(data.message, 'error');
+                }
+              } catch (error) {
+                showToast('No se pudo procesar la solicitud', 'error');
               }
-            } catch (error) {
-              showToast('No se pudo procesar la solicitud', 'error');
             }
-          }
+          });
         });
       });
-    });
 
-    const btnVerDetalle = card.querySelector('.btn-ver-detalle-paseador');
-      if (btnVerDetalle) {
-        btnVerDetalle.addEventListener('click', () => {
+      const btnVerDetalle = card.querySelector('.btn-ver-detalle-paseador');
+        if (btnVerDetalle) {
+          btnVerDetalle.addEventListener('click', () => {
+            showModal({
+              emoji: '🐕',
+              titulo: paseador.nombre,
+              texto: `
+                📍 Zona: ${paseador.zonaCobertura}<br>
+                🎯 Especialidad: ${paseador.especialidad}<br>
+                ⏱️ Experiencia: ${paseador.experiencia}<br>
+                📧 ${paseador.email || 'No proporcionado'}<br>
+                📞 ${paseador.telefono || 'No proporcionado'}<br><br>
+                "${paseador.descripcion}"
+              `,
+              textoBtnConfirmar: 'Cerrar',
+              onConfirmar: () => {}
+            });
+          });
+        }
+
+      // Editar
+      const btnEditar = card.querySelector('.btn-editar-paseador');
+      if (btnEditar) {
+        btnEditar.addEventListener('click', () => {
+          document.querySelector('#paseador-id').value = paseador._id;
+          document.querySelector('#paseador-nombre').value = paseador.nombre;
+          document.querySelector('#paseador-email').value = paseador.email || '';
+          document.querySelector('#paseador-telefono').value = paseador.telefono || '';
+          document.querySelector('#paseador-zona').value = paseador.zonaCobertura;
+          document.querySelector('#paseador-especialidad').value = paseador.especialidad;
+          document.querySelector('#paseador-experiencia').value = paseador.experiencia;
+          document.querySelector('#paseador-descripcion').value = paseador.descripcion;
+          document.querySelector('#paseador-form-titulo').textContent = 'Editar paseador';
+          formularioPaseador.style.display = 'block';
+          formularioPaseador.scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+
+      // Activar/desactivar
+      const btnToggle = card.querySelector('.btn-toggle-paseador');
+      if (btnToggle) {
+        btnToggle.addEventListener('click', () => {
           showModal({
-            emoji: '🐕',
-            titulo: paseador.nombre,
-            texto: `
-              📍 Zona: ${paseador.zonaCobertura}<br>
-              🎯 Especialidad: ${paseador.especialidad}<br>
-              ⏱️ Experiencia: ${paseador.experiencia}<br>
-              📧 ${paseador.email || 'No proporcionado'}<br>
-              📞 ${paseador.telefono || 'No proporcionado'}<br><br>
-              "${paseador.descripcion}"
-            `,
-            textoBtnConfirmar: 'Cerrar',
-            onConfirmar: () => {}
+            emoji: paseador.activo ? '🚫' : '✅',
+            titulo: paseador.activo ? '¿Desactivar paseador?' : '¿Activar paseador?',
+            texto: paseador.activo
+              ? 'Dejará de aparecer públicamente, pero su historial se conserva.'
+              : 'Volverá a aparecer públicamente.',
+            textoBtnConfirmar: 'Confirmar',
+            onConfirmar: async () => {
+              try {
+                const response = await fetchConRefresh(`${BASE_URL}/api/paseadores/${paseador._id}/estado`, {
+                  method: 'PATCH'
+                });
+                const data = await response.json();
+                if (response.ok) {
+                  showToast(data.message, 'success');
+                  cargarPaseadoresAdmin();
+                } else {
+                  showToast(data.message, 'error');
+                }
+              } catch (error) {
+                showToast('No se pudo actualizar el paseador', 'error');
+              }
+            }
           });
         });
       }
+    });
+  };
 
-    // Editar
-    const btnEditar = card.querySelector('.btn-editar-paseador');
-    if (btnEditar) {
-      btnEditar.addEventListener('click', () => {
-        document.querySelector('#paseador-id').value = paseador._id;
-        document.querySelector('#paseador-nombre').value = paseador.nombre;
-        document.querySelector('#paseador-email').value = paseador.email || '';
-        document.querySelector('#paseador-telefono').value = paseador.telefono || '';
-        document.querySelector('#paseador-zona').value = paseador.zonaCobertura;
-        document.querySelector('#paseador-especialidad').value = paseador.especialidad;
-        document.querySelector('#paseador-experiencia').value = paseador.experiencia;
-        document.querySelector('#paseador-descripcion').value = paseador.descripcion;
-        document.querySelector('#paseador-form-titulo').textContent = 'Editar paseador';
-        formularioPaseador.style.display = 'block';
-        formularioPaseador.scrollIntoView({ behavior: 'smooth' });
-      });
-    }
-
-    // Activar/desactivar
-    const btnToggle = card.querySelector('.btn-toggle-paseador');
-    if (btnToggle) {
-      btnToggle.addEventListener('click', () => {
-        showModal({
-          emoji: paseador.activo ? '🚫' : '✅',
-          titulo: paseador.activo ? '¿Desactivar paseador?' : '¿Activar paseador?',
-          texto: paseador.activo
-            ? 'Dejará de aparecer públicamente, pero su historial se conserva.'
-            : 'Volverá a aparecer públicamente.',
-          textoBtnConfirmar: 'Confirmar',
-          onConfirmar: async () => {
-            try {
-              const response = await fetchConRefresh(`${BASE_URL}/api/paseadores/${paseador._id}/estado`, {
-                method: 'PATCH'
-              });
-              const data = await response.json();
-              if (response.ok) {
-                showToast(data.message, 'success');
-                cargarPaseadoresAdmin();
-              } else {
-                showToast(data.message, 'error');
-              }
-            } catch (error) {
-              showToast('No se pudo actualizar el paseador', 'error');
-            }
-          }
-        });
-      });
-    }
-  });
-};
-
-const cargarPaseadoresAdmin = async () => {
-  paseadoresAdminLista.innerHTML = `
-    ${[1, 2, 3].map(() => `
-      <div class="skeleton-card">
-        <div class="skeleton skeleton-foto" style="height:120px;"></div>
-        <div class="skeleton-info">
-          <div class="skeleton skeleton-titulo"></div>
+  const cargarPaseadoresAdmin = async () => {
+    paseadoresAdminLista.innerHTML = `
+      ${[1, 2, 3].map(() => `
+        <div class="skeleton-card">
+          <div class="skeleton skeleton-foto" style="height:120px;"></div>
+          <div class="skeleton-info">
+            <div class="skeleton skeleton-titulo"></div>
+          </div>
         </div>
-      </div>
-    `).join('')}
-  `;
-
-  try {
-    const response = await fetchConRefresh(`${BASE_URL}/api/paseadores/admin/todos`, { method: 'GET' });
-    const paseadores = await response.json();
-
-    todosLosPaseadores = paseadores;
-    aplicarFiltroPaseador(filtroPaseadorActual);
-
-  } catch (error) {
-    console.error('Error al cargar paseadores:', error);
-  }
-};
-
-const aplicarFiltroPaseador = (filtro) => {
-  filtroPaseadorActual = filtro;
-  const filtrados = todosLosPaseadores.filter(p => p.estado === filtro);
-  renderizarPaseadoresAdmin(filtrados);
-};
-
-document.querySelectorAll('.filtro-btn-paseador').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filtro-btn-paseador').forEach(b => b.classList.remove('filtro-paseador-activo'));
-    btn.classList.add('filtro-paseador-activo');
-    aplicarFiltroPaseador(btn.dataset.filtroPaseador);
-  });
-});
-
-if (paseadorForm) {
-  paseadorForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const id = document.querySelector('#paseador-id').value;
-    const formData = new FormData();
-
-    formData.append('nombre', document.querySelector('#paseador-nombre').value);
-    formData.append('email', document.querySelector('#paseador-email').value);
-    formData.append('telefono', document.querySelector('#paseador-telefono').value);
-    formData.append('zonaCobertura', document.querySelector('#paseador-zona').value);
-    formData.append('especialidad', document.querySelector('#paseador-especialidad').value);
-    formData.append('experiencia', document.querySelector('#paseador-experiencia').value);
-    formData.append('descripcion', document.querySelector('#paseador-descripcion').value);
-
-    const foto = document.querySelector('#paseador-foto').files[0];
-    if (foto) formData.append('foto', foto);
-
-    const btnGuardar = paseadorForm.querySelector('button[type="submit"]');
-    btnGuardar.disabled = true;
-    btnGuardar.textContent = 'Guardando...';
+      `).join('')}
+    `;
 
     try {
-      const url = id ? `${BASE_URL}/api/paseadores/${id}` : `${BASE_URL}/api/paseadores`;
-      const method = id ? 'PUT' : 'POST';
+      const response = await fetchConRefresh(`${BASE_URL}/api/paseadores/admin/todos`, { method: 'GET' });
+      const paseadores = await response.json();
 
-      const response = await fetchConRefresh(url, { method, body: formData });
-      const data = await response.json();
+      todosLosPaseadores = paseadores;
+      aplicarFiltroPaseador(filtroPaseadorActual);
 
-      if (response.ok) {
-        showToast(data.message, 'success');
-        resetearFormularioPaseador();
-        cargarPaseadoresAdmin();
-      } else {
-        showToast(data.message, 'error');
-      }
     } catch (error) {
-      showToast('No se pudo conectar con el servidor', 'error');
-    } finally {
-      btnGuardar.disabled = false;
-      btnGuardar.textContent = 'Guardar paseador';
+      console.error('Error al cargar paseadores:', error);
     }
+  };
+
+  const aplicarFiltroPaseador = (filtro) => {
+    filtroPaseadorActual = filtro;
+    const filtrados = todosLosPaseadores.filter(p => p.estado === filtro);
+    renderizarPaseadoresAdmin(filtrados);
+  };
+
+  document.querySelectorAll('.filtro-btn-paseador').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filtro-btn-paseador').forEach(b => b.classList.remove('filtro-paseador-activo'));
+      btn.classList.add('filtro-paseador-activo');
+      aplicarFiltroPaseador(btn.dataset.filtroPaseador);
+    });
   });
+
+  if (paseadorForm) {
+    paseadorForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const id = document.querySelector('#paseador-id').value;
+      const formData = new FormData();
+
+      formData.append('nombre', document.querySelector('#paseador-nombre').value);
+      formData.append('email', document.querySelector('#paseador-email').value);
+      formData.append('telefono', document.querySelector('#paseador-telefono').value);
+      formData.append('zonaCobertura', document.querySelector('#paseador-zona').value);
+      formData.append('especialidad', document.querySelector('#paseador-especialidad').value);
+      formData.append('experiencia', document.querySelector('#paseador-experiencia').value);
+      formData.append('descripcion', document.querySelector('#paseador-descripcion').value);
+
+      const foto = document.querySelector('#paseador-foto').files[0];
+      if (foto) formData.append('foto', foto);
+
+      const btnGuardar = paseadorForm.querySelector('button[type="submit"]');
+      btnGuardar.disabled = true;
+      btnGuardar.textContent = 'Guardando...';
+
+      try {
+        const url = id ? `${BASE_URL}/api/paseadores/${id}` : `${BASE_URL}/api/paseadores`;
+        const method = id ? 'PUT' : 'POST';
+
+        const response = await fetchConRefresh(url, { method, body: formData });
+        const data = await response.json();
+
+        if (response.ok) {
+          showToast(data.message, 'success');
+          resetearFormularioPaseador();
+          cargarPaseadoresAdmin();
+        } else {
+          showToast(data.message, 'error');
+        }
+      } catch (error) {
+        showToast('No se pudo conectar con el servidor', 'error');
+      } finally {
+        btnGuardar.disabled = false;
+        btnGuardar.textContent = 'Guardar paseador';
+      }
+    });
+  }
 }
 
 // Admin perfil

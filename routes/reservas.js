@@ -33,7 +33,7 @@ router.post(
         return res.status(400).json({ message: errores.array()[0].msg });
       }
 
-      const { mascota, fecha, direccion, notas } = req.body;
+      const { mascota, fecha, direccion, notas, paseadorId } = req.body;
 
       const mascotaExiste = await Mascota.findOne({
         _id: mascota,
@@ -53,6 +53,21 @@ router.post(
         });
       }
 
+      let paseadorAsignado = null;
+      let paseadorElegidoPorCliente = false;
+
+      if (paseadorId) {
+        const Paseador = require('../models/Paseador'); // Revisar esto
+        const paseadorExiste = await Paseador.findOne({ _id: paseadorId, estado: 'aprobado', activo: true });
+
+        if (!paseadorExiste) {
+          return res.status(400).json({ message: 'El paseador seleccionado no está disponible' });
+        }
+
+        paseadorAsignado = paseadorExiste._id;
+        paseadorElegidoPorCliente = true;
+      }
+
       const reserva = new Reserva({
         usuario: req.usuario.id,
         mascota,
@@ -60,6 +75,8 @@ router.post(
         fecha: fechaReserva,
         direccion,
         notas,
+        paseadorAsignado,
+        paseadorElegidoPorCliente,
       });
 
       await reserva.save();
@@ -91,6 +108,7 @@ router.get("/", verificarToken, async (req, res) => {
   try {
     const reservas = await Reserva.find({ usuario: req.usuario.id })
       .populate("mascota", "nombre foto")
+      .populate("paseadorAsignado", "nombre foto calificacionPromedio")
       .sort({ fecha: 1 });
 
     res.status(200).json(reservas);
@@ -105,12 +123,46 @@ router.get("/admin/todas", verificarToken, verificarAdmin, async (req, res) => {
     const reservas = await Reserva.find()
       .populate("usuario", "nombre email")
       .populate("mascota", "nombre foto")
+      .populate("paseadorAsignado", "nombre foto")
       .sort({ fecha: 1 });
 
     res.status(200).json(reservas);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error en el servidor" });
+  }
+});
+
+router.patch('/admin/:id/paseador', verificarToken, verificarAdmin, async (req, res) => {
+  try {
+    const { paseadorId } = req.body;
+
+    const reserva = await Reserva.findById(req.params.id);
+    if (!reserva) {
+      return res.status(404).json({ message: 'Reserva no encontrada' });
+    }
+
+    if (paseadorId) {
+      const Paseador = require('../models/Paseador');
+      const paseadorExiste = await Paseador.findOne({ _id: paseadorId, estado: 'aprobado', activo: true });
+      if (!paseadorExiste) {
+        return res.status(400).json({ message: 'El paseador seleccionado no está disponible' });
+      }
+      reserva.paseadorAsignado = paseadorId;
+    } else {
+      reserva.paseadorAsignado = null;
+    }
+
+    // Reasignar desde admin siempre se marca como decisión administrativa, no del cliente
+    reserva.paseadorElegidoPorCliente = false;
+
+    await reserva.save();
+
+    res.status(200).json({ message: 'Paseador reasignado correctamente', reserva });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error en el servidor' });
   }
 });
 
