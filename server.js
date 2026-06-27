@@ -80,6 +80,8 @@ const pedidosRoutes = require("./routes/pedidos");
 app.use("/api/pedidos", pedidosRoutes);
 const paseadoresRoutes = require("./routes/paseadores");
 app.use("/api/paseadores", paseadoresRoutes);
+const paseadorPanelRoutes = require("./routes/paseador-panel");
+app.use("/api/paseador-panel", paseadorPanelRoutes);
 
 app.use(express.static(path.join(__dirname, "/"), {
   index: false,
@@ -97,7 +99,8 @@ app.use((req, res, next) => {
     'index.html', 'login.html', 'registro.html', 'recuperar.html',
     'perfil.html', 'mascotas.html', 'reservas.html', 'admin.html',
     'admin-perfil.html', 'paseos.html', 'petshop.html', 'carrito.html',
-    'checkout.html', 'pedidos.html', '404.html'
+    'checkout.html', 'pedidos.html', 'registro-paseador.html',
+    'paseador-panel.html', '404.html'
   ];
 
   const ruta = req.path.replace('/', '') || 'index.html';

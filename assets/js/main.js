@@ -325,6 +325,8 @@ if (loginForm && document.querySelector("#login-password")) {
         setTimeout(() => {
           if (data.rol === "admin") {
             window.location.replace("admin.html");
+          } else if (data.rol === "paseador") {
+            window.location.replace("paseador-panel.html");
           } else {
             window.location.replace("perfil.html");
           }
@@ -3152,4 +3154,224 @@ if (modalSolicitudPaseador) {
       btnEnviar.textContent = 'Enviar solicitud';
     }
   });
+}
+
+// Registro de cuenta para paseador
+const registroPaseadorForm = document.querySelector('#registro-paseador-form');
+
+if (registroPaseadorForm) {
+  const togglePass = document.querySelector('#toggle-paseador-registro-password');
+  const passInput = document.querySelector('#paseador-registro-password');
+
+  if (togglePass && passInput) {
+    togglePass.addEventListener('click', () => {
+      passInput.type = passInput.type === 'password' ? 'text' : 'password';
+    });
+  }
+
+  registroPaseadorForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = document.querySelector('#paseador-registro-email').value;
+    const password = passInput.value;
+    const message = document.querySelector('#paseador-registro-message');
+
+    const btnRegistro = registroPaseadorForm.querySelector('button[type="submit"]');
+    btnRegistro.disabled = true;
+    btnRegistro.textContent = 'Creando cuenta...';
+
+    try {
+      const response = await fetch(`${BASE_URL}/api/auth/registro-paseador`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showToast(data.message, 'success');
+        registroPaseadorForm.reset();
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 1800);
+      } else {
+        message.textContent = data.message;
+        message.style.color = '#e53e3e';
+      }
+    } catch (error) {
+      message.textContent = 'No se pudo conectar con el servidor';
+      message.style.color = '#e53e3e';
+    } finally {
+      btnRegistro.disabled = false;
+      btnRegistro.textContent = 'Crear cuenta';
+    }
+  });
+}
+
+// Panel del Paseador
+const paseadorStatsGrid = document.querySelector('#paseador-stats-grid');
+
+if (paseadorStatsGrid) {
+  const tokenLocal = localStorage.getItem('token');
+  const rolLocal = localStorage.getItem('rol');
+
+  if (!tokenLocal || rolLocal !== 'paseador') {
+    window.location.replace('login.html');
+  }
+
+  let todosLosPaseos = [];
+
+  const formatearFechaPaseo = (fechaISO) => {
+    const fecha = new Date(fechaISO);
+    return fecha.toLocaleString('es-CO', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const cargarStatsPaseador = async () => {
+    try {
+      const response = await fetchConRefresh(`${BASE_URL}/api/paseador-panel/mi-perfil`, {
+        method: 'GET'
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        showToast(data.message, 'error');
+        return;
+      }
+
+      paseadorStatsGrid.innerHTML = `
+        <div class="stat-card animate-fadeInUp opacity-0 animate-delay-1">
+          <div class="stat-icono">🐾</div>
+          <div class="stat-valor">${data.totalPaseos}</div>
+          <div class="stat-label">Paseos completados</div>
+        </div>
+        <div class="stat-card animate-fadeInUp opacity-0 animate-delay-2">
+          <div class="stat-icono">⭐</div>
+          <div class="stat-valor">${data.calificacionPromedio.toFixed(1)}</div>
+          <div class="stat-label">Calificación promedio</div>
+        </div>
+        <div class="stat-card animate-fadeInUp opacity-0 animate-delay-3">
+          <div class="stat-icono">📍</div>
+          <div class="stat-valor" style="font-size: 18px;">${data.zonaCobertura}</div>
+          <div class="stat-label">Zona de cobertura</div>
+        </div>
+      `;
+
+    } catch (error) {
+      console.error('Error al cargar estadísticas:', error);
+    }
+  };
+
+  const renderizarPaseo = (reserva) => {
+    const card = document.createElement('div');
+    card.classList.add('reserva-card', 'animate-fadeInUp', 'opacity-0');
+
+    const badgeClase = `badge-estado badge-${reserva.estado === 'entregado' ? 'confirmada' : reserva.estado}`;
+    const puedeCompletar = reserva.estado === 'confirmada';
+
+    card.innerHTML = `
+      <div class="reserva-info">
+        <h3>🐾 Paseo de ${reserva.mascota.nombre}</h3>
+        <p>👤 Cliente: ${reserva.usuario.nombre}</p>
+        <p>📅 ${formatearFechaPaseo(reserva.fecha)}</p>
+        <p>📍 ${reserva.direccion}</p>
+        ${reserva.notas ? `<p>📝 ${reserva.notas}</p>` : ''}
+      </div>
+      <div class="reserva-acciones">
+        <span class="${badgeClase}">${reserva.estado}</span>
+        ${puedeCompletar ? `<button class="btn-confirmar" data-id="${reserva._id}">Marcar completado</button>` : ''}
+      </div>
+    `;
+
+    const btnCompletar = card.querySelector('.btn-confirmar');
+    if (btnCompletar) {
+      btnCompletar.addEventListener('click', () => {
+        showModal({
+          emoji: '🐾',
+          titulo: '¿Marcar paseo como completado?',
+          texto: 'Esta acción suma el paseo a tus estadísticas.',
+          textoBtnConfirmar: 'Sí, completar',
+          onConfirmar: async () => {
+            try {
+              const response = await fetchConRefresh(`${BASE_URL}/api/paseador-panel/mis-paseos/${reserva._id}/completar`, {
+                method: 'PATCH'
+              });
+              const data = await response.json();
+              if (response.ok) {
+                showToast(data.message, 'success');
+                cargarMisPaseos();
+                cargarStatsPaseador();
+              } else {
+                showToast(data.message, 'error');
+              }
+            } catch (error) {
+              showToast('No se pudo completar el paseo', 'error');
+            }
+          }
+        });
+      });
+    }
+
+    return card;
+  };
+
+  const cargarMisPaseos = async () => {
+    const listaPendientes = document.querySelector('#paseos-pendientes-lista');
+    const listaCompletados = document.querySelector('#paseos-completados-lista');
+    const emptyPendientes = document.querySelector('#paseos-pendientes-empty');
+    const emptyCompletados = document.querySelector('#paseos-completados-empty');
+
+    try {
+      const response = await fetchConRefresh(`${BASE_URL}/api/paseador-panel/mis-paseos`, {
+        method: 'GET'
+      });
+
+      const paseos = await response.json();
+      todosLosPaseos = paseos;
+
+      const pendientes = paseos.filter(p => p.estado === 'pendiente' || p.estado === 'confirmada');
+      const completados = paseos.filter(p => p.estado === 'entregado');
+
+      listaPendientes.innerHTML = '';
+      if (pendientes.length === 0) {
+        emptyPendientes.style.display = 'block';
+      } else {
+        emptyPendientes.style.display = 'none';
+        pendientes.forEach(p => listaPendientes.appendChild(renderizarPaseo(p)));
+      }
+
+      listaCompletados.innerHTML = '';
+      if (completados.length === 0) {
+        emptyCompletados.style.display = 'block';
+      } else {
+        emptyCompletados.style.display = 'none';
+        completados.forEach(p => listaCompletados.appendChild(renderizarPaseo(p)));
+      }
+
+    } catch (error) {
+      console.error('Error al cargar paseos:', error);
+    }
+  };
+
+  document.querySelectorAll('[data-tab-paseo]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-tab-paseo]').forEach(b => b.classList.remove('tab-activo'));
+      btn.classList.add('tab-activo');
+
+      const tab = btn.dataset.tabPaseo;
+      document.querySelector('#tab-paseos-pendientes').style.display = tab === 'pendientes' ? 'block' : 'none';
+      document.querySelector('#tab-paseos-completados').style.display = tab === 'completados' ? 'block' : 'none';
+    });
+  });
+
+  cargarStatsPaseador();
+  cargarMisPaseos();
 }

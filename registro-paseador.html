@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crear cuenta de Paseador | Paseos Perrunos</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="auth-container">
+      <a href="paseos.html" class="btn-volver">← Volver</a>
+      <h1>Cuenta de Paseador 🐕</h1>
+      <p style="color: var(--gris); font-size: 14px; margin-bottom: 20px;">
+        Usa el mismo correo con el que enviaste tu solicitud y que ya fue aprobado.
+      </p>
+      <form class="auth-form" id="registro-paseador-form">
+        <input type="email" id="paseador-registro-email" placeholder="Correo electrónico" required />
+        <div class="password-container">
+          <input
+            type="password"
+            placeholder="Crea una contraseña"
+            id="paseador-registro-password"
+            required
+          />
+          <span class="toggle-password" id="toggle-paseador-registro-password">👁️</span>
+        </div>
+        <button type="submit">Crear cuenta</button>
+        <p id="paseador-registro-message"></p>
+      </form>
+      <div class="auth-links">
+        <a href="login.html">Ya tengo cuenta</a>
+      </div>
+    </div>
+    <script src="assets/js/main.js?v=2"></script>
+  </body>
+</html>

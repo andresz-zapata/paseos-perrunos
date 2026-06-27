@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
-const Paseador = require('../models/Paseador');
+const Paseador = require('../models/paseador');
 const { uploadPaseador } = require('../config/cloudinary');
 const { verificarToken, verificarAdmin } = require('../middleware/auth');
 

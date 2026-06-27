@@ -78,4 +78,4 @@ const paseadorSchema = new mongoose.Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model('Paseador', paseadorSchema);
+module.exports = mongoose.models.Paseador || mongoose.model('Paseador', paseadorSchema);

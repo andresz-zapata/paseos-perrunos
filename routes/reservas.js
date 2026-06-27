@@ -57,7 +57,7 @@ router.post(
       let paseadorElegidoPorCliente = false;
 
       if (paseadorId) {
-        const Paseador = require('../models/Paseador'); // Revisar esto
+        const Paseador = require('../models/paseador'); 
         const paseadorExiste = await Paseador.findOne({ _id: paseadorId, estado: 'aprobado', activo: true });
 
         if (!paseadorExiste) {
@@ -143,7 +143,7 @@ router.patch('/admin/:id/paseador', verificarToken, verificarAdmin, async (req, 
     }
 
     if (paseadorId) {
-      const Paseador = require('../models/Paseador');
+      const Paseador = require('../models/paseador');
       const paseadorExiste = await Paseador.findOne({ _id: paseadorId, estado: 'aprobado', activo: true });
       if (!paseadorExiste) {
         return res.status(400).json({ message: 'El paseador seleccionado no está disponible' });

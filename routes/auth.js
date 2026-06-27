@@ -79,6 +79,86 @@ router.post(
 );
 
 router.post(
+  "/registro-paseador",
+  [
+    body("email")
+      .trim()
+      .notEmpty()
+      .withMessage("El correo es obligatorio")
+      .isEmail()
+      .withMessage("El correo no tiene un formato válido")
+      .normalizeEmail(),
+    body("password")
+      .notEmpty()
+      .withMessage("La contraseña es obligatoria")
+      .isLength({ min: 6 })
+      .withMessage("La contraseña debe tener mínimo 6 caracteres")
+      .matches(/\d/)
+      .withMessage("La contraseña debe contener al menos un número")
+      .matches(/[a-zA-Z]/)
+      .withMessage("La contraseña debe contener al menos una letra"),
+  ],
+  async (req, res) => {
+    try {
+      const errores = validationResult(req);
+      if (!errores.isEmpty()) {
+        return res.status(400).json({ message: errores.array()[0].msg });
+      }
+
+      const { email, password } = req.body;
+
+      const Paseador = require('../models/paseador');
+      const paseadorExiste = await Paseador.findOne({
+        email,
+        estado: "aprobado",
+      });
+
+      if (!paseadorExiste) {
+        return res.status(404).json({
+          message:
+            "No encontramos un perfil de paseador aprobado con ese correo. Verifica que sea el mismo correo de tu solicitud.",
+        });
+      }
+
+      if (paseadorExiste.usuario) {
+        return res.status(400).json({
+          message: "Este perfil de paseador ya tiene una cuenta creada. Intenta iniciar sesión.",
+        });
+      }
+
+      const usuarioExiste = await User.findOne({ email });
+      if (usuarioExiste) {
+        return res.status(400).json({
+          message: "Ese correo ya está registrado con otra cuenta",
+        });
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      const passwordEncriptada = await bcrypt.hash(password, salt);
+
+      const nuevoUsuario = new User({
+        nombre: paseadorExiste.nombre,
+        email,
+        password: passwordEncriptada,
+        rol: "paseador",
+      });
+
+      await nuevoUsuario.save();
+
+      paseadorExiste.usuario = nuevoUsuario._id;
+      await paseadorExiste.save();
+
+      res.status(201).json({
+        message: "¡Cuenta de paseador creada correctamente! 🐕",
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Error en el servidor" });
+    }
+  }
+);
+
+router.post(
   "/login",
   [
     body("email")

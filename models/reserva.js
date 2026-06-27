@@ -42,7 +42,7 @@ const reservaSchema = new mongoose.Schema(
     },
     estado: {
       type: String,
-      enum: ["pendiente", "confirmada", "cancelada"],
+      enum: ["pendiente", "confirmada", "cancelada", "entregado"],
       default: "pendiente",
     },
   },
@@ -51,4 +51,4 @@ const reservaSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Reserva", reservaSchema);
+module.exports = mongoose.models.Reserva || mongoose.model('Reserva', reservaSchema);

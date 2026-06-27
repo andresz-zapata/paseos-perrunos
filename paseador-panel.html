@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel de Paseador | Paseos Perrunos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">☰</button>
+      <h2 class="logo">Paseos Perrunos 🐶 <span class="badge-admin" style="background-color: var(--verde-principal);">Paseador</span></h2>
+      <ul class="menu" id="menu-principal" style="display:none;"></ul>
+      <div class="navbar-usuario-zona" id="navbar-usuario-zona" style="display:none;">
+        <button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button>
+        <div class="user-pill-wrapper">
+          <button class="user-pill" id="user-pill-btn">
+            <span class="user-pill-avatar" id="user-pill-avatar">🐕</span>
+            <span class="user-pill-nombre" id="user-pill-nombre"></span>
+            <span class="user-pill-flecha">▾</span>
+          </button>
+          <div class="user-pill-menu" id="user-pill-menu">
+            <a href="#" id="user-pill-logout">🚪 Cerrar sesión</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <section class="admin-container">
+      <div class="admin-header">
+        <h1>Mi Panel de Paseador 🐕</h1>
+        <p class="admin-subtitulo">Gestiona tus paseos asignados</p>
+      </div>
+
+      <div class="stats-grid" id="paseador-stats-grid">
+        <div class="stat-card skeleton-stat">
+          <div class="skeleton skeleton-titulo"></div>
+        </div>
+        <div class="stat-card skeleton-stat">
+          <div class="skeleton skeleton-titulo"></div>
+        </div>
+        <div class="stat-card skeleton-stat">
+          <div class="skeleton skeleton-titulo"></div>
+        </div>
+      </div>
+
+      <div class="reservas-tabs">
+        <button class="tab-btn tab-activo" data-tab-paseo="pendientes">Por hacer</button>
+        <button class="tab-btn" data-tab-paseo="completados">Completados</button>
+      </div>
+
+      <div id="tab-paseos-pendientes">
+        <div class="reservas-lista" id="paseos-pendientes-lista">
+          <p class="reservas-empty" id="paseos-pendientes-empty">No tienes paseos pendientes.</p>
+        </div>
+      </div>
+
+      <div id="tab-paseos-completados" style="display:none;">
+        <div class="reservas-lista" id="paseos-completados-lista">
+          <p class="reservas-empty" id="paseos-completados-empty">Aún no has completado paseos.</p>
+        </div>
+      </div>
+    </section>
+
+    <script src="assets/js/main.js?v=2"></script>
+  </body>
+</html>
