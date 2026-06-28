@@ -111,7 +111,17 @@ router.get("/", verificarToken, async (req, res) => {
       .populate("paseadorAsignado", "nombre foto calificacionPromedio")
       .sort({ fecha: 1 });
 
-    res.status(200).json(reservas);
+    const Resena = require('../models/resena');
+    const reservasEntregadas = reservas.filter(r => r.estado === 'entregado').map(r => r._id);
+    const resenasExistentes = await Resena.find({ reserva: { $in: reservasEntregadas } }).select('reserva');
+    const idsReservasCalificadas = new Set(resenasExistentes.map(r => r.reserva.toString()));
+
+    const reservasConFlag = reservas.map(r => ({
+      ...r.toObject(),
+      yaCalificada: idsReservasCalificadas.has(r._id.toString())
+    }));
+
+    res.status(200).json(reservasConFlag);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error en el servidor" });

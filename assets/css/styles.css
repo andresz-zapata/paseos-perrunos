@@ -3290,6 +3290,71 @@ h2 {
   color: #f1f5f9;
 }
 
+/* Selector de estrellas para calificar */
+.estrellas-selector {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 20px 0;
+}
+
+.estrella {
+  font-size: 38px;
+  color: #d1d5db;
+  cursor: pointer;
+  transition: 0.2s;
+  line-height: 1;
+}
+
+.estrella:hover,
+.estrella.activa {
+  color: var(--acento);
+  transform: scale(1.1);
+}
+
+.dark-mode .estrella {
+  color: #334155;
+}
+
+/* Reseñas (lectura pública en modal de paseador) */
+.resenas-lista-modal {
+  text-align: left;
+  margin-top: 20px;
+  max-height: 180px;
+  overflow-y: auto;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  padding-top: 15px;
+}
+.resena-item {
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.resena-item:last-child {
+  border-bottom: none;
+}
+.resena-estrellas {
+  color: var(--acento);
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.resena-autor {
+  font-size: 12px;
+  color: var(--gris);
+  font-weight: 600;
+}
+.resena-comentario {
+  font-size: 13px;
+  color: var(--oscuro);
+  margin-top: 4px;
+}
+.resenas-empty-modal {
+  font-size: 13px;
+  color: var(--gris);
+  text-align: center;
+  padding: 10px 0;
+}
+
 /* Final CSS General */
 
 /* Responsive Tablets (768px) */

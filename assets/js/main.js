@@ -1160,8 +1160,9 @@ if (reservaForm) {
           const delay = `animate-delay-${Math.min(index + 1, 5)}`;
           card.classList.add(delay);
 
-          const badgeClase = `badge-estado badge-${reserva.estado}`;
+          const badgeClase = `badge-estado badge-${reserva.estado === 'entregado' ? 'confirmada' : reserva.estado}`;
           const mostrarCancelar = reserva.estado === "pendiente";
+          const mostrarCalificar = reserva.estado === "entregado" && reserva.paseadorAsignado && !reserva.yaCalificada;
 
           const paseadorHTML = reserva.paseadorAsignado
             ? `<p>🐕 Paseador: ${reserva.paseadorAsignado.nombre}</p>`
@@ -1182,10 +1183,26 @@ if (reservaForm) {
                   ? `<button class="btn-cancelar" data-id="${reserva._id}">Cancelar</button>`
                   : ""
               }
+              ${
+                mostrarCalificar
+                  ? `<button class="btn-confirmar btn-calificar" data-id="${reserva._id}" data-paseador="${reserva.paseadorAsignado.nombre}">⭐ Calificar</button>`
+                  : ""
+              }
+              ${
+                reserva.estado === 'entregado' && reserva.yaCalificada
+                  ? `<span style="font-size:12px; color:var(--gris);">✓ Ya calificaste</span>`
+                  : ""
+              }
             </div>
           `;
 
           contenedor.appendChild(card);
+        });
+
+        contenedor.querySelectorAll(".btn-calificar").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            abrirModalCalificar(btn.dataset.id, btn.dataset.paseador);
+          });
         });
 
         contenedor.querySelectorAll(".btn-cancelar").forEach((btn) => {
@@ -1227,6 +1244,89 @@ if (reservaForm) {
       console.error("Error al cargar reservas:", error);
     }
   };
+
+  // Modal de calificación
+  const modalCalificar = document.querySelector('#modal-calificar');
+  let estrellasSeleccionadas = 0;
+
+  const abrirModalCalificar = (reservaId, nombrePaseador) => {
+    document.querySelector('#calificar-reserva-id').value = reservaId;
+    document.querySelector('#modal-calificar-texto').textContent = `¿Cómo fue tu experiencia con ${nombrePaseador}?`;
+    estrellasSeleccionadas = 0;
+    document.querySelector('#calificar-estrellas').value = '0';
+    document.querySelectorAll('.estrella').forEach(e => e.classList.remove('activa'));
+    document.querySelector('#calificar-comentario').value = '';
+    document.querySelector('#calificar-message').textContent = '';
+
+    modalCalificar.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  };
+
+  const cerrarModalCalificar = () => {
+    modalCalificar.style.display = 'none';
+    document.body.style.overflow = '';
+  };
+
+  document.querySelectorAll('.estrella').forEach(estrella => {
+    estrella.addEventListener('click', () => {
+      estrellasSeleccionadas = parseInt(estrella.dataset.valor);
+      document.querySelector('#calificar-estrellas').value = estrellasSeleccionadas;
+
+      document.querySelectorAll('.estrella').forEach(e => {
+        e.classList.toggle('activa', parseInt(e.dataset.valor) <= estrellasSeleccionadas);
+      });
+    });
+  });
+
+  document.querySelector('#btn-cancelar-calificar').addEventListener('click', cerrarModalCalificar);
+
+  modalCalificar.addEventListener('click', (e) => {
+    if (e.target === modalCalificar) cerrarModalCalificar();
+  });
+
+  document.querySelector('#calificar-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const message = document.querySelector('#calificar-message');
+
+    if (estrellasSeleccionadas === 0) {
+      message.textContent = 'Selecciona al menos una estrella';
+      message.style.color = '#e53e3e';
+      return;
+    }
+
+    const reservaId = document.querySelector('#calificar-reserva-id').value;
+    const comentario = document.querySelector('#calificar-comentario').value;
+
+    const btnEnviar = document.querySelector('#calificar-form button[type="submit"]');
+    btnEnviar.disabled = true;
+    btnEnviar.textContent = 'Enviando...';
+
+    try {
+      const response = await fetchConRefresh(`${BASE_URL}/api/resenas`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reservaId, estrellas: estrellasSeleccionadas, comentario })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showToast(data.message, 'success');
+        cerrarModalCalificar();
+        cargarReservas();
+      } else {
+        message.textContent = data.message;
+        message.style.color = '#e53e3e';
+      }
+    } catch (error) {
+      message.textContent = 'No se pudo enviar la calificación';
+      message.style.color = '#e53e3e';
+    } finally {
+      btnEnviar.disabled = false;
+      btnEnviar.textContent = 'Enviar calificación';
+    }
+  });
 
   cargarReservas();
 

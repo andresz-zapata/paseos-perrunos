@@ -109,6 +109,31 @@
       </div>
     </section>
 
+    <!-- MODAL CALIFICAR PASEADOR -->
+<div class="modal-overlay" id="modal-calificar" style="display:none;">
+  <div class="modal-card modal-solicitud-card">
+    <h2 class="modal-paseador-nombre">Califica tu paseo 🐾</h2>
+    <p class="modal-solicitud-intro" id="modal-calificar-texto"></p>
+
+    <div class="estrellas-selector" id="estrellas-selector">
+      <span class="estrella" data-valor="1">★</span>
+      <span class="estrella" data-valor="2">★</span>
+      <span class="estrella" data-valor="3">★</span>
+      <span class="estrella" data-valor="4">★</span>
+      <span class="estrella" data-valor="5">★</span>
+    </div>
+
+    <form id="calificar-form" class="solicitud-paseador-form">
+      <input type="hidden" id="calificar-reserva-id" />
+      <input type="hidden" id="calificar-estrellas" value="0" />
+      <textarea id="calificar-comentario" placeholder="Cuéntanos cómo fue tu experiencia (opcional)" rows="3"></textarea>
+      <button type="submit" class="btn-agregar modal-producto-btn">Enviar calificación</button>
+      <button type="button" class="btn-cancelar-editar" id="btn-cancelar-calificar" style="width:100%; margin-top:8px;">Cancelar</button>
+      <p id="calificar-message"></p>
+    </form>
+  </div>
+</div>
+
     <script src="assets/js/main.js?v=2"></script>
   </body>
 </html>

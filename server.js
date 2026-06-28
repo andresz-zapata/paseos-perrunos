@@ -82,6 +82,8 @@ const paseadoresRoutes = require("./routes/paseadores");
 app.use("/api/paseadores", paseadoresRoutes);
 const paseadorPanelRoutes = require("./routes/paseador-panel");
 app.use("/api/paseador-panel", paseadorPanelRoutes);
+const resenasRoutes = require("./routes/resenas");
+app.use("/api/resenas", resenasRoutes);
 
 app.use(express.static(path.join(__dirname, "/"), {
   index: false,
