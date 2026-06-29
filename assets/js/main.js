@@ -2582,6 +2582,32 @@ if (contadores.length > 0) {
 const paseadoresPublicoGrid = document.querySelector('#paseadores-publico-grid');
 const modalPaseador = document.querySelector('#modal-paseador');
 
+const cargarResenasPaseador = async (paseadorId) => {
+  const contenedor = document.querySelector('#resenas-lista-modal');
+  contenedor.innerHTML = '<p class="resenas-empty-modal">Cargando reseñas...</p>';
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/resenas/paseador/${paseadorId}`);
+    const resenas = await response.json();
+
+    if (resenas.length === 0) {
+      contenedor.innerHTML = '<p class="resenas-empty-modal">Aún no tiene reseñas. ¡Sé el primero en calificar! 🐾</p>';
+      return;
+    }
+
+    contenedor.innerHTML = resenas.map(resena => `
+      <div class="resena-item">
+        <div class="resena-estrellas">${'★'.repeat(resena.estrellas)}${'☆'.repeat(5 - resena.estrellas)}</div>
+        <div class="resena-autor">${resena.usuario?.nombre || 'Cliente'}</div>
+        ${resena.comentario ? `<div class="resena-comentario">"${resena.comentario}"</div>` : ''}
+      </div>
+    `).join('');
+
+  } catch (error) {
+    contenedor.innerHTML = '<p class="resenas-empty-modal">No se pudieron cargar las reseñas.</p>';
+  }
+};
+
 const abrirModalPaseadorReal = (paseador) => {
   if (!modalPaseador) return;
 
@@ -2596,6 +2622,8 @@ const abrirModalPaseadorReal = (paseador) => {
   document.querySelector('#modal-paseador-experiencia').textContent = `⏱️ ${paseador.experiencia}`;
   document.querySelector('#modal-paseador-especialidad').textContent = paseador.especialidad;
   document.querySelector('#modal-paseador-descripcion').textContent = paseador.descripcion;
+
+  cargarResenasPaseador(paseador._id);
 
   modalPaseador.style.display = 'flex';
   document.body.style.overflow = 'hidden';
