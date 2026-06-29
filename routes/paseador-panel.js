@@ -15,6 +15,10 @@ const verificarPaseador = async (req, res, next) => {
     return res.status(404).json({ message: 'No se encontró tu perfil de paseador' });
   }
 
+  if (!paseador.activo) {
+    return res.status(403).json({ message: 'Tu perfil de paseador está desactivado. Contacta al administrador.' });
+  }
+
   req.paseador = paseador;
   next();
 };
