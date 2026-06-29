@@ -3355,6 +3355,93 @@ h2 {
   padding: 10px 0;
 }
 
+/* SECCIÓN ONLY DOGS CARD*/
+.only-dogs-section {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.only-dogs-card {
+  background: linear-gradient(135deg, #00aff0 0%, #008ec4 100%);
+  border-radius: 20px;
+  padding: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ffffff;
+  box-shadow: 0 10px 25px rgba(0, 175, 240, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+.only-dogs-content {
+  max-width: 65%;
+  z-index: 2;
+}
+.only-dogs-badge {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 6px 12px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  margin-bottom: 15px;
+}
+.only-dogs-card h2 {
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #ffffff;
+}
+.only-dogs-card h2 .text-blue {
+  color: #ffffff;
+  text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+}
+.only-dogs-card p {
+  font-size: 16px;
+  line-height: 1.6;
+  opacity: 0.95;
+  margin-bottom: 25px;
+}
+.only-dogs-features {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+.only-dogs-features span {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.btn-only-dogs {
+  display: inline-block;
+  background-color: #ffffff;
+  color: #00aff0;
+  padding: 14px 28px;
+  border-radius: 50px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+.btn-only-dogs:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+.only-dogs-icon {
+  font-size: 140px;
+  opacity: 0.15;
+  position: absolute;
+  right: 40px;
+  bottom: -20px;
+  user-select: none;
+  z-index: 1;
+}
+
 /* Final CSS General */
 
 /* Responsive Tablets (768px) */
@@ -3605,6 +3692,22 @@ h2 {
   }
   .convocatoria-texto p {
     max-width: 100%;
+  }
+
+  .only-dogs-card {
+    flex-direction: column;
+    padding: 30px 20px;
+    text-align: center;
+  }
+  .only-dogs-content {
+    max-width: 100%;
+  }
+  .only-dogs-features {
+    justify-content: center;
+    gap: 10px;
+  }
+  .only-dogs-icon {
+    display: none;
   }
 }
 

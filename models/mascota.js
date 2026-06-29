@@ -23,6 +23,16 @@ const mascotaSchema = new mongoose.Schema(
       min: 0,
       max: 30,
     },
+    // AGREGAR ESTA PROPIEDAD DENTRO DEL SCHEMA DE MASCOTA:
+genero: {
+  type: String,
+  required: [true, 'El género de la mascota es obligatorio'],
+  default: "macho",
+  enum: {
+    values: ['macho', 'hembra'],
+    message: '{VALUE} no es un género válido (debe ser macho o hembra)'
+  }
+},
     foto: {
       type: String,
       default: "",

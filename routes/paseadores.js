@@ -187,8 +187,25 @@ router.patch('/:id/estado', verificarToken, verificarAdmin, async (req, res) => 
     paseador.activo = !paseador.activo;
     await paseador.save();
 
+    let paseosDesasignados = 0;
+
+    // Si se está desactivando, liberar sus paseos pendientes/confirmados para que el admin reasigne
+    if (!paseador.activo) {
+      const Reserva = require('../models/reserva');
+      const resultado = await Reserva.updateMany(
+        { paseadorAsignado: paseador._id, estado: { $in: ['pendiente', 'confirmada'] } },
+        { paseadorAsignado: null, paseadorElegidoPorCliente: false }
+      );
+      paseosDesasignados = resultado.modifiedCount;
+    }
+
+    const mensajeBase = `Paseador ${paseador.activo ? 'activado' : 'desactivado'} correctamente`;
+    const mensajeExtra = paseosDesasignados > 0
+      ? ` — ${paseosDesasignados} paseo(s) quedaron sin asignar, recuerda reasignarlos`
+      : '';
+
     res.status(200).json({
-      message: `Paseador ${paseador.activo ? 'activado' : 'desactivado'} correctamente`,
+      message: mensajeBase + mensajeExtra,
       paseador
     });
 

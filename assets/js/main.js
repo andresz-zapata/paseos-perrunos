@@ -721,6 +721,7 @@ if (mascotaForm) {
       formData.append("nombre", document.querySelector("#editar-nombre").value);
       formData.append("raza", document.querySelector("#editar-raza").value);
       formData.append("edad", document.querySelector("#editar-edad").value);
+      formData.append("genero", document.querySelector("#editar-genero").value);
       formData.append("notas", document.querySelector("#editar-notas").value);
 
       const foto = editarFotoInput.files[0];
@@ -769,25 +770,24 @@ if (mascotaForm) {
         ? `<div class="mascota-foto"><img src="${mascota.foto}" alt="${mascota.nombre}" /></div>`
         : `<div class="mascota-foto">🐶</div>`;
 
-      card.innerHTML = `
+        card.innerHTML = `
         ${fotoHTML}
         <div class="mascota-info">
           <h3>${mascota.nombre}</h3>
           <p>🐾 Raza: ${mascota.raza}</p>
           <p>🎂 Edad: ${mascota.edad} año${mascota.edad === 1 ? "" : "s"}</p>
+          <p>${mascota.genero === "hembra" ? "♀️ Hembra" : "♂️ Macho"}</p>
           ${mascota.notas ? `<p>📝 ${mascota.notas}</p>` : ""}
         </div>
         <div class="mascota-acciones">
-          <button class="btn-editar-mascota" data-id="${
-            mascota._id
-          }" data-nombre="${mascota.nombre}" data-raza="${
-        mascota.raza
-      }" data-edad="${mascota.edad}" data-notas="${
-        mascota.notas || ""
-      }">✏️ Editar</button>
-          <button class="btn-eliminar-mascota" data-id="${
-            mascota._id
-          }" data-nombre="${mascota.nombre}">🗑️ Eliminar</button>
+          <button class="btn-editar-mascota" 
+            data-id="${mascota._id}" 
+            data-nombre="${mascota.nombre}" 
+            data-raza="${mascota.raza}" 
+            data-edad="${mascota.edad}" 
+            data-genero="${mascota.genero || ""}"
+            data-notas="${mascota.notas || ""}">✏️ Editar</button>
+          <button class="btn-eliminar-mascota" data-id="${mascota._id}" data-nombre="${mascota.nombre}">🗑️ Eliminar</button>
         </div>
       `;
 
@@ -804,12 +804,14 @@ if (mascotaForm) {
         const nombre = btn.dataset.nombre;
         const raza = btn.dataset.raza;
         const edad = btn.dataset.edad;
+        const genero = btn.dataset.genero;
         const notas = btn.dataset.notas;
 
         document.querySelector("#editar-id").value = id;
         document.querySelector("#editar-nombre").value = nombre;
         document.querySelector("#editar-raza").value = raza;
         document.querySelector("#editar-edad").value = edad;
+        document.querySelector("#editar-genero").value = genero;
         document.querySelector("#editar-notas").value = notas;
 
         const formularioEditar = document.querySelector("#formulario-editar");
@@ -967,6 +969,7 @@ if (mascotaForm) {
     formData.append("nombre", document.querySelector("#mascota-nombre").value);
     formData.append("raza", document.querySelector("#mascota-raza").value);
     formData.append("edad", document.querySelector("#mascota-edad").value);
+    formData.append("genero", document.querySelector("#mascota-genero").value);
     formData.append("notas", document.querySelector("#mascota-notas").value);
 
     const fotoInput = document.querySelector("#mascota-foto");
