@@ -1026,19 +1026,7 @@ h2 {
   color: white;
 }
 
-.card {
-  background: var(--blanco);
-  width: 260px;
-  padding: 25px;
-  border-radius: 18px;
-  box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.06);
-  transition: 0.25s ease;
-  border: 1px solid rgba(31, 122, 99, 0.08);
-}
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0px 15px 35px rgba(0, 0, 0, 0.12);
-}
+
 
 #paseadores .card {
   text-align: center;
@@ -1051,10 +1039,7 @@ h2 {
   color: var(--gris);
 }
 
-.container .card p {
-  font-style: normal;
-  color: #444;
-}
+
 
 .container button.btn-agregar {
   padding: 14px 22px;
