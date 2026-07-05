@@ -44,11 +44,23 @@ router.post(
       const { nombre, email, password } = req.body;
 
       const usuarioExiste = await User.findOne({ email });
-      if (usuarioExiste) {
-        return res
-          .status(400)
-          .json({ message: "El correo ya está registrado" });
-      }
+if (usuarioExiste) {
+  return res.status(400).json({ message: "El correo ya está registrado" });
+}
+
+const Paseador = require('../models/paseador');
+const solicitudPaseador = await Paseador.findOne({
+  email,
+  estado: { $in: ['pendiente', 'aprobado'] }
+});
+
+if (solicitudPaseador) {
+  const mensajes = {
+    pendiente: 'Este correo tiene una solicitud de paseador pendiente de revisión. Si quieres registrarte como cliente usa otro correo, o espera la respuesta del administrador.',
+    aprobado: 'Este correo pertenece a un paseador aprobado. Crea tu cuenta desde el enlace de registro de paseadores.'
+  };
+  return res.status(400).json({ message: mensajes[solicitudPaseador.estado] });
+}
 
       const salt = await bcrypt.genSalt(10);
       const passwordEncriptada = await bcrypt.hash(password, salt);
