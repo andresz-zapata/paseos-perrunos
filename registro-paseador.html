@@ -31,6 +31,20 @@
         <a href="login.html">Ya tengo cuenta</a>
       </div>
     </div>
+    <script>
+      // Si ya está logueado como cliente, no debería estar aquí
+      const rolActual = localStorage.getItem('rol');
+      const tokenActual = localStorage.getItem('token');
+      if (tokenActual && rolActual === 'cliente') {
+        window.location.replace('perfil.html');
+      }
+      if (tokenActual && rolActual === 'admin') {
+        window.location.replace('admin.html');
+      }
+      if (tokenActual && rolActual === 'paseador') {
+        window.location.replace('paseador-panel.html');
+      }
+    </script>
     <script src="assets/js/main.js?v=2"></script>
   </body>
 </html>

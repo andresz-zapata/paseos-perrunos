@@ -139,11 +139,12 @@ router.post(
       }
 
       const usuarioExiste = await User.findOne({ email });
-      if (usuarioExiste) {
-        return res.status(400).json({
-          message: "Ese correo ya está registrado con otra cuenta",
-        });
-      }
+if (usuarioExiste) {
+  const mensaje = usuarioExiste.rol === 'cliente'
+    ? 'Este correo ya tiene una cuenta de cliente. No puedes crear una cuenta de paseador con el mismo correo.'
+    : 'Ese correo ya está registrado con otra cuenta.';
+  return res.status(400).json({ message: mensaje });
+}
 
       const salt = await bcrypt.genSalt(10);
       const passwordEncriptada = await bcrypt.hash(password, salt);
