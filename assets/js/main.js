@@ -1048,6 +1048,16 @@ if (reservaForm) {
     }
   });
 
+  // Si viene de un plan, abrir el formulario automáticamente
+  const urlParams = new URLSearchParams(window.location.search);
+  const planElegido = urlParams.get('plan');
+  if (planElegido) {
+    formularioReserva.style.display = "block";
+    btnNuevaReserva.textContent = "− Cancelar";
+    showToast(`Reservando plan ${planElegido} 🐾`, 'info');
+    formularioReserva.scrollIntoView({ behavior: 'smooth' });
+  }
+
   const cargarMascotasSelect = async () => {
     try {
       const response = await fetchConRefresh(`${BASE_URL}/api/mascotas`, {
@@ -2456,6 +2466,21 @@ document.querySelectorAll(".btn-paseos").forEach((btn) => {
     } else {
       window.location.href = "reservas.html";
     }
+  });
+});
+
+// Botones de planes
+document.querySelectorAll(".btn-plan").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const token = localStorage.getItem("token");
+    const plan = btn.dataset.plan;
+
+    if (!token) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    window.location.href = `reservas.html?plan=${plan}`;
   });
 });
 
