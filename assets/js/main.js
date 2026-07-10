@@ -139,6 +139,49 @@ const BASE_URL =
     ? ""
     : "https://paseos-perrunos.onrender.com";
 
+    // Detector de servidor dormido
+const verificarServidor = async () => {
+  if (!BASE_URL) return; // En local no hace falta
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+    const response = await fetch(`${BASE_URL}/api/auth/ping`, {
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+
+  } catch (error) {
+    const estaDespierto = document.querySelector('#servidor-dormido');
+    if (estaDespierto) return;
+
+    const banner = document.createElement('div');
+    banner.id = 'servidor-dormido';
+    banner.innerHTML = `
+      <div class="servidor-dormido-overlay">
+        <div class="servidor-dormido-card">
+          <div class="servidor-dormido-emoji">😴</div>
+          <h2>El servidor está despertando...</h2>
+          <p>Nuestro servidor estuvo inactivo y está iniciando. Esto tarda entre <strong>30 y 60 segundos</strong>. Por favor espera un momento.</p>
+          <div class="servidor-dormido-loader"></div>
+          <button class="btn-agregar servidor-dormido-btn" onclick="window.location.reload()">
+            🔄 Reintentar ahora
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(banner);
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 30000);
+  }
+};
+
+verificarServidor();
+
 const navbar = document.querySelector(".navbar");
 window.addEventListener("scroll", () => {
   if (window.scrollY > 50) {

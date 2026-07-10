@@ -3495,6 +3495,60 @@ h2 {
   color: var(--verde-principal);
 }
 
+/* Servidor dormido */
+.servidor-dormido-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 20px;
+  animation: fadeIn 0.3s ease forwards;
+}
+.servidor-dormido-card {
+  background-color: var(--blanco);
+  border-radius: 24px;
+  padding: 50px 40px;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0px 20px 60px rgba(0, 0, 0, 0.3);
+}
+.servidor-dormido-emoji {
+  font-size: 60px;
+  margin-bottom: 15px;
+}
+.servidor-dormido-card h2 {
+  color: var(--verde-principal);
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+.servidor-dormido-card p {
+  color: var(--gris);
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+.servidor-dormido-loader {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--hero-fondo-1);
+  border-top-color: var(--verde-principal);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 25px;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.servidor-dormido-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+}
+
 /* Final CSS General */
 
 /* Responsive Tablets (768px) */
@@ -4253,5 +4307,12 @@ h2 {
   }
   .hero-badge {
     font-size: 12px;
+  }
+
+  .servidor-dormido-card {
+    padding: 35px 24px;
+  }
+  .servidor-dormido-card h2 {
+    font-size: 20px;
   }
 }

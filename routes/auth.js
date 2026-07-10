@@ -499,4 +499,9 @@ router.patch("/usuarios/:id/rol", verificarToken, async (req, res) => {
   }
 });
 
+// Ruta de health check para detectar si el servidor está activo
+router.get('/ping', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 module.exports = router;
