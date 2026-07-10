@@ -82,4 +82,71 @@ const enviarConfirmacionReserva = async (nombre, email, mascotaNombre, fecha, di
   });
 };
 
-module.exports = { enviarBienvenida, enviarConfirmacionReserva };
+const enviarAprobacionPaseador = async (nombre, email) => {
+  await resend.emails.send({
+    from: 'Paseos Perrunos <onboarding@resend.dev>',
+    to: email,
+    subject: '¡Tu solicitud fue aprobada! 🐾',
+    html: `
+      <div style="font-family: 'Poppins', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #f9fafb;">
+        <div style="background-color: white; border-radius: 20px; padding: 40px; box-shadow: 0px 10px 30px rgba(0,0,0,0.08);">
+          <h1 style="color: #1f7a63; font-size: 28px; margin-bottom: 10px;">¡Felicitaciones, ${nombre}! 🎉</h1>
+          <p style="color: #6b7280; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+            Tu solicitud para ser paseador en <strong>Paseos Perrunos</strong> fue <strong style="color: #1f7a63;">aprobada</strong>.
+            Ya puedes crear tu cuenta y empezar a recibir paseos asignados.
+          </p>
+          <p style="color: #6b7280; font-size: 15px; margin-bottom: 30px;">
+            Usa el mismo correo con el que enviaste tu solicitud (<strong>${email}</strong>) para registrarte.
+          </p>
+          <div style="text-align: center;">
+            <a href="https://andresz-zapata.github.io/paseos-perrunos/registro-paseador.html"
+               style="background: linear-gradient(135deg, #27ae60, #1f7a63); color: white; padding: 14px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block;">
+              Crear mi cuenta de paseador 🐕
+            </a>
+          </div>
+          <p style="color: #6b7280; font-size: 13px; margin-top: 30px; text-align: center;">
+            © 2026 Paseos Perrunos. Todos los derechos reservados.
+          </p>
+        </div>
+      </div>
+    `
+  });
+};
+
+const enviarRechazoSolicitudPaseador = async (nombre, email) => {
+  await resend.emails.send({
+    from: 'Paseos Perrunos <onboarding@resend.dev>',
+    to: email,
+    subject: 'Actualización sobre tu solicitud 🐾',
+    html: `
+      <div style="font-family: 'Poppins', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #f9fafb;">
+        <div style="background-color: white; border-radius: 20px; padding: 40px; box-shadow: 0px 10px 30px rgba(0,0,0,0.08);">
+          <h1 style="color: #1f7a63; font-size: 28px; margin-bottom: 10px;">Hola, ${nombre} 🐾</h1>
+          <p style="color: #6b7280; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+            Gracias por tu interés en formar parte del equipo de paseadores de <strong>Paseos Perrunos</strong>.
+            Luego de revisar tu solicitud, en este momento no podemos continuar con tu proceso.
+          </p>
+          <p style="color: #6b7280; font-size: 15px; margin-bottom: 30px;">
+            Te invitamos a seguir disfrutando de nuestros servicios como cliente y a estar atento a futuras convocatorias.
+          </p>
+          <div style="text-align: center;">
+            <a href="https://andresz-zapata.github.io/paseos-perrunos"
+               style="background: linear-gradient(135deg, #27ae60, #1f7a63); color: white; padding: 14px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block;">
+              Volver al inicio 🏠
+            </a>
+          </div>
+          <p style="color: #6b7280; font-size: 13px; margin-top: 30px; text-align: center;">
+            © 2026 Paseos Perrunos. Todos los derechos reservados.
+          </p>
+        </div>
+      </div>
+    `
+  });
+};
+
+module.exports = {
+  enviarBienvenida,
+  enviarConfirmacionReserva,
+  enviarAprobacionPaseador,
+  enviarRechazoSolicitudPaseador
+};

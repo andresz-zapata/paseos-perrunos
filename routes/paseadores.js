@@ -4,6 +4,7 @@ const { body, validationResult } = require('express-validator');
 const Paseador = require('../models/paseador');
 const { uploadPaseador } = require('../config/cloudinary');
 const { verificarToken, verificarAdmin } = require('../middleware/auth');
+const { enviarAprobacionPaseador, enviarRechazoSolicitudPaseador } = require('../config/mailer');
 
 // Pública: listar paseadores aprobados y activos (para el modal en paseos.html)
 router.get('/', async (req, res) => {
@@ -169,6 +170,19 @@ router.patch('/:id/revision', verificarToken, verificarAdmin, async (req, res) =
     await paseador.save();
 
     res.status(200).json({ message: `Solicitud ${estado} correctamente`, paseador });
+
+    // Enviar email de notificación en segundo plano
+    if (paseador.email) {
+      if (estado === 'aprobado') {
+        enviarAprobacionPaseador(paseador.nombre, paseador.email)
+          .then(() => console.log(`✅ Email de aprobación enviado a: ${paseador.email}`))
+          .catch(err => console.error('❌ Error al enviar email de aprobación:', err.message));
+      } else {
+        enviarRechazoSolicitudPaseador(paseador.nombre, paseador.email)
+          .then(() => console.log(`✅ Email de rechazo enviado a: ${paseador.email}`))
+          .catch(err => console.error('❌ Error al enviar email de rechazo:', err.message));
+      }
+    }
 
   } catch (error) {
     console.error(error);
