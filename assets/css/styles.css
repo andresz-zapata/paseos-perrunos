@@ -3549,6 +3549,17 @@ h2 {
   font-size: 15px;
 }
 
+/* Logo como enlace */
+.logo-link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+.logo-link:hover .logo {
+  opacity: 0.85;
+  transition: 0.2s;
+}
+
 /* Final CSS General */
 
 /* Responsive Tablets (768px) */
