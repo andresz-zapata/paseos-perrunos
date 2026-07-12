@@ -3548,6 +3548,121 @@ h2 {
   transition: 0.2s;
 }
 
+/* Perfil rediseñado */
+.perfil-accesos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  max-width: 700px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.perfil-acceso-card {
+  background-color: var(--blanco);
+  border-radius: 16px;
+  padding: 20px 10px;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.05);
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid transparent;
+}
+
+.perfil-acceso-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(31, 122, 99, 0.2);
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.perfil-acceso-icono {
+  font-size: 28px;
+  width: 55px;
+  height: 55px;
+  background-color: var(--hero-fondo-1);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.perfil-acceso-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--verde-principal);
+}
+
+/* Config acordeón */
+.perfil-config {
+  max-width: 700px;
+  margin: 0 auto 50px;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.perfil-config-item {
+  background-color: var(--blanco);
+  border-radius: 16px;
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  border: 1px solid transparent;
+  transition: 0.3s;
+}
+.perfil-config-item:hover {
+  border-color: rgba(31, 122, 99, 0.15);
+}
+.perfil-config-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 22px;
+  cursor: pointer;
+  user-select: none;
+}
+.perfil-config-icono {
+  font-size: 20px;
+  width: 40px;
+  height: 40px;
+  background-color: var(--hero-fondo-1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.perfil-config-titulo {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--oscuro);
+}
+.perfil-config-flecha {
+  font-size: 13px;
+  color: var(--gris);
+  transition: 0.3s;
+}
+.perfil-config-flecha.abierto {
+  transform: rotate(180deg);
+}
+.perfil-config-body {
+  padding: 0 22px 22px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  padding-top: 20px;
+}
+.dark-mode .perfil-acceso-card,
+.dark-mode .perfil-config-item {
+  background-color: #1e293b;
+}
+.dark-mode .perfil-acceso-icono,
+.dark-mode .perfil-config-icono {
+  background-color: rgba(46, 204, 113, 0.08);
+}
+
 /* Final CSS General */
 
 /* Responsive Tablets (768px) */
@@ -3822,6 +3937,10 @@ h2 {
   }
   .hero-stat-numero {
     font-size: 18px;
+  }
+
+  .perfil-accesos {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -4313,5 +4432,25 @@ h2 {
   }
   .servidor-dormido-card h2 {
     font-size: 20px;
+  }
+
+  .perfil-acceso-card {
+    padding: 16px 8px;
+    border-radius: 14px;
+  }
+  .perfil-acceso-icono {
+    width: 46px;
+    height: 46px;
+    font-size: 22px;
+  }
+  .perfil-acceso-label {
+    font-size: 11px;
+  }
+  .perfil-config-header {
+    padding: 16px 18px;
+  }
+  .perfil-config-body {
+    padding: 0 18px 18px;
+    padding-top: 16px;
   }
 }

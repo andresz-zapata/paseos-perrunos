@@ -15,7 +15,7 @@
   <body>
     <nav class="navbar">
       <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">☰</button>
-      <h2 class="logo">Paseos Perrunos 🐶</h2>
+      <a href="index.html" class="logo-link"><h2 class="logo">Paseos Perrunos 🐶</h2></a>
       <ul class="menu" id="menu-principal" style="display:none;"></ul>
       <div class="navbar-usuario-zona" id="navbar-usuario-zona" style="display:none;">
         <button class="btn-dark-mode" aria-label="Modo oscuro">🌙</button>
@@ -28,21 +28,19 @@
           <div class="user-pill-menu" id="user-pill-menu">
             <a href="mascotas.html">🐾 Mis mascotas</a>
             <a href="reservas.html">📅 Mis reservas</a>
+            <a href="petshop.html">🛍️ Pet Shop</a>
+            <a href="pedidos.html">📦 Mis pedidos</a>
             <a href="#" id="user-pill-logout">🚪 Cerrar sesión</a>
           </div>
         </div>
       </div>
     </nav>
+
     <section class="perfil-hero">
       <div class="perfil-hero-info">
         <div class="perfil-avatar" id="perfil-avatar">
-          <img
-            id="perfil-foto"
-            src=""
-            alt="Foto de perfil"
-            style="display: none"
-          />
-          <span id="perfil-emoji">🐾</span>
+          <img id="perfil-foto" src="" alt="Foto de perfil" style="display:none;" />
+          <span id="perfil-emoji">👤</span>
         </div>
         <div class="perfil-hero-texto">
           <h1 id="perfil-nombre">Cargando...</h1>
@@ -50,80 +48,85 @@
           <p class="perfil-miembro">Miembro de Paseos Perrunos</p>
           <label class="label-foto-perfil" id="label-foto-perfil">
             📷 Cambiar foto de perfil
-            <input
-              type="file"
-              id="foto-perfil-input"
-              accept="image/jpg, image/jpeg, image/png, image/webp"
-            />
+            <input type="file" id="foto-perfil-input" accept="image/jpg, image/jpeg, image/png, image/webp" />
           </label>
           <p id="foto-perfil-message"></p>
         </div>
       </div>
     </section>
 
-    <section class="config-container">
-      <div class="config-tabs">
-        <button class="config-tab-btn config-tab-activo" data-config-tab="general">👤 General</button>
-        <button class="config-tab-btn" data-config-tab="seguridad">🔒 Seguridad</button>
-      </div>
-
-      <div class="config-panel" id="config-panel-general">
-        <form id="editar-perfil-form">
-          <div class="config-grupo">
-            <label class="config-label" for="editar-perfil-nombre">Nombre completo</label>
-            <input type="text" id="editar-perfil-nombre" class="config-input" placeholder="Tu nombre completo" required />
-            <span class="config-ayuda">Este es el nombre que verán en tu perfil y reservas.</span>
-          </div>
-
-          <div class="config-grupo">
-            <label class="config-label" for="editar-perfil-email">Correo electrónico</label>
-            <input type="email" id="editar-perfil-email" class="config-input" placeholder="nuevo@correo.com" />
-            <span class="config-ayuda">Déjalo vacío si no quieres cambiar tu correo actual.</span>
-          </div>
-
-          <div id="campo-password-actual" class="config-grupo config-grupo-alerta" style="display:none;">
-            <label class="config-label" for="editar-perfil-password-actual">Confirma tu contraseña actual</label>
-            <div class="password-container">
-              <input type="password" id="editar-perfil-password-actual" class="config-input" placeholder="Contraseña actual" />
-              <span class="toggle-password" id="toggle-password-actual">👁️</span>
-            </div>
-            <span class="config-ayuda">Necesaria para confirmar el cambio de correo o contraseña.</span>
-          </div>
-
-          <button type="submit" class="config-btn-guardar">Guardar cambios</button>
-        </form>
-      </div>
-
-      <div class="config-panel" id="config-panel-seguridad" style="display:none;">
-        <div class="config-grupo">
-          <label class="config-label">Nueva contraseña</label>
-          <div class="password-container">
-            <input type="password" id="editar-perfil-password-nueva" class="config-input" placeholder="Déjalo vacío para no cambiarla" form="editar-perfil-form" />
-            <span class="toggle-password" id="toggle-password-nueva">👁️</span>
-          </div>
-          <span class="config-ayuda">Mínimo 6 caracteres, con al menos una letra y un número.</span>
-        </div>
-        <button type="submit" form="editar-perfil-form" class="config-btn-guardar">Actualizar contraseña</button>
-      </div>
+    <section class="perfil-accesos">
+      <a href="mascotas.html" class="perfil-acceso-card">
+        <span class="perfil-acceso-icono">🐾</span>
+        <span class="perfil-acceso-label">Mis mascotas</span>
+      </a>
+      <a href="reservas.html" class="perfil-acceso-card">
+        <span class="perfil-acceso-icono">📅</span>
+        <span class="perfil-acceso-label">Mis reservas</span>
+      </a>
+      <a href="petshop.html" class="perfil-acceso-card">
+        <span class="perfil-acceso-icono">🛍️</span>
+        <span class="perfil-acceso-label">Pet Shop</span>
+      </a>
+      <a href="pedidos.html" class="perfil-acceso-card">
+        <span class="perfil-acceso-icono">📦</span>
+        <span class="perfil-acceso-label">Mis pedidos</span>
+      </a>
     </section>
 
-    <section class="perfil-secciones">
-      <a href="mascotas.html" class="perfil-seccion-card">
-        <div class="perfil-seccion-icono">🐾</div>
-        <div class="perfil-seccion-info">
-          <h2>Mis Mascotas</h2>
-          <p>Registra y gestiona las mascotas de tu hogar</p>
+    <section class="perfil-config">
+      <div class="perfil-config-item" id="toggle-info">
+        <div class="perfil-config-header">
+          <span class="perfil-config-icono">✏️</span>
+          <span class="perfil-config-titulo">Editar información</span>
+          <span class="perfil-config-flecha">▾</span>
         </div>
-        <span class="perfil-seccion-arrow">→</span>
-      </a>
-      <a href="reservas.html" class="perfil-seccion-card">
-        <div class="perfil-seccion-icono">📅</div>
-        <div class="perfil-seccion-info">
-          <h2>Mis Reservas</h2>
-          <p>Agenda y revisa tus paseos programados</p>
+        <div class="perfil-config-body" id="body-info" style="display:none;">
+          <form id="editar-perfil-form">
+            <label class="config-label" for="editar-perfil-nombre">Nombre completo</label>
+            <input type="text" id="editar-perfil-nombre" class="config-input" placeholder="Tu nombre completo" required />
+            <span class="config-ayuda" style="margin-bottom:16px; display:block;">Este es el nombre que verán en tu perfil y reservas.</span>
+
+            <label class="config-label" for="editar-perfil-email">Correo electrónico</label>
+            <input type="email" id="editar-perfil-email" class="config-input" placeholder="nuevo@correo.com" />
+            <span class="config-ayuda" style="margin-bottom:16px; display:block;">Déjalo vacío si no quieres cambiar tu correo actual.</span>
+
+            <div id="campo-password-actual" class="config-grupo-alerta" style="display:none; margin-bottom:16px;">
+              <label class="config-label" for="editar-perfil-password-actual">Confirma tu contraseña actual</label>
+              <div class="password-container">
+                <input type="password" id="editar-perfil-password-actual" class="config-input" placeholder="Contraseña actual" />
+                <span class="toggle-password" id="toggle-password-actual">👁️</span>
+              </div>
+              <span class="config-ayuda">Necesaria para confirmar el cambio de correo.</span>
+            </div>
+
+            <button type="submit" class="config-btn-guardar">Guardar cambios</button>
+          </form>
         </div>
-        <span class="perfil-seccion-arrow">→</span>
-      </a>
+      </div>
+
+      <div class="perfil-config-item" id="toggle-seguridad">
+        <div class="perfil-config-header">
+          <span class="perfil-config-icono">🔒</span>
+          <span class="perfil-config-titulo">Cambiar contraseña</span>
+          <span class="perfil-config-flecha">▾</span>
+        </div>
+        <div class="perfil-config-body" id="body-seguridad" style="display:none;">
+          <form id="cambiar-password-form">
+            <label class="config-label">Contraseña actual</label>
+            <div class="password-container" style="margin-bottom:16px;">
+              <input type="password" id="password-actual-seg" class="config-input" placeholder="Tu contraseña actual" />
+              <span class="toggle-password" id="toggle-password-actual-seg">👁️</span>
+            </div>
+            <label class="config-label">Nueva contraseña</label>
+            <div class="password-container" style="margin-bottom:16px;">
+              <input type="password" id="editar-perfil-password-nueva" class="config-input" placeholder="Mínimo 6 caracteres con letras y números" />
+              <span class="toggle-password" id="toggle-password-nueva">👁️</span>
+            </div>
+            <button type="submit" class="config-btn-guardar">Actualizar contraseña</button>
+          </form>
+        </div>
+      </div>
     </section>
     <script src="assets/js/main.js?v=2"></script>
   </body>

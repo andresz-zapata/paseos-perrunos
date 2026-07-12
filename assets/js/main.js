@@ -557,17 +557,87 @@ if (perfilNombre) {
   }
 }
 
-// Tabs de configuración de perfil
-document.querySelectorAll('.config-tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.config-tab-btn').forEach(b => b.classList.remove('config-tab-activo'));
-    btn.classList.add('config-tab-activo');
+// Acordeones del perfil
+const acordeones = [
+  { toggle: 'toggle-info', body: 'body-info' },
+  { toggle: 'toggle-seguridad', body: 'body-seguridad' }
+];
 
-    const tab = btn.dataset.configTab;
-    document.querySelector('#config-panel-general').style.display = tab === 'general' ? 'block' : 'none';
-    document.querySelector('#config-panel-seguridad').style.display = tab === 'seguridad' ? 'block' : 'none';
+acordeones.forEach(({ toggle, body }) => {
+  const toggleEl = document.querySelector(`#${toggle}`);
+  if (!toggleEl) return;
+
+  const header = toggleEl.querySelector('.perfil-config-header');
+  const bodyEl = document.querySelector(`#${body}`);
+  const flecha = header.querySelector('.perfil-config-flecha');
+
+  header.addEventListener('click', () => {
+    const abierto = bodyEl.style.display !== 'none';
+    bodyEl.style.display = abierto ? 'none' : 'block';
+    flecha.classList.toggle('abierto', !abierto);
   });
 });
+
+// Toggle contraseña nueva (sección seguridad)
+const togglePasswordNueva = document.querySelector('#toggle-password-nueva');
+const passwordNuevaInput = document.querySelector('#editar-perfil-password-nueva');
+if (togglePasswordNueva && passwordNuevaInput) {
+  togglePasswordNueva.addEventListener('click', () => {
+    passwordNuevaInput.type = passwordNuevaInput.type === 'password' ? 'text' : 'password';
+  });
+}
+
+const togglePasswordActualSeg = document.querySelector('#toggle-password-actual-seg');
+const passwordActualSeg = document.querySelector('#password-actual-seg');
+if (togglePasswordActualSeg && passwordActualSeg) {
+  togglePasswordActualSeg.addEventListener('click', () => {
+    passwordActualSeg.type = passwordActualSeg.type === 'password' ? 'text' : 'password';
+  });
+}
+
+// Formulario cambiar contraseña (sección seguridad)
+const cambiarPasswordForm = document.querySelector('#cambiar-password-form');
+if (cambiarPasswordForm) {
+  cambiarPasswordForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const passwordActual = document.querySelector('#password-actual-seg').value;
+    const passwordNueva = document.querySelector('#editar-perfil-password-nueva').value;
+
+    const btnGuardar = cambiarPasswordForm.querySelector('button[type="submit"]');
+    btnGuardar.disabled = true;
+    btnGuardar.textContent = 'Guardando...';
+
+    try {
+      const response = await fetch(`${BASE_URL}/api/auth/perfil`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          nombre: localStorage.getItem('nombre'),
+          passwordActual,
+          passwordNueva
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showToast('¡Contraseña actualizada correctamente! 🔒', 'success');
+        cambiarPasswordForm.reset();
+      } else {
+        showToast(data.message, 'error');
+      }
+    } catch (error) {
+      showToast('No se pudo conectar con el servidor', 'error');
+    } finally {
+      btnGuardar.disabled = false;
+      btnGuardar.textContent = 'Actualizar contraseña';
+    }
+  });
+}
 
 // Toggle contraseñas editar perfil
 const togglePasswordActual = document.querySelector("#toggle-password-actual");
@@ -578,17 +648,6 @@ if (togglePasswordActual && passwordActualInput) {
   togglePasswordActual.addEventListener("click", () => {
     passwordActualInput.type =
       passwordActualInput.type === "password" ? "text" : "password";
-  });
-}
-
-const togglePasswordNueva = document.querySelector("#toggle-password-nueva");
-const passwordNuevaInput = document.querySelector(
-  "#editar-perfil-password-nueva"
-);
-if (togglePasswordNueva && passwordNuevaInput) {
-  togglePasswordNueva.addEventListener("click", () => {
-    passwordNuevaInput.type =
-      passwordNuevaInput.type === "password" ? "text" : "password";
   });
 }
 
