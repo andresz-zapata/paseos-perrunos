@@ -3427,18 +3427,6 @@ h2 {
   z-index: 1;
 }
 
-/* Hero index mejorado */
-.hero-badge {
-  display: inline-block;
-  background-color: rgba(31, 122, 99, 0.1);
-  color: var(--verde-principal);
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 20px;
-}
-
 .hero-btn-principal {
   padding: 12px 28px;
   font-size: 16px;
