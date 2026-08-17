@@ -69,9 +69,37 @@ if (solicitudPaseador) {
         nombre,
         email,
         password: passwordEncriptada,
+        rol: req.body.tipoCuenta === 'paseador' ? 'paseador' : 'cliente',
       });
 
       await nuevoUsuario.save();
+
+      // Si se registra como paseador, crear perfil de Paseador en estado pendiente
+      if (req.body.tipoCuenta === 'paseador') {
+        const Paseador = require('../models/paseador');
+        const nuevoPaseador = new Paseador({
+          usuario: nuevoUsuario._id,
+          nombre,
+          email,
+          zonaCobertura: 'Por definir',
+          especialidad: 'Por definir',
+          experiencia: 'Por definir',
+          descripcion: 'Por definir',
+          estado: 'pendiente',
+          origen: 'solicitud'
+        });
+        await nuevoPaseador.save();
+
+        res.status(201).json({
+          message: '¡Cuenta creada! Tu solicitud de paseador está en revisión. Te notificaremos pronto. 🐾'
+        });
+
+        enviarBienvenida(nombre, email)
+          .then(() => console.log('✅ Email de bienvenida enviado a paseador:', email))
+          .catch(err => console.error('❌ Error al enviar email a paseador:', err.message));
+
+        return;
+      }
 
       res.status(201).json({ message: "¡Cuenta creada correctamente! 🎉" });
 
