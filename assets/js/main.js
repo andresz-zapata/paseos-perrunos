@@ -290,15 +290,16 @@ if (registerForm) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000);
 
+      const tipoRegistro = document.querySelector('input[name="tipo-registro"]:checked')?.value || 'cliente';
+
       const response = await fetch(`${BASE_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ nombre, email, password }),
+        body: JSON.stringify({ nombre, email, password, tipoCuenta: tipoRegistro }),
         signal: controller.signal,
       });
-
       clearTimeout(timeoutId);
 
       const data = await response.json();
@@ -306,6 +307,10 @@ if (registerForm) {
       if (response.ok) {
         showToast(data.message, "success");
         registerForm.reset();
+        const tipoActual = document.querySelector('input[name="tipo-registro"]:checked')?.value;
+        if (tipoActual === 'paseador') {
+          showToast('Revisa tu correo cuando el admin haya revisado tu solicitud 📧', 'info', 5000);
+        }
       } else {
         showToast(data.message, "error");
       }
@@ -656,25 +661,20 @@ const editarPerfilForm = document.querySelector("#editar-perfil-form");
 if (editarPerfilForm) {
   const nombreInput = document.querySelector("#editar-perfil-nombre");
   const emailInput = document.querySelector("#editar-perfil-email");
-  const passwordNuevaInput2 = document.querySelector(
-    "#editar-perfil-password-nueva"
-  );
   const campoPaswordActual = document.querySelector("#campo-password-actual");
 
   const mostrarPasswordActual = () => {
-    const emailCambiado = emailInput.value.trim() !== "";
-    const passwordNueva = passwordNuevaInput2.value.trim() !== "";
-    if (emailCambiado || passwordNueva) {
-      campoPaswordActual.style.display = "block";
+    const emailCambiado = emailInput?.value.trim() !== "";
+    if (emailCambiado) {
+      if (campoPaswordActual) campoPaswordActual.style.display = "block";
     } else {
-      campoPaswordActual.style.display = "none";
-      document.querySelector("#editar-perfil-password-actual").value = "";
+      if (campoPaswordActual) campoPaswordActual.style.display = "none";
+      const passActual = document.querySelector("#editar-perfil-password-actual");
+      if (passActual) passActual.value = "";
     }
   };
 
   if (emailInput) emailInput.addEventListener("input", mostrarPasswordActual);
-  if (passwordNuevaInput2)
-    passwordNuevaInput2.addEventListener("input", mostrarPasswordActual);
 
   fetch(`${BASE_URL}/api/auth/perfil`, {
     method: "GET",
@@ -3502,6 +3502,11 @@ if (paseadorStatsGrid) {
 
       if (!response.ok) {
         showToast(data.message, 'error');
+        if (response.status === 403) {
+          setTimeout(() => {
+            window.location.replace('login.html');
+          }, 2000);
+        }
         return;
       }
 
